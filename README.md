@@ -53,7 +53,12 @@ JP/
 ├── app.js                    # 核心邏輯（儲存、渲染、天氣…）
 ├── js/
 │   ├── share-print.js        # 分享文字、列印、分享備份
-│   └── reminders.js          # 本機出發提醒
+│   ├── reminders.js          # 本機出發提醒
+│   ├── trip-calendar.js      # 行程日曆檢視
+│   ├── ui-ux.js              # 介面互動邏輯
+│   ├── weather-locations.js  # 天氣地點設定
+│   ├── onboarding.js         # 新手引導流程
+│   └── demo-data.js          # 示範資料
 ├── sw.js
 ├── manifest.webmanifest
 ├── vendor/
