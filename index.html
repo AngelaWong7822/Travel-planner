@@ -46,9 +46,16 @@
                 <p id="header-subtitle" class="truncate">開始規劃！</p>
             </div>
         </div>
+        <button type="button" id="header-settings-btn" onclick="openSettingsSheet()" class="header-mode-btn header-icon-btn flex-shrink-0" aria-label="設定" aria-haspopup="dialog" aria-controls="settings-sheet">
+            <i class="fas fa-gear" aria-hidden="true"></i>
+        </button>
         <div id="header-menu" class="hidden" role="menu">
             <p class="type-micro text-muted mb-2 px-0.5">我的旅程</p>
             <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
+            <label class="header-menu-field">
+                <span class="type-micro text-muted font-heavy">目的地（天氣用）</span>
+                <select id="weather-location-select" onchange="onWeatherLocationSelect(this.value)" class="weather-day-select" aria-label="選擇目的地"></select>
+            </label>
             <div class="header-menu-actions">
                 <button type="button" onclick="editTripName(); closeHeaderMenu();" class="bg-pink-50 text-pink-600">改名</button>
                 <button type="button" onclick="createNewTrip(); closeHeaderMenu();" class="bg-pink-50 text-pink-600">新旅程</button>
@@ -97,15 +104,17 @@
             <div id="main-day-card" class="bg-white rounded-[1.5rem] overflow-hidden relative">
                 <div id="day-banner" class="day-banner day-banner-date-only relative bg-gray-200 group">
                     <div id="day-banner-date" class="day-banner-date">
-                        <p id="day-banner-date-main" class="day-banner-date-main">Day 1</p>
-                        <p id="day-banner-date-sub" class="day-banner-date-sub"></p>
-                        <p id="day-banner-place" class="day-banner-place hidden"><i class="fas fa-location-dot" aria-hidden="true"></i><span id="day-banner-place-text"></span></p>
-                        <div id="day-banner-weather" class="day-banner-weather hidden" aria-label="當日天氣">
-                            <span id="day-banner-weather-icon" class="day-banner-weather-icon" aria-hidden="true"></span>
-                            <span id="day-banner-weather-temp" class="day-banner-weather-temp"></span>
-                            <span id="day-banner-weather-mood" class="day-banner-weather-mood"></span>
+                        <div class="day-banner-row">
+                            <p id="day-banner-date-main" class="day-banner-date-main">Day 1</p>
+                            <p id="day-banner-date-sub" class="day-banner-date-sub"></p>
+                            <span id="day-banner-today-mark" class="day-banner-today-mark hidden">今日</span>
+                            <div id="day-banner-weather" class="day-banner-weather hidden" aria-label="當日天氣">
+                                <span id="day-banner-weather-icon" class="day-banner-weather-icon" aria-hidden="true"></span>
+                                <span id="day-banner-weather-temp" class="day-banner-weather-temp"></span>
+                                <span id="day-banner-weather-mood" class="day-banner-weather-mood"></span>
+                            </div>
                         </div>
-                        <span id="day-banner-today-mark" class="day-banner-today-mark hidden">今日</span>
+                        <p id="day-banner-title" class="day-banner-title hidden"></p>
                     </div>
                     <img id="day-img" src="" alt="" class="day-banner-photo w-full h-full object-cover">
                     <div class="day-banner-photo absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
@@ -136,32 +145,6 @@
             <p id="tools-group-travel" class="tools-group-heading">出門必備</p>
 
             <div class="tools-travel-stack">
-            <div id="tools-weather-card" class="tools-widget-card bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-heavy text-primary">天氣</h2>
-                <div id="weather-widget" class="w-full bg-surface-muted p-3 rounded-2xl border border-default">
-                    <div class="weather-widget-controls">
-                        <label class="weather-day-field">
-                            <span class="type-micro text-muted font-heavy">日期</span>
-                            <select id="weather-day-select" onchange="onWeatherDaySelect(parseInt(this.value,10))" class="weather-day-select" aria-label="選擇日期"></select>
-                        </label>
-                        <label class="weather-day-field">
-                            <span class="type-micro text-muted font-heavy">地點</span>
-                            <select id="weather-location-select" onchange="onWeatherLocationSelect(this.value)" class="weather-day-select" aria-label="選擇地點"></select>
-                        </label>
-                    </div>
-                    <div class="weather-widget-body">
-                        <div id="weather-icon" class="text-xl text-warning shrink-0" aria-hidden="true"><i class="fas fa-sun"></i></div>
-                        <div class="overflow-hidden min-w-0 flex-1">
-                            <p id="weather-display" class="type-caption text-primary font-heavy">--°C</p>
-                            <p id="weather-detail" class="hidden type-micro text-muted truncate"></p>
-                        </div>
-                        <span id="weather-loading" aria-hidden="true">●</span>
-                        <button type="button" onclick="refreshWeather(true)" class="rate-refresh-btn" aria-label="刷新天氣"><i class="fas fa-rotate-right text-secondary type-micro" aria-hidden="true"></i></button>
-                    </div>
-                </div>
-                <p id="weather-coverage-hint" class="type-micro text-muted text-center leading-relaxed"></p>
-            </div>
-
             <div id="tools-rate-card" class="tools-widget-card bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-heavy text-primary">匯率</h2>
                 <div id="rate-widget" class="w-full bg-surface-muted p-3 rounded-2xl border border-default">
@@ -218,7 +201,7 @@
                 <div id="check-list" class="space-y-3"></div>
             </div>
 
-            <p id="tools-group-backup" class="tools-group-heading mt-2">備份與分享</p>
+            <p id="tools-group-backup" class="tools-group-heading mt-2">分享</p>
 
             <div id="tools-share-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-heavy text-primary">分享與列印</h2>
@@ -226,65 +209,6 @@
                     <button type="button" onclick="shareCurrentTrip()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-share-alt mr-1"></i>分享全程</button>
                     <button type="button" onclick="printCurrentTrip()" class="flex-1 btn-ghost-sm py-3"><i class="fas fa-print mr-1"></i>列印／PDF</button>
                 </div>
-            </div>
-
-            <button type="button" id="tools-settings-toggle" class="tools-settings-toggle mt-2" onclick="toggleToolsSettings()" aria-expanded="false" aria-controls="tools-settings-panel">
-                <span>設定與進階</span>
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
-            </button>
-
-            <div id="tools-settings-panel" class="tools-settings-panel hidden">
-            <div id="tools-appearance-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
-                <label class="setting-row">
-                    <span class="type-body font-heavy text-primary">深色模式</span>
-                    <button type="button" id="theme-toggle-btn" onclick="toggleDarkMode()" class="setting-theme-btn" aria-pressed="false" aria-label="切換深色模式">
-                        <i id="theme-toggle-icon" class="fas fa-moon" aria-hidden="true"></i>
-                    </button>
-                </label>
-            </div>
-
-            <div id="tools-reminders-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary">出發提醒</h2>
-                <label class="setting-row">
-                    <span class="type-body font-bold text-primary">開啟提醒</span>
-                    <span class="setting-toggle">
-                        <input type="checkbox" id="reminder-enabled" onchange="onReminderSettingsChange()" class="setting-toggle-input">
-                        <span class="setting-toggle-track" aria-hidden="true"></span>
-                    </span>
-                </label>
-                <label class="setting-row">
-                    <span class="type-caption text-secondary">出發前／當日</span>
-                    <span class="setting-toggle">
-                        <input type="checkbox" id="reminder-departure" onchange="onReminderSettingsChange()" class="setting-toggle-input">
-                        <span class="setting-toggle-track" aria-hidden="true"></span>
-                    </span>
-                </label>
-                <div class="flex items-center gap-2 type-caption">
-                    <span class="font-bold text-gray-600 shrink-0">每日</span>
-                    <select id="reminder-hour" onchange="onReminderSettingsChange()" class="bg-pink-50 rounded-xl px-3 py-2 outline-none font-bold text-pink-600 min-h-[2.75rem]">
-                        <option value="7">7:00</option>
-                        <option value="8" selected>8:00</option>
-                        <option value="9">9:00</option>
-                        <option value="10">10:00</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="storage-warning" class="hidden bg-red-50 p-4 rounded-2xl border border-red-200 type-caption font-bold text-red-600 leading-relaxed"></div>
-            <p id="storage-info" class="type-micro text-muted font-bold text-center"></p>
-
-            <div class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary">離線與安裝</h2>
-                <p class="type-caption text-gray-500">曾連線開啟一次後可離線用。Safari／Chrome 選「加入主畫面」。</p>
-                <p id="pwa-install-hint" class="hidden type-caption text-pink-500 font-bold">可安裝 App 或加入主畫面</p>
-            </div>
-
-            <div class="tools-advanced-bar">
-                <button type="button" id="tools-advanced-btn" onclick="toggleToolsAdvancedMenu()" class="tools-settings-toggle w-full" aria-label="進階選項" aria-expanded="false" aria-controls="tools-advanced-menu">
-                    <span>進階選項</span>
-                    <i class="fas fa-ellipsis" aria-hidden="true"></i>
-                </button>
-            </div>
             </div>
         </section>
 
@@ -335,9 +259,67 @@
         </button>
         <button type="button" onclick="setTab('tools')" id="nav-tools" class="flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem] text-muted">
             <i class="fas fa-briefcase text-sm" aria-hidden="true"></i>
-            <span class="nav-tab-label">設定及工具</span>
+            <span class="nav-tab-label">工具</span>
         </button>
     </nav>
+
+    <div id="settings-sheet" class="hidden" role="dialog" aria-label="設定" onclick="if(event.target===this)closeSettingsSheet()">
+        <div class="sheet sheet-tall settings-sheet-body" onclick="event.stopPropagation()">
+            <p class="type-caption text-muted mb-1">設定</p>
+            <div id="tools-appearance-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
+                <label class="setting-row">
+                    <span class="type-body font-heavy text-primary">深色模式</span>
+                    <button type="button" id="theme-toggle-btn" onclick="toggleDarkMode()" class="setting-theme-btn" aria-pressed="false" aria-label="切換深色模式">
+                        <i id="theme-toggle-icon" class="fas fa-moon" aria-hidden="true"></i>
+                    </button>
+                </label>
+            </div>
+
+            <div id="tools-reminders-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
+                <h2 class="type-body font-bold text-primary">出發提醒</h2>
+                <label class="setting-row">
+                    <span class="type-body font-bold text-primary">開啟提醒</span>
+                    <span class="setting-toggle">
+                        <input type="checkbox" id="reminder-enabled" onchange="onReminderSettingsChange()" class="setting-toggle-input">
+                        <span class="setting-toggle-track" aria-hidden="true"></span>
+                    </span>
+                </label>
+                <label class="setting-row">
+                    <span class="type-caption text-secondary">出發前／當日</span>
+                    <span class="setting-toggle">
+                        <input type="checkbox" id="reminder-departure" onchange="onReminderSettingsChange()" class="setting-toggle-input">
+                        <span class="setting-toggle-track" aria-hidden="true"></span>
+                    </span>
+                </label>
+                <div class="flex items-center gap-2 type-caption">
+                    <span class="font-bold text-gray-600 shrink-0">每日</span>
+                    <select id="reminder-hour" onchange="onReminderSettingsChange()" class="bg-pink-50 rounded-xl px-3 py-2 outline-none font-bold text-pink-600 min-h-[2.75rem]">
+                        <option value="7">7:00</option>
+                        <option value="8" selected>8:00</option>
+                        <option value="9">9:00</option>
+                        <option value="10">10:00</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="storage-warning" class="hidden bg-red-50 p-4 rounded-2xl border border-red-200 type-caption font-bold text-red-600 leading-relaxed"></div>
+            <p id="storage-info" class="type-micro text-muted font-bold text-center"></p>
+
+            <div class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
+                <h2 class="type-body font-bold text-primary">離線與安裝</h2>
+                <p class="type-caption text-gray-500">曾連線開啟一次後可離線用。Safari／Chrome 選「加入主畫面」。</p>
+                <p id="pwa-install-hint" class="hidden type-caption text-pink-500 font-bold">可安裝 App 或加入主畫面</p>
+            </div>
+
+            <div class="tools-advanced-bar">
+                <button type="button" id="tools-advanced-btn" onclick="closeSettingsSheet();toggleToolsAdvancedMenu()" class="tools-settings-toggle w-full" aria-label="進階選項" aria-expanded="false" aria-controls="tools-advanced-menu">
+                    <span>進階選項</span>
+                    <i class="fas fa-ellipsis" aria-hidden="true"></i>
+                </button>
+            </div>
+            <button type="button" class="type-caption text-muted mt-1 w-full min-h-[2.75rem]" onclick="closeSettingsSheet()">完成</button>
+        </div>
+    </div>
 
     <div id="tools-advanced-menu" class="hidden" role="dialog" aria-label="進階選項" onclick="if(event.target===this)closeToolsAdvancedMenu()">
         <div class="sheet" onclick="event.stopPropagation()">

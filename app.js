@@ -541,16 +541,6 @@ function goToToolsSection(sectionId) {
     }, 120);
 }
 
-function toggleToolsSettings() {
-    const panel = document.getElementById('tools-settings-panel');
-    const btn = document.getElementById('tools-settings-toggle');
-    if (!panel || !btn) return;
-    const open = panel.classList.toggle('hidden');
-    const isOpen = !open;
-    btn.classList.toggle('is-open', isOpen);
-    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-}
-
 function togglePinDoc(i) {
     if (!trip.docs[i]) return;
     const wasPinned = trip.pinnedDocIdx === i;
@@ -1148,7 +1138,6 @@ function onWeatherLocationSelect(cityId) {
     trip.city = loc.id;
     invalidateWeatherForecast();
     debouncedSave();
-    updateDayBannerPlace();
     fetchWeather();
 }
 
@@ -1323,12 +1312,11 @@ function formatBannerDateHero(trip, day, idx) {
     if (trip.startDate) {
         const d = addDaysFromIso(trip.startDate, idx);
         const w = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
-        const y = d.getFullYear();
         const m = d.getMonth() + 1;
         const dd = d.getDate();
         return {
             main: `${m}/${dd}`,
-            sub: `週${w} · ${y}`,
+            sub: `週${w}`,
             isToday,
         };
     }
@@ -1337,25 +1325,6 @@ function formatBannerDateHero(trip, day, idx) {
         sub: day.weekday || '',
         isToday,
     };
-}
-
-function getTripDestinationLabel() {
-    const loc = getWeatherLocation(trip.city);
-    return loc.label || loc.id || '';
-}
-
-function updateDayBannerPlace() {
-    const wrap = document.getElementById('day-banner-place');
-    const textEl = document.getElementById('day-banner-place-text');
-    if (!wrap || !textEl) return;
-    const place = getTripDestinationLabel();
-    if (!place) {
-        wrap.classList.add('hidden');
-        textEl.textContent = '';
-        return;
-    }
-    wrap.classList.remove('hidden');
-    textEl.textContent = place;
 }
 
 function getDayBannerWeather(idx) {
@@ -1424,7 +1393,6 @@ function updateDayBannerDate(idx) {
         subEl.classList.toggle('hidden', !hero.sub);
     }
     if (todayMark) todayMark.classList.toggle('hidden', !hero.isToday);
-    updateDayBannerPlace();
     updateDayBannerWeather(idx);
 }
 
@@ -1928,6 +1896,11 @@ async function init() {
             },
             { passive: true },
         );
+        // 編輯／瀏覽切換時 sticky bar 高度會變（瀏覽模式係 0）
+        const stickyBar = document.getElementById('itinerary-sticky-bar');
+        if (stickyBar && 'ResizeObserver' in window) {
+            new ResizeObserver(() => syncItineraryChromeOffset()).observe(stickyBar);
+        }
     }
     syncItineraryChromeOffset();
 }
@@ -2304,14 +2277,15 @@ async function renderDay(idx) {
     const editingDay = isEdit && !travelMode;
     const titleText = displayDayTitle(day.title);
     tBox.innerHTML = '';
+    // 瀏覽時標題放喺日期列下面，唔再另起一個大標題
+    const bannerTitle = document.getElementById('day-banner-title');
+    if (bannerTitle) {
+        bannerTitle.textContent = titleText;
+        bannerTitle.classList.toggle('hidden', editingDay || !titleText);
+    }
     if (titleDisplay) {
-        if (!editingDay && titleText) {
-            titleDisplay.textContent = titleText;
-            titleDisplay.classList.remove('hidden');
-        } else {
-            titleDisplay.textContent = '';
-            titleDisplay.classList.add('hidden');
-        }
+        titleDisplay.textContent = '';
+        titleDisplay.classList.add('hidden');
     }
     if (editingDay) {
         titlePanel?.classList.remove('hidden');

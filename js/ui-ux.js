@@ -49,6 +49,17 @@ function closeToolsAdvancedMenu() {
     document.getElementById('tools-advanced-btn')?.setAttribute('aria-expanded', 'false');
 }
 
+function openSettingsSheet() {
+    closeHeaderMenu();
+    document.getElementById('settings-sheet')?.classList.remove('hidden');
+    document.getElementById('header-settings-btn')?.setAttribute('aria-expanded', 'true');
+}
+
+function closeSettingsSheet() {
+    document.getElementById('settings-sheet')?.classList.add('hidden');
+    document.getElementById('header-settings-btn')?.setAttribute('aria-expanded', 'false');
+}
+
 function eventStatusMeta(status) {
     const s = typeof normalizeEventStatus === 'function' ? normalizeEventStatus(status) : status;
     const map = {
@@ -443,7 +454,6 @@ function renderTodayQuickTools(hideForHero = false) {
         pinnedChip = `<button type="button" class="dashboard-quick-icon dashboard-quick-icon-pin" onclick="openPinnedDoc()" aria-label="釘選文件"><i class="fas fa-thumbtack" aria-hidden="true"></i>${escapeHtml(label)}</button>`;
     }
     el.innerHTML = `${pinnedChip}
-        <button type="button" class="dashboard-quick-icon" onclick="goToToolsSection('tools-weather-card')" aria-label="天氣"><i class="fas fa-cloud-sun" aria-hidden="true"></i>天氣</button>
         <button type="button" class="dashboard-quick-icon" onclick="goToToolsSection('tools-rate-card')" aria-label="匯率"><i class="fas fa-coins" aria-hidden="true"></i>匯率</button>
         <button type="button" class="dashboard-quick-icon" onclick="goToToolsSection('tools-docs-card')" aria-label="文件"><i class="fas fa-file-image" aria-hidden="true"></i>文件</button>`;
     el.classList.remove('hidden');
@@ -468,7 +478,7 @@ function renderDashboardWeather(dayIdx) {
     const moodHtml = mood
         ? `<span class="dashboard-weather-mood dashboard-weather-mood-${w.code <= 3 ? 'good' : 'warn'}">${escapeHtml(mood)}</span>`
         : '';
-    el.innerHTML = `<button type="button" class="dashboard-weather" onclick="goToToolsSection('tools-weather-card')" aria-label="今日天氣：${escapeAttr(mood || w.temp)}">
+    el.innerHTML = `<button type="button" class="dashboard-weather" onclick="refreshWeather(true)" aria-label="今日天氣：${escapeAttr(mood || w.temp)}（撳一下刷新）">
         ${weatherIconHtml(w.code)}<span class="dashboard-weather-temp">${escapeHtml(w.temp)}</span>${moodHtml}
     </button>`;
     el.classList.remove('hidden');

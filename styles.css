@@ -1233,6 +1233,11 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     gap: 0.5rem;
 }
 
+.itinerary-edit-actions.hidden,
+.itinerary-sticky-bar .itinerary-edit-actions.hidden {
+    display: none;
+}
+
 .itinerary-edit-action {
     flex: 1;
     min-height: var(--touch-min);
@@ -1408,7 +1413,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 
 .day-banner-date-only {
     height: auto;
-    min-height: 6.5rem;
+    min-height: 0;
     overflow: hidden;
     background: linear-gradient(145deg, var(--accent-soft), var(--surface));
     border-bottom: 1px solid var(--border-soft);
@@ -1431,24 +1436,40 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 .day-banner-date {
     display: none;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    gap: 0.3rem;
     width: 100%;
-    padding: 1.35rem 1rem 1.15rem;
-    text-align: center;
+    padding: 0.75rem 1.15rem;
+    text-align: left;
+}
+
+/* 日期、星期、今日、天氣排成一行 */
+.day-banner-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.5rem;
+}
+
+.day-banner-title {
+    margin: 0;
+    font-size: var(--type-title);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.3;
 }
 
 .day-banner-date-main {
     margin: 0;
-    font-size: 2.75rem;
+    font-size: 1.5rem;
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1.1;
     color: var(--cute-pink);
     letter-spacing: -0.02em;
 }
 
 .day-banner-date-sub {
-    margin: 0.35rem 0 0;
+    margin: 0;
     font-size: var(--type-body);
     font-weight: 800;
     color: var(--text-secondary);
@@ -1484,8 +1505,8 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    margin-top: 0.55rem;
-    padding: 0.3rem 0.7rem;
+    margin-left: auto;
+    padding: 0.25rem 0.6rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.6);
     border: 1px solid var(--border-soft);
@@ -1524,7 +1545,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 }
 
 .day-banner-today-mark {
-    margin-top: 0.45rem;
+    margin: 0;
     padding: 0.2rem 0.55rem;
     border-radius: 999px;
     background: var(--cute-pink);
@@ -2811,6 +2832,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #event-status-picker,
 #event-edit-picker,
 #trip-date-picker,
+#settings-sheet,
 #tools-advanced-menu {
     position: fixed;
     inset: 0;
@@ -2825,6 +2847,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #event-status-picker.hidden,
 #event-edit-picker.hidden,
 #trip-date-picker.hidden,
+#settings-sheet.hidden,
 #tools-advanced-menu.hidden,
 #print-preview.hidden { display: none; }
 
@@ -2891,6 +2914,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #event-status-picker .sheet,
 #event-edit-picker .sheet,
 #trip-date-picker .sheet,
+#settings-sheet .sheet,
 #tools-advanced-menu .sheet {
     width: 100%;
     max-width: 24rem;
@@ -3045,4 +3069,60 @@ input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='h
 textarea,
 select {
     font-size: 16px !important;
+}
+
+/* ── 設定 sheet、旅程選單目的地 ── */
+.settings-sheet-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.settings-sheet-body > div[class*='p-5'] {
+    padding: 1rem;
+}
+
+.header-menu-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0.65rem 0 0.25rem;
+}
+
+/* ── 闊畫面：底部導航同內容一樣闊 ── */
+@media (min-width: 640px) {
+    .app-bottom-nav {
+        left: 50%;
+        right: auto;
+        width: min(28rem, calc(100% - 2rem));
+        transform: translateX(-50%);
+        bottom: 0.75rem;
+        border: 1px solid var(--border-default);
+        border-radius: 1.5rem;
+        padding-bottom: 0.35rem;
+    }
+}
+
+/* ── 瀏覽模式：搜尋／編輯掣疊喺日期選擇列右邊，唔再獨佔一行 ── */
+.itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) {
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) .itinerary-sticky-tools {
+    position: absolute;
+    top: 0.5rem;
+    right: 0;
+    height: 4.5rem;
+    padding-left: 0.5rem;
+    background: linear-gradient(to right, transparent, var(--soft-bg) 0.5rem);
+}
+
+.itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) ~ #day-selector {
+    padding-right: 6.5rem;
 }
