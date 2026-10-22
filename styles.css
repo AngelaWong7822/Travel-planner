@@ -3686,3 +3686,189 @@ select {
 .spend-day-row:last-child {
     border-bottom: none;
 }
+
+/* ── 每日感想 ── */
+.day-journal {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 2px dashed var(--border-soft);
+}
+
+.day-journal.hidden {
+    display: none;
+}
+
+.journal-text {
+    width: 100%;
+    margin-top: 0.6rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-muted);
+    color: var(--text-primary);
+    line-height: 1.7;
+    resize: vertical;
+    outline: none;
+}
+
+.journal-text:focus {
+    border-color: var(--cute-pink);
+}
+
+.journal-photos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+}
+
+.journal-photos.hidden {
+    display: none;
+}
+
+.journal-photo {
+    position: relative;
+}
+
+.journal-photo-img {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.journal-photo-img img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.75rem;
+}
+
+.journal-photo-del {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 0.7rem;
+}
+
+/* ── 想去清單 ── */
+.wishlist-card {
+    border-radius: 1.5rem;
+    border: 1px solid var(--border-default);
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.wishlist-card.hidden {
+    display: none;
+}
+
+.wishlist-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: var(--touch-min);
+    padding: 0.85rem 1.15rem;
+    border: none;
+    background: none;
+    font-size: var(--type-body);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.wishlist-head i {
+    color: var(--text-muted);
+    transition: transform 0.2s;
+}
+
+.wishlist-head.is-open i {
+    transform: rotate(180deg);
+}
+
+.wishlist-count {
+    margin-left: 0.25rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--cute-pink);
+    font-size: var(--type-micro);
+}
+
+.wishlist-count:empty {
+    display: none;
+}
+
+.wishlist-body {
+    padding: 0 1.15rem 1rem;
+}
+
+.wishlist-body.hidden,
+.wishlist-add.hidden {
+    display: none;
+}
+
+.wishlist-add {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.wish-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.wish-row:last-child {
+    border-bottom: none;
+}
+
+.wish-row-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.wish-row-loc {
+    margin: 0;
+    font-size: var(--type-caption);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.wish-row-remark {
+    margin: 0.1rem 0 0;
+    font-size: var(--type-micro);
+    color: var(--text-muted);
+}
+
+.wish-schedule-btn {
+    flex-shrink: 0;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--cute-pink);
+    color: #fff;
+    font-size: var(--type-micro);
+    font-weight: 800;
+}
+
+.wish-del-btn {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+}

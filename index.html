@@ -26,6 +26,7 @@
     <input type="file" id="banner-img-input" class="hidden" accept="image/*">
     <input type="file" id="event-img-input" class="hidden" accept="image/*">
     <input type="file" id="lib-file-input" class="hidden" accept="image/*,application/pdf,.pdf">
+    <input type="file" id="journal-img-input" class="hidden" accept="image/*" multiple>
     <div id="lightbox" role="dialog" aria-label="圖片預覽">
         <button type="button" id="lightbox-close" onclick="closeLightbox()" aria-label="關閉"><i class="fas fa-times"></i></button>
         <div id="lightbox-viewport">
@@ -152,8 +153,32 @@
                         </div>
                     </div>
                     <section id="day-expenses" class="day-expenses hidden" aria-label="今日花費"></section>
+                    <section id="day-journal" class="day-journal hidden" aria-label="今日感想">
+                        <div class="expense-head">
+                            <p class="expense-title"><i class="fas fa-pen-nib" aria-hidden="true"></i>今日感想</p>
+                            <button type="button" class="expense-add-btn" onclick="triggerFile('journal-img-input')"><i class="fas fa-camera" aria-hidden="true"></i>加相</button>
+                        </div>
+                        <label for="journal-text" class="sr-only">今日感想</label>
+                        <textarea id="journal-text" class="journal-text" rows="3" placeholder="今日有咩開心事？食咗咩好嘢？" oninput="onJournalInput(this)"></textarea>
+                        <div id="journal-photos" class="journal-photos hidden"></div>
+                    </section>
                 </div>
             </div>
+
+            <section id="wishlist-card" class="wishlist-card hidden" aria-label="想去清單">
+                <button type="button" id="wishlist-head" class="wishlist-head" onclick="toggleWishlist()" aria-expanded="false" aria-controls="wishlist-body">
+                    <span><span aria-hidden="true">💡</span> 想去清單 <span id="wishlist-count" class="wishlist-count"></span></span>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div id="wishlist-body" class="wishlist-body hidden">
+                    <div id="wishlist-add" class="wishlist-add">
+                        <label for="wishlist-input" class="sr-only">想去嘅地方</label>
+                        <input type="text" id="wishlist-input" class="field-input flex-1" placeholder="想去邊？例：豪德寺" enterkeyhint="done" onkeydown="if(event.key==='Enter')addWish()">
+                        <button type="button" class="expense-add-btn" onclick="addWish()"><i class="fas fa-plus" aria-hidden="true"></i>加</button>
+                    </div>
+                    <div id="wishlist-list" class="wishlist-list"></div>
+                </div>
+            </section>
         </section>
 
         <!-- Tools Tab -->
@@ -243,6 +268,7 @@
                     <button type="button" onclick="shareCurrentTrip()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-share-alt mr-1"></i>分享全程</button>
                     <button type="button" onclick="printCurrentTrip()" class="flex-1 btn-ghost-sm py-3"><i class="fas fa-print mr-1"></i>列印／PDF</button>
                 </div>
+                <button type="button" onclick="printJournal()" class="w-full btn-ghost-sm py-3"><i class="fas fa-book-open mr-1"></i>遊記 PDF（感想＋相片）</button>
             </div>
         </section>
 
@@ -506,5 +532,6 @@
     <script src="js/day-map.js"></script>
     <script src="js/expenses.js"></script>
     <script src="js/stays.js"></script>
+    <script src="js/journal.js"></script>
 </body>
 </html>

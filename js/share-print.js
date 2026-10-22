@@ -130,26 +130,35 @@ ${days}
 </body></html>`;
 }
 
-function printCurrentTrip() {
-    if (typeof flushSave === 'function') flushSave();
+// 預覽緊嘅 HTML（行程或遊記），列印時用返同一份
+let printPreviewHtml = '';
+
+function showPrintPreview(titleText, html) {
     const overlay = document.getElementById('print-preview');
     const frame = document.getElementById('print-preview-frame');
     if (!overlay || !frame) return;
+    printPreviewHtml = html;
     const title = document.querySelector('.print-preview-title');
-    if (title) title.textContent = trip.name || '行程預覽';
+    if (title) title.textContent = titleText;
     overlay.classList.remove('hidden');
-    frame.srcdoc = buildPrintHtml(trip);
+    frame.srcdoc = html;
+}
+
+function printCurrentTrip() {
+    if (typeof flushSave === 'function') flushSave();
+    showPrintPreview(trip.name || '行程預覽', buildPrintHtml(trip));
 }
 
 function closePrintPreview() {
     const frame = document.getElementById('print-preview-frame');
     if (frame) frame.removeAttribute('srcdoc');
+    printPreviewHtml = '';
     document.getElementById('print-preview')?.classList.add('hidden');
 }
 
 function runPrintPreview() {
     if (typeof flushSave === 'function') flushSave();
-    const html = buildPrintHtml(trip);
+    const html = printPreviewHtml || buildPrintHtml(trip);
     const w = window.open('', '_blank');
     if (!w) {
         const frame = document.getElementById('print-preview-frame');

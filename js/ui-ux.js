@@ -354,6 +354,7 @@ function renderEventEditSheetFields(dayIdx, i, ev) {
         </div>
         <div class="event-edit-actions mt-2">
             <button type="button" onclick="copyEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-pink">複製</button>
+            <button type="button" onclick="moveEventToWishlist(${dayIdx}, ${i})" class="btn-inline">移去想去</button>
             <button type="button" onclick="closeEventEditSheet();removeEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-danger">刪除</button>
         </div>`;
 }

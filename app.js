@@ -515,7 +515,8 @@ function cloneDayData(day) {
         img: day.img,
         budget: day.budget,
         events: day.events.map(cloneEventData),
-        expenses: [], // 實際花費唔跟住複製
+        expenses: [], // 實際花費同感想唔跟住複製
+        journal: migrateJournal(null),
     };
 }
 
@@ -822,16 +823,18 @@ function idbListAll() {
     );
 }
 
+// 一日入面所有圖片引用：封面、景點圖、遊記相
+function dayImageRefs(day) {
+    return [day.img, ...day.events.map((ev) => ev.img), ...(day.journal?.photos || [])];
+}
+
 function collectUsedImageRefs(rootData) {
     const used = new Set();
     const add = (ref) => {
         if (isIdbRef(ref)) used.add(idbRefToId(ref));
     };
     for (const t of rootData.trips) {
-        for (const day of t.itinerary) {
-            add(day.img);
-            for (const ev of day.events) add(ev.img);
-        }
+        for (const day of t.itinerary) dayImageRefs(day).forEach(add);
         for (const doc of t.docs) add(doc.url);
     }
     return used;
@@ -912,6 +915,13 @@ async function migrateDataUrlsToIdb(rootData) {
                     changed = true;
                 }
             }
+            const photos = day.journal?.photos || [];
+            for (let i = 0; i < photos.length; i++) {
+                if (isDataUrl(photos[i])) {
+                    photos[i] = await storeImage(photos[i]);
+                    changed = true;
+                }
+            }
         }
         for (const doc of t.docs) {
             if (isDataUrl(doc.url)) {
@@ -924,12 +934,7 @@ async function migrateDataUrlsToIdb(rootData) {
 }
 
 async function purgeTripImages(t) {
-    for (const day of t.itinerary) {
-        if (isIdbRef(day.img)) await deleteImageRef(day.img);
-        for (const ev of day.events) {
-            if (isIdbRef(ev.img)) await deleteImageRef(ev.img);
-        }
-    }
+    for (const day of t.itinerary) await cleanupDayImages(day);
     for (const doc of t.docs) {
         if (isIdbRef(doc.url)) await deleteImageRef(doc.url);
     }
@@ -1026,9 +1031,8 @@ function formatTripScheduleRange() {
 }
 
 async function cleanupDayImages(day) {
-    if (isIdbRef(day.img)) await deleteImageRef(day.img);
-    for (const ev of day.events) {
-        if (isIdbRef(ev.img)) await deleteImageRef(ev.img);
+    for (const ref of dayImageRefs(day)) {
+        if (isIdbRef(ref)) await deleteImageRef(ref);
     }
 }
 
@@ -1428,6 +1432,7 @@ const defaultTrip = (name = '我的旅行', city = 'Tokyo') => ({
     docs: [],
     pinnedDocIdx: null,
     stays: [],
+    wishlist: [],
 });
 
 const EVENT_STATUS_VALUES = ['pending', 'booked', 'done'];
@@ -1469,6 +1474,23 @@ function migrateStay(s) {
         nights: Number.isFinite(nights) && nights > 0 ? nights : 1,
         bookingRef: s?.bookingRef != null ? String(s.bookingRef) : '',
         cost,
+    };
+}
+
+function migrateJournal(j) {
+    return {
+        text: j?.text != null ? String(j.text) : '',
+        photos: Array.isArray(j?.photos) ? j.photos.filter((p) => typeof p === 'string' && p) : [],
+    };
+}
+
+// 想去清單：未排日子嘅景點
+function migrateWish(w) {
+    return {
+        loc: w?.loc != null ? String(w.loc).trim() : '',
+        remark: w?.remark != null ? String(w.remark) : '',
+        link: w?.link != null ? String(w.link) : '',
+        tag: w?.tag != null ? String(w.tag) : '',
     };
 }
 
@@ -1540,7 +1562,9 @@ function migrateTrip(t) {
         budget: day.budget != null ? day.budget : 0,
         events: Array.isArray(day.events) ? day.events.map(migrateEvent) : [],
         expenses: Array.isArray(day.expenses) ? day.expenses.map(migrateExpense) : [],
+        journal: migrateJournal(day.journal),
     }));
+    trip.wishlist = Array.isArray(t.wishlist) ? t.wishlist.map(migrateWish).filter((w) => w.loc) : [];
     trip.stays = Array.isArray(t.stays) ? t.stays.map(migrateStay) : [];
     if (trip.itinerary.length === 0) {
         trip.itinerary = defaultTrip().itinerary;
@@ -2457,6 +2481,8 @@ async function renderDay(idx) {
     if (typeof syncDayMap === 'function') syncDayMap(idx);
     if (typeof renderDayStay === 'function') renderDayStay(idx);
     if (typeof renderDayExpenses === 'function') renderDayExpenses(idx);
+    if (typeof renderDayJournal === 'function') renderDayJournal(idx);
+    if (typeof renderWishlist === 'function') renderWishlist();
     syncWeatherToDay(idx);
     saveUiPrefs();
 }
