@@ -1436,7 +1436,16 @@ function normalizeEventStatus(s) {
     return EVENT_STATUS_VALUES.includes(s) ? s : 'pending';
 }
 
+function toCoord(v) {
+    if (v == null || v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+}
+
 function migrateEvent(ev) {
+    const lat = toCoord(ev.lat);
+    const lon = toCoord(ev.lon);
+    const hasCoords = lat != null && lon != null;
     return {
         loc: ev.loc != null ? ev.loc : '景點',
         time: ev.time != null ? ev.time : '12:00',
@@ -1447,6 +1456,10 @@ function migrateEvent(ev) {
         bookingRef: ev.bookingRef != null ? ev.bookingRef : '',
         cost: ev.cost != null && ev.cost !== '' ? ev.cost : '',
         tag: ev.tag != null ? ev.tag : '',
+        // 地圖座標；geoQ 記住係用邊個景點名查到，改名後會重新查
+        lat: hasCoords ? lat : null,
+        lon: hasCoords ? lon : null,
+        geoQ: hasCoords && ev.geoQ != null ? String(ev.geoQ) : '',
     };
 }
 
@@ -1901,6 +1914,7 @@ async function init() {
         if (stickyBar && 'ResizeObserver' in window) {
             new ResizeObserver(() => syncItineraryChromeOffset()).observe(stickyBar);
         }
+        if (typeof setupDayMap === 'function') setupDayMap();
     }
     syncItineraryChromeOffset();
 }
@@ -2402,6 +2416,7 @@ async function renderDay(idx) {
         if (dayCard) dayCard.scrollIntoView({ inline: 'center', behavior: 'smooth' });
         lastRenderedDayIdx = idx;
     }
+    if (typeof syncDayMap === 'function') syncDayMap(idx);
     syncWeatherToDay(idx);
     saveUiPrefs();
 }

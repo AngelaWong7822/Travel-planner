@@ -3126,3 +3126,194 @@ select {
 .itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) ~ #day-selector {
     padding-right: 6.5rem;
 }
+
+/* ── 景點地圖 ── */
+.day-view-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.day-view-bar.hidden {
+    display: none;
+}
+
+.day-view-toggle {
+    display: inline-flex;
+    padding: 0.2rem;
+    border-radius: 999px;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-soft);
+}
+
+.day-view-btn,
+.day-route-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.25rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    font-size: var(--type-caption);
+    font-weight: 800;
+    color: var(--text-secondary);
+}
+
+.day-view-btn-active {
+    background: var(--cute-pink);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(255, 133, 161, 0.35);
+}
+
+.day-route-btn {
+    background: var(--accent-soft);
+    color: var(--cute-pink);
+}
+
+.day-route-btn.hidden {
+    display: none;
+}
+
+.day-map-wrap.hidden {
+    display: none;
+}
+
+.day-map {
+    position: relative;
+    isolation: isolate; /* Leaflet 內部 z-index 好高，唔好蓋過 header／底部導航 */
+    z-index: 0;
+    height: 60vh;
+    min-height: 18rem;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-muted);
+}
+
+.day-map-picking,
+.day-map-picking .leaflet-grab {
+    cursor: crosshair;
+}
+
+.day-map-picking {
+    box-shadow: 0 0 0 3px var(--cute-pink);
+}
+
+.day-map-pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--cute-pink);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
+.day-map-pin-done {
+    background: #9ca3af;
+}
+
+.day-map-popup-time {
+    margin: 0;
+    font-size: var(--type-micro);
+    font-weight: 800;
+    color: var(--cute-pink);
+}
+
+.day-map-popup-loc {
+    margin: 0.1rem 0 0.5rem !important;
+    font-size: var(--type-caption);
+    font-weight: 800;
+    color: #374151;
+}
+
+.day-map-popup-actions {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.day-map-popup-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    border: none;
+    background: #ffe4ec;
+    color: #e0567a;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.day-map-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    font-size: var(--type-caption);
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.day-map-status.hidden {
+    display: none;
+}
+
+.day-map-status p {
+    margin: 0;
+}
+
+.day-map-status-pick {
+    color: var(--cute-pink);
+    font-weight: 800;
+}
+
+.day-map-status-pick i {
+    margin-right: 0.3rem;
+}
+
+.day-map-status-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+/* 闊畫面：時間線同地圖並排，唔使切換 */
+@media (min-width: 1024px) {
+    main:has(#content-itinerary:not(.hidden) #main-day-card.day-map-on) {
+        max-width: 64rem;
+    }
+
+    .day-view-toggle {
+        display: none;
+    }
+
+    .day-view-bar {
+        justify-content: flex-end;
+    }
+
+    #main-day-card.day-map-on .day-body-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    #main-day-card.day-map-on .day-map-wrap {
+        position: sticky;
+        top: calc(var(--itinerary-chrome-offset, 4rem) + 6rem);
+    }
+
+    #main-day-card.day-map-on .day-map {
+        height: calc(100vh - 16rem);
+    }
+}
