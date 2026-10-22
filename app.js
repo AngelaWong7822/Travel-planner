@@ -515,6 +515,7 @@ function cloneDayData(day) {
         img: day.img,
         budget: day.budget,
         events: day.events.map(cloneEventData),
+        expenses: [], // 實際花費唔跟住複製
     };
 }
 
@@ -1426,6 +1427,7 @@ const defaultTrip = (name = '我的旅行', city = 'Tokyo') => ({
     checklist: [{ task: '檢查護照', done: false }],
     docs: [],
     pinnedDocIdx: null,
+    stays: [],
 });
 
 const EVENT_STATUS_VALUES = ['pending', 'booked', 'done'];
@@ -1434,6 +1436,40 @@ window.EVENT_STATUS_VALUES = EVENT_STATUS_VALUES;
 function normalizeEventStatus(s) {
     if (s === 'optional') return 'pending';
     return EVENT_STATUS_VALUES.includes(s) ? s : 'pending';
+}
+
+const EXPENSE_CATS = [
+    { id: 'food', label: '食', icon: '🍜' },
+    { id: 'transport', label: '交通', icon: '🚃' },
+    { id: 'shopping', label: '購物', icon: '🛍️' },
+    { id: 'ticket', label: '門票', icon: '🎟️' },
+    { id: 'stay', label: '住宿', icon: '🏨' },
+    { id: 'other', label: '其他', icon: '✨' },
+];
+
+function migrateExpense(x) {
+    const n = Number(x?.amount);
+    return {
+        amount: Number.isFinite(n) ? n : 0,
+        cat: EXPENSE_CATS.some((c) => c.id === x?.cat) ? x.cat : 'other',
+        note: x?.note != null ? String(x.note) : '',
+        ts: Number.isFinite(Number(x?.ts)) ? Number(x.ts) : Date.now(),
+    };
+}
+
+// 住宿：startIdx 係入住嗰日（第幾日），住 nights 晚，退房日 = startIdx + nights
+function migrateStay(s) {
+    const start = parseInt(s?.startIdx, 10);
+    const nights = parseInt(s?.nights, 10);
+    const cost = s?.cost != null && s.cost !== '' && Number.isFinite(Number(s.cost)) ? Number(s.cost) : '';
+    return {
+        name: s?.name != null ? String(s.name) : '',
+        address: s?.address != null ? String(s.address) : '',
+        startIdx: Number.isFinite(start) && start >= 0 ? start : 0,
+        nights: Number.isFinite(nights) && nights > 0 ? nights : 1,
+        bookingRef: s?.bookingRef != null ? String(s.bookingRef) : '',
+        cost,
+    };
 }
 
 function toCoord(v) {
@@ -1503,7 +1539,9 @@ function migrateTrip(t) {
         img: day.img || '',
         budget: day.budget != null ? day.budget : 0,
         events: Array.isArray(day.events) ? day.events.map(migrateEvent) : [],
+        expenses: Array.isArray(day.expenses) ? day.expenses.map(migrateExpense) : [],
     }));
+    trip.stays = Array.isArray(t.stays) ? t.stays.map(migrateStay) : [];
     if (trip.itinerary.length === 0) {
         trip.itinerary = defaultTrip().itinerary;
     }
@@ -2417,6 +2455,8 @@ async function renderDay(idx) {
         lastRenderedDayIdx = idx;
     }
     if (typeof syncDayMap === 'function') syncDayMap(idx);
+    if (typeof renderDayStay === 'function') renderDayStay(idx);
+    if (typeof renderDayExpenses === 'function') renderDayExpenses(idx);
     syncWeatherToDay(idx);
     saveUiPrefs();
 }
@@ -2807,6 +2847,7 @@ async function delDay(i) {
     const day = trip.itinerary[i];
     await cleanupDayImages(day);
     trip.itinerary.splice(i, 1);
+    if (typeof shiftStaysForDeletedDay === 'function') shiftStaysForDeletedDay(i);
     const nextIdx = Math.min(i, trip.itinerary.length - 1);
     invalidateWeatherForecast();
     save();
@@ -2871,6 +2912,8 @@ async function setTab(t) {
     if (t === 'tools') {
         renderCheck();
         renderDocs();
+        if (typeof renderSpendSummary === 'function') renderSpendSummary();
+        if (typeof renderStaysList === 'function') renderStaysList();
     }
     if (typeof syncToolsLayout === 'function') syncToolsLayout();
     if (t === 'today' && typeof renderTravelDashboard === 'function') renderTravelDashboard();

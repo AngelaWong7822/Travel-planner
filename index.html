@@ -136,6 +136,7 @@
                         <label for="day-title-input" class="sr-only">當日標題</label>
                         <input type="text" id="day-title-input" placeholder="當日標題，例：上野 · 秋葉原" class="day-heading-input" aria-label="當日標題">
                     </div>
+                    <div id="day-stay" class="day-stay hidden"></div>
                     <div id="day-view-bar" class="day-view-bar hidden">
                         <div class="day-view-toggle" role="group" aria-label="顯示方式">
                             <button type="button" data-view="list" onclick="setDayView('list')" class="day-view-btn" aria-pressed="true"><i class="fas fa-list" aria-hidden="true"></i>列表</button>
@@ -150,6 +151,7 @@
                             <div id="day-map-status" class="day-map-status hidden" aria-live="polite"></div>
                         </div>
                     </div>
+                    <section id="day-expenses" class="day-expenses hidden" aria-label="今日花費"></section>
                 </div>
             </div>
         </section>
@@ -186,6 +188,24 @@
                     <p id="rate-detail" class="hidden type-micro text-muted text-center truncate mt-0.5"></p>
                 </div>
             </div>
+            </div>
+
+            <div id="tools-spend-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
+                <h2 class="type-body font-heavy text-primary">花費總覽</h2>
+                <div id="spend-totals"></div>
+                <label class="spend-budget-field">
+                    <span class="type-micro text-muted font-heavy">全程預算（<span id="trip-budget-currency">JPY</span>，可留空）</span>
+                    <input type="number" id="trip-budget-input" oninput="onTripBudgetInput(this.value)" placeholder="例：150000" class="field-input w-full mt-1" inputmode="decimal">
+                </label>
+                <div id="spend-detail"></div>
+            </div>
+
+            <div id="tools-stays-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="type-body font-heavy text-primary">住宿</h2>
+                    <button type="button" onclick="openStaySheet()" class="type-micro font-heavy text-pink-500 px-3 py-1.5 bg-pink-50 rounded-xl">＋ 新增</button>
+                </div>
+                <div id="stays-list" class="space-y-2"></div>
             </div>
 
             <div id="tools-docs-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
@@ -252,6 +272,7 @@
                 </div>
                 <div id="dashboard-hero" class="hidden"></div>
                 <div id="dashboard-quick-bar" class="dashboard-quick-bar hidden"></div>
+                <div id="dashboard-spend" class="dashboard-spend hidden"></div>
                 <div id="today-overview-list" class="dashboard-day-list"></div>
             </div>
         </section>
@@ -332,6 +353,70 @@
                 </button>
             </div>
             <button type="button" class="type-caption text-muted mt-1 w-full min-h-[2.75rem]" onclick="closeSettingsSheet()">完成</button>
+        </div>
+    </div>
+
+    <div id="expense-sheet" class="hidden" role="dialog" aria-labelledby="expense-sheet-title" onclick="if(event.target===this)closeExpenseSheet()">
+        <div class="sheet sheet-tall" onclick="event.stopPropagation()">
+            <p id="expense-sheet-title" class="type-body font-heavy text-primary mb-3">記一筆</p>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">金額（<span id="expense-currency">JPY</span>）</span>
+                <input type="number" id="expense-amount" class="field-input w-full mt-1" inputmode="decimal" placeholder="0" enterkeyhint="done" onkeydown="if(event.key==='Enter')saveExpenseFromSheet()">
+            </label>
+            <div class="event-edit-sheet-field">
+                <span class="type-micro text-muted">類別</span>
+                <div id="expense-cats" class="expense-cats mt-1"></div>
+            </div>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">備註</span>
+                <input type="text" id="expense-note" class="field-input w-full mt-1" placeholder="例：拉麵、Suica 增值">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">日子</span>
+                <select id="expense-day" class="field-input w-full mt-1"></select>
+            </label>
+            <div class="flex gap-2 mt-3">
+                <button type="button" id="expense-delete-btn" onclick="deleteExpenseFromSheet()" class="btn-inline btn-inline-danger hidden">刪除</button>
+                <button type="button" onclick="saveExpenseFromSheet()" class="btn-primary-sm flex-1 py-3">儲存</button>
+            </div>
+            <button type="button" class="type-caption text-muted mt-2 w-full min-h-[2.75rem]" onclick="closeExpenseSheet()">取消</button>
+        </div>
+    </div>
+
+    <div id="stay-sheet" class="hidden" role="dialog" aria-labelledby="stay-sheet-title" onclick="if(event.target===this)closeStaySheet()">
+        <div class="sheet sheet-tall" onclick="event.stopPropagation()">
+            <p id="stay-sheet-title" class="type-body font-heavy text-primary mb-3">加住宿</p>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">名稱</span>
+                <input type="text" id="stay-name" class="field-input w-full mt-1" placeholder="例：上野 APA 酒店">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">地址（導航用，可留空）</span>
+                <input type="text" id="stay-address" class="field-input w-full mt-1" placeholder="例：東京都台東区上野 1-2-3">
+            </label>
+            <div class="flex gap-2">
+                <label class="event-edit-sheet-field flex-1">
+                    <span class="type-micro text-muted">入住</span>
+                    <select id="stay-start" class="field-input w-full mt-1"></select>
+                </label>
+                <label class="event-edit-sheet-field w-24">
+                    <span class="type-micro text-muted">晚數</span>
+                    <input type="number" id="stay-nights" min="1" class="field-input w-full mt-1" inputmode="numeric">
+                </label>
+            </div>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">訂位編號</span>
+                <input type="text" id="stay-ref" class="field-input w-full mt-1" placeholder="訂位編號">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">房費（<span id="stay-cost-currency">JPY</span>，計入預估）</span>
+                <input type="number" id="stay-cost" class="field-input w-full mt-1" inputmode="decimal">
+            </label>
+            <div class="flex gap-2 mt-3">
+                <button type="button" id="stay-delete-btn" onclick="deleteStayFromSheet()" class="btn-inline btn-inline-danger hidden">刪除</button>
+                <button type="button" onclick="saveStayFromSheet()" class="btn-primary-sm flex-1 py-3">儲存</button>
+            </div>
+            <button type="button" class="type-caption text-muted mt-2 w-full min-h-[2.75rem]" onclick="closeStaySheet()">取消</button>
         </div>
     </div>
 
@@ -419,5 +504,7 @@
     <script src="app.js"></script>
     <script src="js/trip-calendar.js"></script>
     <script src="js/day-map.js"></script>
+    <script src="js/expenses.js"></script>
+    <script src="js/stays.js"></script>
 </body>
 </html>

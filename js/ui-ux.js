@@ -517,6 +517,7 @@ function renderTravelDashboard() {
         renderDashboardWeather(-1);
         syncDashboardProgress([]);
         renderTodayQuickTools();
+        if (typeof renderDashboardSpend === 'function') renderDashboardSpend(-1);
         if (hero) {
             hero.classList.add('hidden');
             hero.innerHTML = '';
@@ -551,6 +552,7 @@ function renderTravelDashboard() {
     const liveToday = hasRealToday() && todayIdx === getTodayDayIndex();
     const hasUpcomingHero = next.type === 'upcoming';
     renderTodayQuickTools(hasUpcomingHero);
+    if (typeof renderDashboardSpend === 'function') renderDashboardSpend(todayIdx);
 
     if (hero) {
         if (next.type === 'empty') {
