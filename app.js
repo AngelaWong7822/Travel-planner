@@ -2169,8 +2169,16 @@ async function fetchWeather(force = false) {
     }
 
     const now = Date.now();
+    // 有出發日期要每日預報，冇就要即時天氣；快取類型唔啱就當過期
+    const needsDaily = !!(trip.startDate && trip.itinerary.length);
+    const cacheMatchesMode = needsDaily
+        ? (weatherForecastCache.daily?.time?.length || 0) > 1
+        : !!weatherForecastCache.current;
     const cacheFresh =
-        !force && hasWeatherForecastCache(cityKey) && now - weatherForecastCache.ts < WEATHER_TTL_MS;
+        !force &&
+        hasWeatherForecastCache(cityKey) &&
+        cacheMatchesMode &&
+        now - weatherForecastCache.ts < WEATHER_TTL_MS;
 
     if (!navigator.onLine) {
         if (hasWeatherForecastCache(cityKey)) {

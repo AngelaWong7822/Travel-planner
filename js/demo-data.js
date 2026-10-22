@@ -161,19 +161,3 @@ function buildTokyoDemoTrip() {
     ];
     return tripData;
 }
-
-async function loadDemoTrip() {
-    const ok = await modalConfirm(
-        '載入示範行程',
-        '會取代目前旅程嘅所有內容（景點、預算、清單等），確定？',
-        { confirmText: '載入' },
-    );
-    if (!ok) return;
-    data.trips[data.activeIdx] = migrateTrip(buildTokyoDemoTrip());
-    trip = data.trips[data.activeIdx];
-    const todayIdx = getTodayDayIndex();
-    curDayIdx = todayIdx >= 0 ? todayIdx : 1;
-    save();
-    await init();
-    showToast('已載入東京示範行程');
-}
