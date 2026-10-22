@@ -11,17 +11,31 @@
 - 今日總覽、全旅程搜尋
 - 地圖／導航一鍵開啟（Google Maps、Apple 地圖）
 - 編輯模式：複製景點／整天、▲▼ 排序、刪除二次確認
+- **想去清單**：未定日子嘅景點先儲起，之後「排入」某一日；景點亦可「移去想去」
 
-### 預算與匯率
-- 每日預算、行程上限、景點預估花費加總與進度條
+### 景點地圖
+- 每日「列表／地圖」切換；闊畫面（≥1024px）時間線同地圖並排
+- 景點按時間編號，虛線連起；用 OpenStreetMap Nominatim 自動查座標（每秒 1 次）
+- 查唔到或者唔準：撳「改位置」／「喺地圖揀」手動釘位
+- **成日路線**：一次過開 Google Maps 導航（最多 10 個點）
+
+### 花費與住宿
+- **記一筆**：金額、類別（食／交通／購物／門票／住宿／其他）、備註，記喺當日
+- 每日「實際 vs 預估」，超出預估變紅；今日頁顯示今日已用
+- 工具頁「花費總覽」：全程實際、可選全程預算、分類同每日明細，按旅程匯率顯示約等於本國貨幣
+- **住宿**：入住日 + 晚數，範圍內每日顯示「今晚住」、訂位編號、一撳導航；退房日提醒；房費計入預估
 - 每個旅程可自訂目的地／本國貨幣與匯率
 
+### 遊記
+- 每日「今日感想」：文字 + 相片（存 IndexedDB）
+- **遊記 PDF**：每日路線、感想、相片、花費
+
 ### 工具
-- 天氣（Open-Meteo，點擊刷新）
+- 天氣（Open-Meteo）：每日卡同今日頁顯示，撳今日頁天氣刷新；目的地喺旅程選單揀
 - 行李清單模板與進度條
 - 重要文件：**圖片 + PDF**（護照、機票等）
 - 旅行模式（僅瀏覽）
-- 深色模式
+- 深色模式、出發提醒等設定喺右上角齒輪
 
 ### 分享與列印
 - **分享全程／今日／當天**純文字（Web Share API 或複製剪貼簿）
@@ -50,16 +64,26 @@
 JP/
 ├── index.html
 ├── styles.css
-├── app.js                    # 核心邏輯（儲存、渲染、天氣…）
+├── app.js                    # 核心邏輯（儲存、資料遷移、渲染、天氣…）
 ├── js/
-│   ├── share-print.js        # 分享文字、列印、分享備份
-│   └── reminders.js          # 本機出發提醒
+│   ├── share-print.js        # 分享文字、列印預覽
+│   ├── reminders.js          # 本機出發提醒
+│   ├── weather-locations.js  # 天氣地點座標
+│   ├── demo-data.js          # 東京 5 日模板（新手引導用）
+│   ├── onboarding.js         # 新手引導
+│   ├── ui-ux.js              # 今日頁、設定、景點編輯 sheet
+│   ├── trip-calendar.js      # 行程日期月曆
+│   ├── day-map.js            # 景點地圖、查座標、成日路線
+│   ├── expenses.js           # 記帳、花費總覽
+│   ├── stays.js              # 住宿
+│   └── journal.js            # 想去清單、今日感想、遊記 PDF
 ├── sw.js
 ├── manifest.webmanifest
 ├── vendor/
 │   ├── tailwind.css          # 預編譯 Tailwind（勿手改）
 │   ├── fonts/                # Noto Sans TC
-│   └── fontawesome/          # Font Awesome 6.4
+│   ├── fontawesome/          # Font Awesome 6.4
+│   └── leaflet/              # Leaflet 1.9.4（地圖）
 ├── icons/
 │   ├── icon.svg
 │   ├── icon-192.png
@@ -100,11 +124,12 @@ npm run build:css
 | 類型 | 位置 | 說明 |
 |------|------|------|
 | 行程 JSON | `localStorage`（`TRAVEL_V6_STORAGE`） | 文字資料、圖片引用 |
-| 圖片 | IndexedDB（`TRAVEL_APP_IMAGES`） | 封面、景點圖、文件 |
+| 圖片 | IndexedDB（`TRAVEL_APP_IMAGES`） | 封面、景點圖、文件、遊記相 |
 | UI 偏好 | `localStorage`（`TRAVEL_APP_UI_PREFS`） | 上次 tab、day |
 | 深色模式 | `localStorage`（`TRAVEL_APP_DARK_MODE`） | 開／關 |
 | 旅行模式 | `localStorage`（`TRAVEL_APP_TRAVEL_MODE`） | 開／關 |
 | 提醒設定 | `localStorage`（`TRAVEL_APP_REMINDER_SETTINGS`） | 開關、時段 |
+| 列表／地圖 | `localStorage`（`TRAVEL_APP_DAY_VIEW`） | 上次揀嘅顯示方式 |
 
 建議定期在「工具清單 → 完整匯出」或「分享備份檔」備份 JSON。
 
@@ -130,7 +155,16 @@ npm run build:css
       "rate": 0.052,
       "startDate": "",
       "tripBudget": null,
-      "itinerary": [],
+      "itinerary": [
+        {
+          "title": "抵達・淺草",
+          "events": [{ "loc": "淺草寺", "time": "14:00", "lat": 35.7134, "lon": 139.7955, "geoQ": "淺草寺" }],
+          "expenses": [{ "amount": 1200, "cat": "food", "note": "拉麵", "ts": 0 }],
+          "journal": { "text": "", "photos": ["idb:…"] }
+        }
+      ],
+      "stays": [{ "name": "上野 APA", "address": "", "startIdx": 0, "nights": 3, "bookingRef": "", "cost": 36000 }],
+      "wishlist": [{ "loc": "豪德寺", "remark": "", "link": "", "tag": "" }],
       "checklist": [],
       "docs": [{ "url": "idb:…", "label": "護照", "mimeType": "image/jpeg" }]
     }
@@ -153,7 +187,7 @@ npm run build:css
 
 ## 離線限制
 
-- 天氣更新需要網絡
+- 天氣更新、地圖底圖、自動查座標需要網絡
 - 未快取過的 Unsplash 預設封面可能無法顯示
 - 輕量備份不含圖片本體，跨裝置還原請用完整匯出
 - 本機提醒需瀏覽器允許通知；背景／關閉 App 後不保證觸發（尤其 iOS）
@@ -164,4 +198,5 @@ npm run build:css
 - Tailwind CSS 3（預編譯至 `vendor/tailwind.css`）
 - Font Awesome 6、Noto Sans TC（本地）
 - Open-Meteo API（天氣）
+- Leaflet + OpenStreetMap（地圖底圖、Nominatim 查座標）
 - localStorage + IndexedDB
