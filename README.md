@@ -40,18 +40,18 @@
 ### 分享與列印
 - **分享全程／今日／當天**純文字（Web Share API 或複製剪貼簿）
 - **列印／另存 PDF**：開啟列印友好版面，可用瀏覽器「另存為 PDF」
-- **分享備份檔**：一鍵分享完整 JSON 到 AirDrop、iCloud Drive、WhatsApp 等
 
 ### 出發提醒
 - 本機通知（Notification API）：出發前一日、出發當日、行程中每日早上
 - 需允許瀏覽器通知；**非**伺服器 Web Push（App 關閉後 iOS 可能無法觸發）
 
-### 備份
-- **完整匯出**：JSON 內嵌 base64 圖片，可跨裝置還原
-- **輕量匯出**：僅 `idb:` 引用，檔案小
-- **匯入（取代）**：清除現有資料後還原
+### 備份（右上角齒輪 → 備份）
+- **匯出備份**：下載完整 JSON，所有圖片（封面、景點圖、文件、遊記相）以 base64 內嵌，可跨裝置還原
+- **分享備份檔**：支援檔案分享嘅裝置（多數手機）會顯示，可直接存去 iCloud Drive、AirDrop、WhatsApp 等
 - **匯入（合併）**：將備份中的旅程追加到現有列表
-- **清理未使用圖片**：刪除 IndexedDB 中無引用的圖片
+- **匯入（取代）**：換成備份內容；先存好新資料先刪舊圖片，中途失敗唔會清走舊資料
+- 設定入面顯示「上次匯出」時間
+- **清理未使用圖片**（進階選項）：刪除 IndexedDB 中無引用的圖片
 
 ### PWA 離線
 - 樣式、字型、圖示均已**本地化**（無需 CDN 即可顯示介面）
@@ -76,7 +76,8 @@ JP/
 │   ├── day-map.js            # 景點地圖、查座標、成日路線
 │   ├── expenses.js           # 記帳、花費總覽
 │   ├── stays.js              # 住宿
-│   └── journal.js            # 想去清單、今日感想、遊記 PDF
+│   ├── journal.js            # 想去清單、今日感想、遊記 PDF
+│   └── backup.js             # 備份匯出、匯入（取代／合併）
 ├── sw.js
 ├── manifest.webmanifest
 ├── vendor/
@@ -129,9 +130,10 @@ npm run build:css
 | 深色模式 | `localStorage`（`TRAVEL_APP_DARK_MODE`） | 開／關 |
 | 旅行模式 | `localStorage`（`TRAVEL_APP_TRAVEL_MODE`） | 開／關 |
 | 提醒設定 | `localStorage`（`TRAVEL_APP_REMINDER_SETTINGS`） | 開關、時段 |
+| 上次備份 | `localStorage`（`TRAVEL_APP_LAST_BACKUP`） | 上次匯出時間 |
 | 列表／地圖 | `localStorage`（`TRAVEL_APP_DAY_VIEW`） | 上次揀嘅顯示方式 |
 
-建議定期在「工具清單 → 完整匯出」或「分享備份檔」備份 JSON。
+建議定期喺「齒輪 → 備份 → 匯出備份」或「分享備份檔」備份 JSON。
 
 ### 跨裝置「同步」建議
 
@@ -172,7 +174,7 @@ npm run build:css
 }
 ```
 
-完整匯出時圖片／PDF 為 base64；輕量匯出為 `idb:uuid`；匯入後會自動遷移至 IndexedDB。PDF 上限 8MB。
+匯出時圖片／PDF 為 base64（app 內部存為 `idb:uuid`）；匯入後會自動遷移至 IndexedDB。PDF 上限 8MB。
 
 ## 部署
 
@@ -189,7 +191,6 @@ npm run build:css
 
 - 天氣更新、地圖底圖、自動查座標需要網絡
 - 未快取過的 Unsplash 預設封面可能無法顯示
-- 輕量備份不含圖片本體，跨裝置還原請用完整匯出
 - 本機提醒需瀏覽器允許通知；背景／關閉 App 後不保證觸發（尤其 iOS）
 
 ## 技術棧
