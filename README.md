@@ -53,6 +53,12 @@
 - 設定入面顯示「上次匯出」時間
 - **清理未使用圖片**（進階選項）：刪除 IndexedDB 中無引用的圖片
 
+### 介面
+- 粉彩糖果風：奶白圓點背景，卡片按類別分色（粉紅：行程、薄荷綠：花費／匯率、薰衣草紫：感想／分享／備份、奶油黃：住宿／想去、天空藍：文件／行李）
+- jf open 粉圓體、emoji 導航同標題、心心時間線、顏文字空白狀態
+- 撳掣彈一彈、sheet 彈出；手機開咗「減少動態效果」會自動停
+- 外觀全部喺 `css/cute.css`（喺 `styles.css` 之後載入）
+
 ### PWA 離線
 - 樣式、字型、圖示均已**本地化**（無需 CDN 即可顯示介面）
 - Service Worker 快取；有新版本時提示「立即更新」
@@ -64,6 +70,8 @@
 JP/
 ├── index.html
 ├── styles.css
+├── css/
+│   └── cute.css              # 粉彩糖果風外觀（顏色、裝飾、動畫）
 ├── app.js                    # 核心邏輯（儲存、資料遷移、渲染、天氣…）
 ├── js/
 │   ├── share-print.js        # 分享文字、列印預覽
@@ -82,7 +90,7 @@ JP/
 ├── manifest.webmanifest
 ├── vendor/
 │   ├── tailwind.css          # 預編譯 Tailwind（勿手改）
-│   ├── fonts/                # Noto Sans TC
+│   ├── fonts/                # jf open 粉圓（SIL OFL）、Noto Sans TC（後備）
 │   ├── fontawesome/          # Font Awesome 6.4
 │   └── leaflet/              # Leaflet 1.9.4（地圖）
 ├── icons/
@@ -197,7 +205,7 @@ npm run build:css
 
 - 純 HTML / CSS / JavaScript
 - Tailwind CSS 3（預編譯至 `vendor/tailwind.css`）
-- Font Awesome 6、Noto Sans TC（本地）
+- Font Awesome 6、jf open 粉圓、Noto Sans TC（本地）
 - Open-Meteo API（天氣）
 - Leaflet + OpenStreetMap（地圖底圖、Nominatim 查座標）
 - localStorage + IndexedDB

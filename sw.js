@@ -1,10 +1,12 @@
-const SHELL_CACHE = 'travel-shell-v113';
-const ASSET_CACHE = 'travel-assets-v113';
+const SHELL_CACHE = 'travel-shell-v114';
+const ASSET_CACHE = 'travel-assets-v114';
 
 /** Critical path - small files only; must finish before SW takes over. */
 const CORE_SHELL_URLS = [
     './index.html',
     './styles.css',
+    './css/cute.css',
+    './vendor/fonts/jf-openhuninn.css',
     './app.js',
     './js/share-print.js',
     './js/reminders.js',
@@ -31,6 +33,7 @@ const CORE_SHELL_URLS = [
 
 /** Large assets - cached in background after first paint. */
 const DEFERRED_ASSET_URLS = [
+    './vendor/fonts/jf-openhuninn-2.1.woff2',
     './vendor/fonts/noto-sans-tc.css',
     './vendor/fonts/NotoSansTC-400.ttf',
     './vendor/fonts/NotoSansTC-700.ttf',

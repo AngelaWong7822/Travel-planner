@@ -47,7 +47,7 @@ function renderWishlist() {
             </div>`,
               )
               .join('')
-        : '<p class="type-caption text-muted">未有想去嘅地方。諗到就加，之後先排入日子。</p>';
+        : '<p class="type-caption text-muted">未有想去嘅地方 (｡•ᴗ•｡)　諗到就加，之後先排入日子</p>';
 }
 
 function addWish() {

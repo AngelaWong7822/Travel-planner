@@ -112,7 +112,7 @@
                         <div class="day-banner-row">
                             <p id="day-banner-date-main" class="day-banner-date-main">Day 1</p>
                             <p id="day-banner-date-sub" class="day-banner-date-sub"></p>
-                            <span id="day-banner-today-mark" class="day-banner-today-mark hidden">今日</span>
+                            <span id="day-banner-today-mark" class="day-banner-today-mark hidden">✿ 今日</span>
                             <div id="day-banner-weather" class="day-banner-weather hidden" aria-label="當日天氣">
                                 <span id="day-banner-weather-icon" class="day-banner-weather-icon" aria-hidden="true"></span>
                                 <span id="day-banner-weather-temp" class="day-banner-weather-temp"></span>
@@ -158,11 +158,11 @@
                     <section id="day-expenses" class="day-expenses hidden" aria-label="今日花費"></section>
                     <section id="day-journal" class="day-journal hidden" aria-label="今日感想">
                         <div class="expense-head">
-                            <p class="expense-title"><i class="fas fa-pen-nib" aria-hidden="true"></i>今日感想</p>
+                            <p class="expense-title"><span class="cute-emoji" aria-hidden="true">📝</span>今日感想</p>
                             <button type="button" class="expense-add-btn" onclick="triggerFile('journal-img-input')"><i class="fas fa-camera" aria-hidden="true"></i>加相</button>
                         </div>
                         <label for="journal-text" class="sr-only">今日感想</label>
-                        <textarea id="journal-text" class="journal-text" rows="3" placeholder="今日有咩開心事？食咗咩好嘢？" oninput="onJournalInput(this)"></textarea>
+                        <textarea id="journal-text" class="journal-text" rows="3" placeholder="今日有咩開心事？食咗咩好嘢？(〃'▽'〃)" oninput="onJournalInput(this)"></textarea>
                         <div id="journal-photos" class="journal-photos hidden"></div>
                     </section>
                 </div>
@@ -190,7 +190,7 @@
 
             <div class="tools-travel-stack">
             <div id="tools-rate-card" class="tools-widget-card bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-heavy text-primary">匯率</h2>
+                <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">💱</span>匯率</h2>
                 <div id="rate-widget" class="w-full bg-surface-muted p-3 rounded-2xl border border-default">
                     <div class="rate-currency-row">
                         <label class="rate-currency-field">
@@ -219,7 +219,7 @@
             </div>
 
             <div id="tools-spend-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-heavy text-primary">花費總覽</h2>
+                <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">💰</span>花費總覽</h2>
                 <div id="spend-totals"></div>
                 <label class="spend-budget-field">
                     <span class="type-micro text-muted font-heavy">全程預算（<span id="trip-budget-currency">JPY</span>，可留空）</span>
@@ -230,7 +230,7 @@
 
             <div id="tools-stays-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <div class="flex justify-between items-center mb-3">
-                    <h2 class="type-body font-heavy text-primary">住宿</h2>
+                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🏨</span>住宿</h2>
                     <button type="button" onclick="openStaySheet()" class="type-micro font-heavy text-pink-500 px-3 py-1.5 bg-pink-50 rounded-xl">＋ 新增</button>
                 </div>
                 <div id="stays-list" class="space-y-2"></div>
@@ -238,7 +238,7 @@
 
             <div id="tools-docs-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="type-body font-heavy text-primary">重要文件</h2>
+                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">📄</span>重要文件</h2>
                     <button type="button" id="btn-upload-doc" onclick="triggerFile('lib-file-input')" class="hidden btn-primary-sm chip-label px-3 py-2">上傳</button>
                 </div>
                 <div id="doc-list" class="grid grid-cols-2 gap-4"></div>
@@ -246,7 +246,7 @@
 
             <div id="tools-checklist-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="type-body font-heavy text-primary">行李清單</h2>
+                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🧳</span>行李清單</h2>
                     <button type="button" id="btn-add-check" onclick="addCheck()" class="hidden type-micro font-heavy text-pink-500 px-3 py-1.5 bg-pink-50 rounded-xl">+ 新增</button>
                 </div>
                 <div id="check-progress-wrap" class="hidden mb-4">
@@ -266,7 +266,7 @@
             <p id="tools-group-backup" class="tools-group-heading mt-2">分享</p>
 
             <div id="tools-share-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-heavy text-primary">分享與列印</h2>
+                <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">💌</span>分享與列印</h2>
                 <div class="flex gap-2">
                     <button type="button" onclick="shareCurrentTrip()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-share-alt mr-1"></i>分享全程</button>
                     <button type="button" onclick="printCurrentTrip()" class="flex-1 btn-ghost-sm py-3"><i class="fas fa-print mr-1"></i>列印／PDF</button>
@@ -314,15 +314,15 @@
     <!-- Navigation -->
     <nav class="app-bottom-nav" aria-label="主選單">
         <button type="button" onclick="setTab('today')" id="nav-today" class="nav-tab-active flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem]">
-            <i class="fas fa-calendar-day text-sm" aria-hidden="true"></i>
+            <span class="nav-emoji" aria-hidden="true">🗓️</span>
             <span class="nav-tab-label">今日</span>
         </button>
         <button type="button" onclick="setTab('itinerary')" id="nav-itinerary" class="flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem] text-muted">
-            <i class="fas fa-map-marked-alt text-sm" aria-hidden="true"></i>
+            <span class="nav-emoji" aria-hidden="true">🗺️</span>
             <span class="nav-tab-label">行程</span>
         </button>
         <button type="button" onclick="setTab('tools')" id="nav-tools" class="flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem] text-muted">
-            <i class="fas fa-briefcase text-sm" aria-hidden="true"></i>
+            <span class="nav-emoji" aria-hidden="true">🧸</span>
             <span class="nav-tab-label">工具</span>
         </button>
     </nav>
@@ -331,7 +331,7 @@
         <div class="sheet sheet-tall settings-sheet-body" onclick="event.stopPropagation()">
             <p class="type-caption text-muted mb-1">設定</p>
             <div id="tools-backup-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary">備份</h2>
+                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">💾</span>備份</h2>
                 <p class="type-caption text-gray-500">資料只存喺呢部機嘅瀏覽器。定期匯出備份檔（連相片），換機或者清咗瀏覽器都可以還原。</p>
                 <p id="backup-last" class="type-micro text-muted font-bold"></p>
                 <div class="flex gap-2">
@@ -346,7 +346,7 @@
             </div>
             <div id="tools-appearance-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <label class="setting-row">
-                    <span class="type-body font-heavy text-primary">深色模式</span>
+                    <span class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🌙</span>深色模式</span>
                     <button type="button" id="theme-toggle-btn" onclick="toggleDarkMode()" class="setting-theme-btn" aria-pressed="false" aria-label="切換深色模式">
                         <i id="theme-toggle-icon" class="fas fa-moon" aria-hidden="true"></i>
                     </button>
@@ -354,7 +354,7 @@
             </div>
 
             <div id="tools-reminders-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary">出發提醒</h2>
+                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">⏰</span>出發提醒</h2>
                 <label class="setting-row">
                     <span class="type-body font-bold text-primary">開啟提醒</span>
                     <span class="setting-toggle">
@@ -384,7 +384,7 @@
             <p id="storage-info" class="type-micro text-muted font-bold text-center"></p>
 
             <div class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary">離線與安裝</h2>
+                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">📲</span>離線與安裝</h2>
                 <p class="type-caption text-gray-500">曾連線開啟一次後可離線用。Safari／Chrome 選「加入主畫面」。</p>
                 <p id="pwa-install-hint" class="hidden type-caption text-pink-500 font-bold">可安裝 App 或加入主畫面</p>
             </div>

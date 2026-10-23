@@ -2390,8 +2390,8 @@ async function renderDay(idx) {
         timeline.innerHTML += `
             <div class="timeline-empty-state">
                 <i class="fas fa-map-marker-alt timeline-empty-state-icon" aria-hidden="true"></i>
-                <p class="timeline-empty-state-title">呢日未有景點</p>
-                <p class="timeline-empty-state-hint">${travelMode ? '今日可以休息下' : '撳下面掣開始規劃'}</p>
+                <p class="timeline-empty-state-title">呢日仲係白紙一張 (｡•ᴗ•｡)</p>
+                <p class="timeline-empty-state-hint">${travelMode ? '今日可以休息下 ☕' : '撳下面掣開始規劃 ✨'}</p>
                 ${cta}
             </div>`;
     }
@@ -2655,12 +2655,12 @@ function renderCheck() {
     }
     document.getElementById('check-list').innerHTML =
         trip.checklist.length === 0
-            ? '<div class="empty-state"><i class="fas fa-suitcase"></i><p class="type-caption font-heavy">行李清單是空的</p></div>'
+            ? '<div class="empty-state"><i class="fas fa-suitcase"></i><p class="type-caption font-heavy">行李清單空空如也 (´･ω･`)</p></div>'
             : trip.checklist
                   .map(
                       (c, i) => `
         <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-pink-50">
-            <input type="checkbox" ${c.done ? 'checked' : ''} onchange="trip.checklist[${i}].done=this.checked;save();renderCheck()" class="w-5 h-5 accent-pink-400">
+            <input type="checkbox" ${c.done ? 'checked' : ''} onchange="trip.checklist[${i}].done=this.checked;save();renderCheck();cutePop('#check-list > :nth-child(${i + 1})')" class="w-5 h-5 accent-pink-400">
             <span class="type-caption font-heavy ${c.done ? 'line-through opacity-30' : ''}">${escapeHtml(c.task)}</span>
             ${canEditToolsContent() ? `<button type="button" onclick="trip.checklist.splice(${i},1);save();renderCheck()" class="ml-auto text-red-200" aria-label="刪除此項目"><i class="fas fa-trash-alt"></i></button>` : ''}
         </div>`,
@@ -2699,7 +2699,7 @@ async function renderDocs() {
             ${canEditToolsContent() ? `<button type="button" onclick="removeDoc(${i})" class="absolute -top-1 -right-1 bg-red-400 text-white w-6 h-6 rounded-full type-micro border-2 border-white shadow" aria-label="刪除文件"><i class="fas fa-times"></i></button>` : ''}
         </div>`;
             })
-            .join('') || '<p class="col-span-2 text-center type-caption text-muted py-10 font-heavy">尚無文件（可上傳圖片或 PDF）</p>';
+            .join('') || '<p class="col-span-2 text-center type-caption text-muted py-10 font-heavy">未有文件 (・ω・)　可以上傳圖片或 PDF</p>';
 }
 
 async function openDoc(ref) {

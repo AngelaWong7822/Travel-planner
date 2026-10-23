@@ -70,7 +70,7 @@ function renderDayExpenses(idx) {
         .join('');
     el.innerHTML = `
         <div class="expense-head">
-            <p class="expense-title"><i class="fas fa-wallet" aria-hidden="true"></i>今日花費</p>
+            <p class="expense-title"><span class="cute-emoji" aria-hidden="true">💰</span>今日花費</p>
             <button type="button" class="expense-add-btn" onclick="openExpenseSheet(${idx})"><i class="fas fa-plus" aria-hidden="true"></i>記一筆</button>
         </div>
         <p class="expense-summary${over ? ' expense-summary-over' : ''}">
@@ -78,7 +78,7 @@ function renderDayExpenses(idx) {
             ${estimate > 0 ? `／預估 ${escapeHtml(formatMoney(estimate))}` : ''}
             ${actual > 0 && formatHomeHint(actual) ? `<span class="expense-home">${escapeHtml(formatHomeHint(actual))}</span>` : ''}
         </p>
-        ${rows ? `<div class="expense-list">${rows}</div>` : ''}`;
+        ${rows ? `<div class="expense-list">${rows}</div>` : '<p class="cute-empty">未記帳喎 (・ω・)ﾉ</p>'}`;
     el.classList.remove('hidden');
 }
 
@@ -95,7 +95,7 @@ function renderDashboardSpend(dayIdx) {
     const stayLine = typeof dashboardStayHtml === 'function' ? dashboardStayHtml(dayIdx) : '';
     el.innerHTML = `${stayLine}
         <div class="dashboard-spend-row">
-            <span class="dashboard-spend-text"><i class="fas fa-wallet" aria-hidden="true"></i>今日已用 <strong>${escapeHtml(formatMoney(actual))}</strong>${estimate > 0 ? `<span class="text-muted">／預估 ${escapeHtml(formatMoney(estimate))}</span>` : ''}</span>
+            <span class="dashboard-spend-text"><span aria-hidden="true">💰</span>今日已用 <strong>${escapeHtml(formatMoney(actual))}</strong>${estimate > 0 ? `<span class="text-muted">／預估 ${escapeHtml(formatMoney(estimate))}</span>` : ''}</span>
             <button type="button" class="expense-add-btn" onclick="openExpenseSheet(${dayIdx})"><i class="fas fa-plus" aria-hidden="true"></i>記一筆</button>
         </div>`;
     el.classList.remove('hidden');
@@ -167,7 +167,8 @@ async function saveExpenseFromSheet() {
     save();
     closeExpenseSheet();
     refreshSpendViews();
-    showToast(expIdx != null ? '已更新' : `已記 ${formatMoney(amount)}`);
+    if (targetIdx === curDayIdx) cutePop('#day-expenses .expense-row:last-child');
+    showToast(expIdx != null ? '已更新 ✨' : `已記 ${formatMoney(amount)} ✨`);
 }
 
 async function deleteExpenseFromSheet() {
@@ -240,6 +241,6 @@ function renderSpendSummary(opts = {}) {
     if (detail) {
         detail.innerHTML = catRows || dayRows
             ? `${catRows ? `<div class="spend-cats">${catRows}</div>` : ''}${dayRows ? `<p class="spend-section-label">每日（實際／預估）</p><div class="spend-days">${dayRows}</div>` : ''}`
-            : '<p class="type-caption text-muted">未有記帳，喺行程或今日頁撳「記一筆」</p>';
+            : '<p class="type-caption text-muted">未有記帳 (・ω・)ﾉ　喺行程或今日頁撳「記一筆」</p>';
     }
 }

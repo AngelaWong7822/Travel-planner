@@ -256,3 +256,190 @@ body {
 #day-expenses .expense-summary-over strong {
     color: var(--color-danger);
 }
+
+/* ── emoji 標題 ── */
+.cute-emoji {
+    margin-right: 0.35rem;
+    font-size: 1.05em;
+}
+
+.nav-emoji {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.app-bottom-nav button.nav-tab-active .nav-emoji {
+    animation: cute-bob 2.4s ease-in-out infinite;
+}
+
+.tools-group-heading {
+    color: var(--tint-pink-ink);
+}
+
+.day-banner-today-mark {
+    background: var(--cute-pink);
+    box-shadow: 0 2px 8px rgba(255, 133, 161, 0.4);
+}
+
+/* ── 心心時間線 ── */
+.timeline-dot {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin-top: 1px;
+}
+
+.timeline-dot::before {
+    content: '♥';
+    display: block;
+    font-family: 'Segoe UI Symbol', 'Apple Symbols', sans-serif;
+    font-size: 16px;
+    line-height: 18px;
+    text-align: center;
+    color: var(--cute-pink);
+    text-shadow: 0 0 0 var(--card-bg), 2px 0 0 var(--card-bg), -2px 0 0 var(--card-bg), 0 2px 0 var(--card-bg), 0 -2px 0 var(--card-bg);
+}
+
+.timeline-line {
+    background-image: linear-gradient(var(--tint-pink-line) 50%, transparent 50%) !important;
+    background-size: 100% 10px !important;
+    background-color: transparent !important;
+}
+
+/* ── 地圖心心 pin ── */
+.day-map-pin {
+    border-radius: 50% 50% 50% 8px;
+    transform: rotate(-45deg);
+    border-width: 2.5px;
+}
+
+.day-map-pin span {
+    transform: rotate(45deg);
+}
+
+/* ── 空白狀態、顏文字 ── */
+.cute-empty {
+    margin: 0.5rem 0 0;
+    font-size: var(--type-caption);
+    color: var(--text-muted);
+}
+
+.timeline-empty-state-title {
+    color: var(--tint-pink-ink);
+}
+
+/* 行李清單逐項：喺天藍卡入面用半透明白 */
+#check-list > div {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-color: var(--tint-sky-line) !important;
+    border-radius: 1.1rem !important;
+}
+
+[data-theme='dark'] #check-list > div {
+    background: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* ── 掣：圓啲、撳落彈一彈 ── */
+.btn-primary-sm,
+.btn-ghost-sm,
+.expense-add-btn,
+.wish-schedule-btn,
+.day-route-btn,
+.day-view-btn,
+.stay-nav-btn,
+.chip-copy,
+.app-bottom-nav button,
+#fab-quick-add {
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s;
+}
+
+.btn-primary-sm:active,
+.btn-ghost-sm:active,
+.expense-add-btn:active,
+.wish-schedule-btn:active,
+.day-route-btn:active,
+.day-view-btn:active,
+.stay-nav-btn:active,
+.chip-copy:active,
+.app-bottom-nav button:active {
+    transform: scale(0.92);
+}
+
+#fab-quick-add:active {
+    transform: scale(0.88) rotate(-8deg);
+}
+
+.btn-primary-sm {
+    box-shadow: 0 4px 12px rgba(255, 133, 161, 0.35);
+}
+
+/* ── 彈出效果 ── */
+@keyframes cute-pop {
+    0% { transform: scale(0.85); }
+    55% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+@keyframes cute-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes cute-sheet-in {
+    0% { transform: translateY(40px) scale(0.97); opacity: 0; }
+    70% { transform: translateY(-4px) scale(1.01); opacity: 1; }
+    100% { transform: translateY(0) scale(1); }
+}
+
+.cute-pop {
+    animation: cute-pop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#settings-sheet:not(.hidden) .sheet,
+#expense-sheet:not(.hidden) .sheet,
+#stay-sheet:not(.hidden) .sheet,
+#event-edit-picker:not(.hidden) .sheet,
+#event-status-picker:not(.hidden) .sheet,
+#tools-advanced-menu:not(.hidden) .sheet,
+#trip-date-picker:not(.hidden) .sheet {
+    animation: cute-sheet-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid var(--tint-pink-line);
+    border-radius: 1.75rem;
+}
+
+#toast {
+    border-radius: 999px;
+    background: var(--cute-pink);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(255, 133, 161, 0.4);
+}
+
+/* 手機設定咗「減少動態效果」就唔郁 */
+@media (prefers-reduced-motion: reduce) {
+    .cute-pop,
+    .app-bottom-nav button.nav-tab-active .nav-emoji,
+    #settings-sheet .sheet,
+    #expense-sheet .sheet,
+    #stay-sheet .sheet,
+    #event-edit-picker .sheet,
+    #event-status-picker .sheet,
+    #tools-advanced-menu .sheet,
+    #trip-date-picker .sheet {
+        animation: none !important;
+    }
+
+    .btn-primary-sm:active,
+    .btn-ghost-sm:active,
+    .expense-add-btn:active,
+    .wish-schedule-btn:active,
+    .day-route-btn:active,
+    .day-view-btn:active,
+    .stay-nav-btn:active,
+    .chip-copy:active,
+    .app-bottom-nav button:active,
+    #fab-quick-add:active {
+        transform: none;
+    }
+}

@@ -32,7 +32,7 @@ function syncTravelLayout() {
 
 function syncToolsLayout() {
     const groupTravel = document.getElementById('tools-group-travel');
-    if (groupTravel) groupTravel.textContent = '出門必備';
+    if (groupTravel) groupTravel.textContent = '✈️ 出門必備';
 }
 
 function toggleToolsAdvancedMenu() {
@@ -47,6 +47,15 @@ function toggleToolsAdvancedMenu() {
 function closeToolsAdvancedMenu() {
     document.getElementById('tools-advanced-menu')?.classList.add('hidden');
     document.getElementById('tools-advanced-btn')?.setAttribute('aria-expanded', 'false');
+}
+
+// 新加／剛剔嘅項目彈一下（減少動態效果時唔做）
+function cutePop(target) {
+    const el = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    el.classList.remove('cute-pop');
+    void el.offsetWidth;
+    el.classList.add('cute-pop');
 }
 
 function openSettingsSheet() {
