@@ -1252,6 +1252,10 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     white-space: nowrap;
 }
 
+.itinerary-edit-action.hidden {
+    display: none;
+}
+
 .itinerary-edit-action-primary {
     border: 2px dashed var(--cute-pink);
     background: var(--accent-soft);

@@ -613,6 +613,8 @@ function syncTripScheduleChrome() {
     const onItinerary = !document.getElementById('content-itinerary')?.classList.contains('hidden');
     const showBar = onItinerary && isEdit && !travelMode;
     if (bar) bar.classList.toggle('hidden', !showBar);
+    // 有出發日期就用月曆改日數，唔使「新增一天」
+    document.getElementById('add-day-btn')?.classList.toggle('hidden', !!trip.startDate);
 }
 
 function closeSearchPanelIfOpen() {
