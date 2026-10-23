@@ -1,0 +1,9 @@
+jf open 粉圓 (jf-openhuninn) 2.1
+Copyright (c) justfont — https://github.com/justfont/open-huninn-font
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+The full license text is available at https://scripts.sil.org/OFL
+and is embedded in the font's name table (IDs 13 and 14).
+
+jf-openhuninn-2.1.woff2 is the unmodified upstream jf-openhuninn-2.1.ttf
+re-wrapped as WOFF2 for smaller downloads; glyphs and names are unchanged.

@@ -1,0 +1,258 @@
+/* 粉彩糖果風 — 喺 styles.css 之後載入，只改外觀 */
+
+/* ── 色票 ── */
+:root {
+    --cute-pink: #ff85a1;
+    --accent: #ff85a1;
+    --accent-soft: #fff0f4;
+    --soft-bg: #fff8f3;
+    --border-soft: #ffe1ea;
+    --surface-muted: #fff4f7;
+    --glass-bg: rgba(255, 250, 247, 0.92);
+    --text-primary: #4a3b45;
+    --text-secondary: #8a7482;
+    --text-muted: #b8a6b1;
+    --surface-inverse: #4a3b45;
+    --radius-card: 1.75rem;
+    --radius-btn: 1.1rem;
+    --type-title: 1.0625rem;
+    --type-body: 0.8125rem;
+    --type-caption: 0.72rem;
+    --type-micro: 0.6875rem;
+
+    --tint-pink: #fff0f4;
+    --tint-pink-line: #ffd3e0;
+    --tint-pink-ink: #e0567a;
+    --tint-mint: #ebfaf3;
+    --tint-mint-line: #bfead6;
+    --tint-mint-ink: #2f8f6b;
+    --tint-lavender: #f4f0ff;
+    --tint-lavender-line: #dcd0ff;
+    --tint-lavender-ink: #7a5bc7;
+    --tint-butter: #fff8e1;
+    --tint-butter-line: #ffe7a3;
+    --tint-butter-ink: #b7791f;
+    --tint-sky: #eef7ff;
+    --tint-sky-line: #cfe6fb;
+    --tint-sky-ink: #3b7fc0;
+    --dot-color: rgba(255, 133, 161, 0.14);
+    --cute-shadow: 0 6px 18px rgba(255, 133, 161, 0.16);
+}
+
+[data-theme='dark'] {
+    --soft-bg: #1f1a2e;
+    --surface: #2a2440;
+    --card-bg: #2a2440;
+    --surface-elevated: #332c4d;
+    --surface-muted: #332c4d;
+    --border-soft: #4a3f66;
+    --glass-bg: rgba(42, 36, 64, 0.92);
+    --text-primary: #f6eef4;
+    --text-secondary: #c3b3c4;
+    --text-muted: #8f8199;
+    --accent-soft: #452c42;
+    --surface-inverse: #17132a;
+
+    --tint-pink: #3a2638;
+    --tint-pink-line: #6b3a57;
+    --tint-pink-ink: #ffb3c6;
+    --tint-mint: #1f3a33;
+    --tint-mint-line: #2f6b57;
+    --tint-mint-ink: #9fe3c6;
+    --tint-lavender: #2e2a4a;
+    --tint-lavender-line: #5b4e8f;
+    --tint-lavender-ink: #c8b8ff;
+    --tint-butter: #3a3324;
+    --tint-butter-line: #7a6634;
+    --tint-butter-ink: #ffd98a;
+    --tint-sky: #1f3047;
+    --tint-sky-line: #3a5c85;
+    --tint-sky-ink: #a8d1ff;
+    --dot-color: rgba(255, 133, 161, 0.08);
+    --cute-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* ── 字體 + 圓點背景 ── */
+body,
+button,
+input,
+select,
+textarea {
+    font-family: 'jf-openhuninn', 'Noto Sans TC', 'Noto Sans JP', sans-serif;
+}
+
+body {
+    background-color: var(--soft-bg);
+    background-image: radial-gradient(var(--dot-color) 1.6px, transparent 1.7px);
+    background-size: 22px 22px;
+    background-attachment: fixed;
+}
+
+/* ── 分類卡片顏色 ── */
+.tint-pink,
+#travel-dashboard {
+    --card-tint: var(--tint-pink);
+    --card-line: var(--tint-pink-line);
+    --card-ink: var(--tint-pink-ink);
+}
+
+.tint-mint,
+#tools-rate-card,
+#tools-spend-card,
+#day-expenses {
+    --card-tint: var(--tint-mint);
+    --card-line: var(--tint-mint-line);
+    --card-ink: var(--tint-mint-ink);
+}
+
+.tint-lavender,
+#tools-share-card,
+#day-journal,
+#tools-backup-card {
+    --card-tint: var(--tint-lavender);
+    --card-line: var(--tint-lavender-line);
+    --card-ink: var(--tint-lavender-ink);
+}
+
+.tint-butter,
+#tools-stays-card,
+#wishlist-card,
+#day-stay {
+    --card-tint: var(--tint-butter);
+    --card-line: var(--tint-butter-line);
+    --card-ink: var(--tint-butter-ink);
+}
+
+.tint-sky,
+#tools-docs-card,
+#tools-checklist-card {
+    --card-tint: var(--tint-sky);
+    --card-line: var(--tint-sky-line);
+    --card-ink: var(--tint-sky-ink);
+}
+
+#travel-dashboard,
+#tools-rate-card,
+#tools-spend-card,
+#tools-stays-card,
+#tools-docs-card,
+#tools-checklist-card,
+#tools-share-card,
+#tools-backup-card,
+#wishlist-card {
+    background: var(--card-tint) !important;
+    border: 2px solid var(--card-line) !important;
+    border-radius: var(--radius-card) !important;
+    box-shadow: var(--cute-shadow) !important;
+}
+
+#tools-rate-card h2,
+#tools-spend-card h2,
+#tools-stays-card h2,
+#tools-docs-card h2,
+#tools-checklist-card h2,
+#tools-share-card h2,
+#tools-backup-card h2,
+.wishlist-head {
+    color: var(--card-ink) !important;
+}
+
+/* 卡片入面嘅白底小格，喺有色卡入面改用半透明白 */
+#tools-rate-card #rate-widget,
+#tools-stays-card .stay-card,
+#tools-checklist-card .bg-surface-muted {
+    background: rgba(255, 255, 255, 0.65) !important;
+    border-color: var(--card-line) !important;
+}
+
+[data-theme='dark'] #tools-rate-card #rate-widget,
+[data-theme='dark'] #tools-stays-card .stay-card,
+[data-theme='dark'] #tools-checklist-card .bg-surface-muted {
+    background: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* 行程主卡：白底粉紅邊 */
+#main-day-card {
+    background: var(--surface) !important;
+    border: 2px solid var(--tint-pink-line) !important;
+    border-radius: var(--radius-card) !important;
+    box-shadow: var(--cute-shadow);
+}
+
+.day-banner-date-only {
+    background: var(--tint-pink);
+    border-bottom: 2px dashed var(--tint-pink-line);
+}
+
+/* 日卡入面嘅住宿／花費／感想：有色小卡，取代虛線分隔 */
+#day-stay .stay-line {
+    background: var(--card-tint);
+    border: 1.5px solid var(--card-line);
+}
+
+#day-stay .stay-line strong,
+#day-stay .stay-add-link {
+    color: var(--card-ink);
+}
+
+#day-expenses,
+#day-journal {
+    margin-top: 1.25rem;
+    padding: 0.9rem 1rem;
+    border: 1.5px solid var(--card-line);
+    border-radius: 1.35rem;
+    background: var(--card-tint);
+}
+
+#day-expenses .expense-title,
+#day-journal .expense-title,
+#day-expenses .expense-title i,
+#day-journal .expense-title i {
+    color: var(--card-ink);
+}
+
+#day-expenses .expense-add-btn,
+#day-journal .expense-add-btn {
+    background: var(--surface);
+    color: var(--card-ink);
+    border: 1.5px solid var(--card-line);
+}
+
+#day-expenses .expense-row {
+    border-bottom-color: var(--card-line);
+}
+
+#day-journal .journal-text {
+    background: var(--surface);
+    border-color: var(--card-line);
+}
+
+/* 設定 sheet 入面嘅卡 */
+.settings-sheet-body > div[class*='p-5'] {
+    border-radius: 1.35rem !important;
+}
+
+/* 花費卡：條同金額跟卡片色 */
+#tools-spend-card .spend-actual,
+#day-expenses .expense-summary strong {
+    color: var(--card-ink);
+}
+
+#tools-spend-card .spend-cat-bar span,
+#tools-spend-card .progress-fill:not(.spend-over) {
+    background: var(--card-ink);
+}
+
+#tools-spend-card .spend-cat-bar,
+#tools-spend-card .progress-track {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme='dark'] #tools-spend-card .spend-cat-bar,
+[data-theme='dark'] #tools-spend-card .progress-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#day-expenses .expense-summary-over strong {
+    color: var(--color-danger);
+}
