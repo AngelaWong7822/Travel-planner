@@ -108,7 +108,6 @@ function onboardingNext() {
         if (typeof renderTripScheduleUI === 'function') renderTripScheduleUI();
         renderDaySelector();
         updateHeaderSubtitle();
-        renderTodayOverview();
         onboardingStep = 2;
         renderOnboardingStep();
         return;

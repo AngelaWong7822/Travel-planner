@@ -8,7 +8,8 @@
 - 按日管理景點、時間、備註、訂位編號、連結、標籤、預估花費
 - 多旅程建立、切換、重新命名
 - 出發日期自動計算每日日期
-- 今日總覽、全旅程搜尋
+- 兩個分頁：🗺️ 行程、🧸 工具；開 app 直接去行程，今日嗰日自動置中
+- 全旅程搜尋
 - 地圖／導航一鍵開啟（Google Maps、Apple 地圖）
 - 編輯模式：複製景點／整天、▲▼ 排序、刪除二次確認
 
@@ -23,10 +24,10 @@
 - 每個旅程可自訂目的地／本國貨幣與匯率
 
 ### 工具
-- 天氣（Open-Meteo）：每日卡同今日頁顯示，撳今日頁天氣刷新；目的地喺旅程選單揀
+- 天氣（Open-Meteo）：每日卡顯示；目的地喺旅程選單揀（日本、台港澳韓、東南亞、中國、意大利、歐美澳）
 - 行李清單模板與進度條
 - 重要文件：**圖片 + PDF**（護照、機票等）
-- 旅行模式（僅瀏覽）
+- 出門模式（設定入面開關；開咗只可以睇、header 顯示「🧳 出門中」）
 - 深色模式、出發提醒等設定喺右上角齒輪
 
 ### 分享與列印
@@ -71,7 +72,7 @@ JP/
 │   ├── weather-locations.js  # 天氣地點座標
 │   ├── demo-data.js          # 東京 5 日模板（新手引導用）
 │   ├── onboarding.js         # 新手引導
-│   ├── ui-ux.js              # 今日頁、設定、景點編輯 sheet
+│   ├── ui-ux.js              # 設定、出門模式、景點狀態／編輯 sheet
 │   ├── trip-calendar.js      # 行程日期月曆
 │   ├── day-map.js            # 景點地圖、查座標、成日路線
 │   ├── stays.js              # 住宿
@@ -126,7 +127,7 @@ npm run build:css
 | 圖片 | IndexedDB（`TRAVEL_APP_IMAGES`） | 封面、景點圖、文件 |
 | UI 偏好 | `localStorage`（`TRAVEL_APP_UI_PREFS`） | 上次 tab、day |
 | 深色模式 | `localStorage`（`TRAVEL_APP_DARK_MODE`） | 開／關 |
-| 旅行模式 | `localStorage`（`TRAVEL_APP_TRAVEL_MODE`） | 開／關 |
+| 出門模式 | `localStorage`（`TRAVEL_APP_TRAVEL_MODE`） | 開／關 |
 | 提醒設定 | `localStorage`（`TRAVEL_APP_REMINDER_SETTINGS`） | 開關、時段 |
 | 上次備份 | `localStorage`（`TRAVEL_APP_LAST_BACKUP`） | 上次匯出時間 |
 | 列表／地圖 | `localStorage`（`TRAVEL_APP_DAY_VIEW`） | 上次揀嘅顯示方式 |

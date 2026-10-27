@@ -50,6 +50,7 @@
                 <p id="header-subtitle" class="truncate">開始規劃！</p>
             </div>
         </div>
+        <button type="button" id="travel-mode-chip" class="travel-mode-chip hidden" onclick="openSettingsSheet()" aria-label="出門模式開緊，撳入設定關閉">🧳 出門中</button>
         <button type="button" id="header-settings-btn" onclick="openSettingsSheet()" class="header-mode-btn header-icon-btn flex-shrink-0" aria-label="設定" aria-haspopup="dialog" aria-controls="settings-sheet">
             <i class="fas fa-gear" aria-hidden="true"></i>
         </button>
@@ -238,36 +239,6 @@
             </div>
         </section>
 
-        <!-- Today Tab -->
-        <section id="content-today" class="hidden space-y-4 pb-10 tab-panel">
-            <div id="travel-dashboard" class="bg-surface rounded-[1.5rem] border border-default shadow-sm dashboard-card">
-                <button type="button" id="dashboard-travel-toggle" class="dashboard-travel-toggle w-full" onclick="toggleTravelMode()" aria-pressed="false" aria-label="出門模式">
-                    <span class="dashboard-travel-toggle-main">
-                        <i class="fas fa-suitcase-rolling" aria-hidden="true"></i>
-                        <span id="dashboard-travel-label">出門模式</span>
-                    </span>
-                    <span id="dashboard-travel-state" class="dashboard-travel-state">關</span>
-                </button>
-                <div class="dashboard-top">
-                    <h2 id="dashboard-title" class="sr-only">今日總覽</h2>
-                    <p id="dashboard-hint" class="hidden dashboard-hint"></p>
-                    <p id="dashboard-day-title" class="dashboard-day-heading hidden"></p>
-                </div>
-                <div class="dashboard-meta-row">
-                    <div id="dashboard-weather" class="hidden" aria-live="polite"></div>
-                    <div class="dashboard-meta-actions">
-                        <div id="dashboard-progress" class="dashboard-progress hidden" aria-label="今日進度"></div>
-                        <button type="button" id="dashboard-jump-btn" onclick="goToToday()" class="dashboard-jump-link" aria-label="查看行程" title="查看行程">
-                            <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </div>
-                <div id="dashboard-hero" class="hidden"></div>
-                <div id="dashboard-quick-bar" class="dashboard-quick-bar hidden"></div>
-                <div id="dashboard-stay" class="dashboard-stay hidden"></div>
-                <div id="today-overview-list" class="dashboard-day-list"></div>
-            </div>
-        </section>
     </main>
 
     <button type="button" id="fab-quick-add" onclick="quickAddEvent()" class="hidden" aria-label="快速新增景點">
@@ -276,11 +247,7 @@
 
     <!-- Navigation -->
     <nav class="app-bottom-nav" aria-label="主選單">
-        <button type="button" onclick="setTab('today')" id="nav-today" class="nav-tab-active flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem]">
-            <span class="nav-emoji" aria-hidden="true">🗓️</span>
-            <span class="nav-tab-label">今日</span>
-        </button>
-        <button type="button" onclick="setTab('itinerary')" id="nav-itinerary" class="flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem] text-muted">
+        <button type="button" onclick="setTab('itinerary')" id="nav-itinerary" class="nav-tab-active flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem]">
             <span class="nav-emoji" aria-hidden="true">🗺️</span>
             <span class="nav-tab-label">行程</span>
         </button>
@@ -307,6 +274,19 @@
                 </div>
                 <p class="type-micro text-muted">合併：備份入面嘅旅程加落而家嘅列表。取代：清走而家全部旅程，換成備份。</p>
             </div>
+            <div id="tools-travelmode-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
+                <label class="setting-row">
+                    <span>
+                        <span class="type-body font-heavy text-primary block"><span class="cute-emoji" aria-hidden="true">🧳</span>出門模式</span>
+                        <span class="type-micro text-muted">開咗之後行程只可以睇，唔會誤改</span>
+                    </span>
+                    <span class="setting-toggle">
+                        <input type="checkbox" id="travel-mode-toggle" onchange="onTravelModeToggle(this.checked)" class="setting-toggle-input">
+                        <span class="setting-toggle-track" aria-hidden="true"></span>
+                    </span>
+                </label>
+            </div>
+
             <div id="tools-appearance-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <label class="setting-row">
                     <span class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🌙</span>深色模式</span>

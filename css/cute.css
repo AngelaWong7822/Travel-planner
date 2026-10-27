@@ -89,8 +89,7 @@ body {
 }
 
 /* ── 分類卡片顏色 ── */
-.tint-pink,
-#travel-dashboard {
+.tint-pink {
     --card-tint: var(--tint-pink);
     --card-line: var(--tint-pink-line);
     --card-ink: var(--tint-pink-ink);
@@ -113,8 +112,7 @@ body {
 
 .tint-butter,
 #tools-stays-card,
-#day-stay,
-#dashboard-stay {
+#day-stay {
     --card-tint: var(--tint-butter);
     --card-line: var(--tint-butter-line);
     --card-ink: var(--tint-butter-ink);
@@ -128,7 +126,6 @@ body {
     --card-ink: var(--tint-sky-ink);
 }
 
-#travel-dashboard,
 #tools-rate-card,
 #tools-stays-card,
 #tools-docs-card,
@@ -177,16 +174,14 @@ body {
     border-bottom: 2px dashed var(--tint-pink-line);
 }
 
-/* 日卡同今日頁嘅住宿：奶油黃小卡 */
-#day-stay .stay-line,
-#dashboard-stay .dashboard-stay-row {
+/* 日卡嘅住宿：奶油黃小卡 */
+#day-stay .stay-line {
     background: var(--card-tint);
     border: 1.5px solid var(--card-line);
 }
 
 #day-stay .stay-line strong,
-#day-stay .stay-add-link,
-#dashboard-stay strong {
+#day-stay .stay-add-link {
     color: var(--card-ink);
 }
 
@@ -276,7 +271,6 @@ body {
 /* ── 掣：圓啲、撳落彈一彈 ── */
 .btn-primary-sm,
 .btn-ghost-sm,
-.pill-btn,
 .day-route-btn,
 .day-view-btn,
 .stay-nav-btn,
@@ -288,7 +282,6 @@ body {
 
 .btn-primary-sm:active,
 .btn-ghost-sm:active,
-.pill-btn:active,
 .day-route-btn:active,
 .day-view-btn:active,
 .stay-nav-btn:active,
@@ -360,7 +353,6 @@ body {
 
     .btn-primary-sm:active,
     .btn-ghost-sm:active,
-    .pill-btn:active,
         .day-route-btn:active,
     .day-view-btn:active,
     .stay-nav-btn:active,

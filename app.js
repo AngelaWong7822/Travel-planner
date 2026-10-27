@@ -271,10 +271,6 @@ function getDashboardDayIndex() {
     return Math.min(Math.max(curDayIdx, 0), trip.itinerary.length - 1);
 }
 
-function hasRealToday() {
-    return getTodayDayIndex() >= 0;
-}
-
 function isTodayDayIndex(i) {
     const realToday = getTodayDayIndex();
     if (realToday >= 0) return realToday === i;
@@ -345,13 +341,7 @@ function getUiPrefs() {
     }
 }
 
-function isTodayTabActive() {
-    const el = document.getElementById('content-today');
-    return el && !el.classList.contains('hidden');
-}
-
 function getActiveTab() {
-    if (isTodayTabActive()) return 'today';
     if (!document.getElementById('content-tools').classList.contains('hidden')) return 'tools';
     return 'itinerary';
 }
@@ -370,9 +360,7 @@ async function restoreUiPrefs() {
         const idx = prefs.days[data.activeIdx];
         if (idx >= 0 && idx < trip.itinerary.length) curDayIdx = idx;
     }
-    if (prefs.activeTab === 'tools') await setTab('tools');
-    else if (prefs.activeTab === 'itinerary') await setTab('itinerary');
-    else await setTab('today');
+    await setTab(prefs.activeTab === 'tools' ? 'tools' : 'itinerary');
 }
 
 function isDarkMode() {
@@ -536,34 +524,6 @@ function moveEventTo(dayIdx, fromIdx, toIdx) {
     renderDay(dayIdx);
 }
 
-function goToToolsSection(sectionId) {
-    setTab('tools');
-    setTimeout(() => {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 120);
-}
-
-function togglePinDoc(i) {
-    if (!trip.docs[i]) return;
-    const wasPinned = trip.pinnedDocIdx === i;
-    trip.pinnedDocIdx = wasPinned ? null : i;
-    save();
-    renderDocs();
-    if (typeof renderTodayQuickTools === 'function') renderTodayQuickTools();
-    showToast(wasPinned ? '已取消釘選' : '已釘選文件');
-}
-
-async function openPinnedDoc() {
-    const i = trip.pinnedDocIdx;
-    if (i == null || !trip.docs[i]) {
-        goToToolsSection('tools-docs-card');
-        return;
-    }
-    const d = trip.docs[i];
-    if (isPdfDoc(d)) await openDoc(d.url);
-    else showBig(d.url);
-}
-
 async function copyEvent(dayIdx, eventIdx) {
     if (travelMode) return;
     const ev = trip.itinerary[dayIdx].events[eventIdx];
@@ -581,16 +541,7 @@ async function copyCurrentDay() {
     renderDaySelector();
     await renderDay(trip.itinerary.length - 1);
     renderDaySelector();
-    renderTodayOverview();
     showToast('已複製整天行程');
-}
-
-function goToToday() {
-    const idx = getDashboardDayIndex();
-    if (idx < 0) return;
-    setTab('itinerary');
-    renderDay(idx);
-    scrollToTodayCard();
 }
 
 function goToTripScheduleSettings() {
@@ -712,10 +663,6 @@ function clearSearch() {
     if (input) input.value = '';
     renderSearchResults();
     renderDay(curDayIdx);
-}
-
-function renderTodayOverview() {
-    if (typeof renderTravelDashboard === 'function') renderTravelDashboard();
 }
 
 function sumEventCosts(events) {
@@ -1076,25 +1023,6 @@ function weatherMoodLabel(code) {
     return '';
 }
 
-function getDayWeatherSnippet(dayIdx) {
-    const daily = weatherForecastCache.daily;
-    if (trip.startDate && daily?.time && dayIdx >= 0 && dayIdx < trip.itinerary.length) {
-        const targetIso = getWeatherDayIso(dayIdx);
-        if (targetIso) {
-            const i = daily.time.indexOf(targetIso);
-            if (i >= 0) {
-                const max = Math.round(daily.temperature_2m_max[i]);
-                const min = Math.round(daily.temperature_2m_min[i]);
-                const temp = max === min ? `${max}°` : `${min}–${max}°`;
-                return { temp, code: daily.weather_code[i] };
-            }
-        }
-    }
-    const cw = weatherForecastCache.current;
-    if (cw) return { temp: `${Math.round(cw.temperature)}°`, code: cw.weathercode };
-    return null;
-}
-
 function weatherDaySelectLabel(idx) {
     const d = trip.itinerary[idx];
     if (!d) return '';
@@ -1242,7 +1170,6 @@ function applyTripSchedule() {
     renderDay(curDayIdx);
     updateHeaderSubtitle();
     scrollToTodayCard();
-    renderTodayOverview();
 }
 
 function applyWeatherForDay(offlineNote = '') {
@@ -1268,7 +1195,6 @@ function applyWeatherForDay(offlineNote = '') {
         } else {
             setWeatherUI({ temp: '--°C', detail: '請設定出發日期' + offlineNote, isError: true });
         }
-        renderTodayOverview();
         updateDayBannerWeather(curDayIdx);
         return;
     }
@@ -1298,7 +1224,6 @@ function applyWeatherForDay(offlineNote = '') {
         code,
     });
     updateWeatherCoverageHint();
-    renderTodayOverview();
     updateDayBannerWeather(curDayIdx);
 }
 
@@ -1696,10 +1621,6 @@ function onSearchInput(v) {
     }, 250);
 }
 
-function toggleTravelMode() {
-    onTravelModeToggle(!travelMode);
-}
-
 function onTravelModeToggle(checked) {
     if (isEdit) {
         persistTripMetaInputs();
@@ -1709,7 +1630,7 @@ function onTravelModeToggle(checked) {
     localStorage.setItem(TRAVEL_MODE_KEY, travelMode ? '1' : '0');
     if (travelMode) {
         isEdit = false;
-        setTab('today');
+        setTab('itinerary');
     }
     syncEditChrome();
     renderTripSelector();
@@ -1823,7 +1744,8 @@ function syncEditChrome() {
     document.getElementById('itinerary-sticky-bar')?.classList.toggle('itinerary-sticky-bar-edit', planningEdit);
     if (planningEdit) closeSearchPanelIfOpen();
     const daySel = document.getElementById('day-selector');
-    const showPills = onItinerary && !travelMode && trip.itinerary.length > 0;
+    // 冇咗「今日」頁，出門模式都要揀得日子
+    const showPills = onItinerary && trip.itinerary.length > 0;
     daySel?.classList.toggle('hidden', !showPills);
     syncTripScheduleChrome();
     syncTravelLayout();
@@ -1939,7 +1861,7 @@ function setupPwaInstallHint() {
 async function init() {
     applyTheme();
     await restoreUiPrefs();
-    if (travelMode) await setTab('today');
+    if (travelMode) await setTab('itinerary');
     updateOnlineStatus();
     syncEditChrome();
     renderTripSelector();
@@ -1958,7 +1880,6 @@ async function init() {
     updateHeaderSubtitle();
     scrollToTodayCard();
     renderTripHeader();
-    renderTodayOverview();
     renderSearchResults();
     if (typeof setupUiUx === 'function') setupUiUx();
     if (typeof setupReminders === 'function') setupReminders();
@@ -2135,7 +2056,7 @@ async function deleteCurrentTrip() {
 
 async function toggleEdit() {
     if (travelMode) {
-        await modalAlert('無法編輯', '請先撳「出門中」關閉出門模式');
+        await modalAlert('無法編輯', '出門模式開緊，請去右上角齒輪 → 設定關閉');
         return;
     }
     if (isEdit) persistTripMetaInputs();
@@ -2327,7 +2248,6 @@ function setEventStatus(dayIdx, eventIdx, status) {
     if (typeof refreshEventEditSheetIfOpen === 'function') refreshEventEditSheetIfOpen(dayIdx, eventIdx);
     renderDay(dayIdx);
     renderDaySelector();
-    renderTodayOverview();
 }
 window.setEventStatus = setEventStatus;
 
@@ -2374,7 +2294,6 @@ async function renderDay(idx) {
             titleInput.oninput = () => {
                 trip.itinerary[idx].title = titleInput.value;
                 debouncedSave();
-                if (typeof syncDashboardDayTitle === 'function') syncDashboardDayTitle(titleInput.value);
             };
         }
     } else {
@@ -2475,7 +2394,6 @@ async function renderDay(idx) {
     });
     document.querySelectorAll('.day-card').forEach((el, i) => el.classList.toggle('active', i === idx));
     updateHeaderSubtitle();
-    renderTodayOverview();
     if (idx !== lastRenderedDayIdx) {
         const daySel = document.getElementById('day-selector');
         const dayCard = daySel?.children[idx];
@@ -2688,7 +2606,6 @@ async function renderDocs() {
                 <span class="type-micro font-heavy text-white/90">PDF</span>
             </button>
             ${d.label ? `<span class="absolute bottom-2 left-2 right-2 type-micro font-heavy text-white drop-shadow-md truncate px-1 pointer-events-none">${escapeHtml(d.label)}</span>` : ''}
-            <button type="button" onclick="togglePinDoc(${i})" class="doc-pin-btn${trip.pinnedDocIdx === i ? ' is-pinned' : ''}" aria-label="${trip.pinnedDocIdx === i ? '取消釘選' : '釘選到今日'}"><i class="fas fa-thumbtack"></i></button>
             ${canEditToolsContent() ? `<button type="button" onclick="removeDoc(${i})" class="absolute -top-1 -right-1 bg-red-400 text-white w-6 h-6 rounded-full type-micro border-2 border-white shadow" aria-label="刪除文件"><i class="fas fa-times"></i></button>` : ''}
         </div>`;
                 }
@@ -2696,7 +2613,6 @@ async function renderDocs() {
         <div class="relative">
             <img src="${escapeAttr(url)}" alt="${escapeAttr(d.label || '文件')}" class="w-full aspect-square object-cover rounded-3xl border-2 border-white shadow-md" onclick='showBig(${JSON.stringify(d.url)})'>
             ${d.label ? `<span class="absolute bottom-2 left-2 right-2 type-micro font-heavy text-white drop-shadow-md truncate px-1">${escapeHtml(d.label)}</span>` : ''}
-            <button type="button" onclick="togglePinDoc(${i})" class="doc-pin-btn${trip.pinnedDocIdx === i ? ' is-pinned' : ''}" aria-label="${trip.pinnedDocIdx === i ? '取消釘選' : '釘選到今日'}"><i class="fas fa-thumbtack"></i></button>
             ${canEditToolsContent() ? `<button type="button" onclick="removeDoc(${i})" class="absolute -top-1 -right-1 bg-red-400 text-white w-6 h-6 rounded-full type-micro border-2 border-white shadow" aria-label="刪除文件"><i class="fas fa-times"></i></button>` : ''}
         </div>`;
             })
@@ -2720,7 +2636,6 @@ async function removeDoc(i) {
     else if (trip.pinnedDocIdx != null && trip.pinnedDocIdx > i) trip.pinnedDocIdx -= 1;
     save();
     await renderDocs();
-    if (typeof renderTodayQuickTools === 'function') renderTodayQuickTools();
 }
 
 async function removeEvent(dayIdx, eventIdx) {
@@ -2916,8 +2831,8 @@ async function setTab(t) {
     if (t !== 'tools' && typeof closeToolsAdvancedMenu === 'function') closeToolsAdvancedMenu();
     if (t !== 'itinerary' && typeof closeEventEditSheet === 'function') closeEventEditSheet({ silent: true });
     await exitEditForTabSwitch(t);
-    const panelIds = ['content-today', 'content-itinerary', 'content-tools'];
-    const activeId = t === 'today' ? 'content-today' : t === 'tools' ? 'content-tools' : 'content-itinerary';
+    const panelIds = ['content-itinerary', 'content-tools'];
+    const activeId = t === 'tools' ? 'content-tools' : 'content-itinerary';
     panelIds.forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -2933,7 +2848,6 @@ async function setTab(t) {
     const navBase = 'flex-1 py-3 flex flex-col items-center gap-0.5 rounded-[2rem]';
     document.getElementById('nav-itinerary').className = `${navBase} ${t === 'itinerary' ? 'nav-tab-active' : 'text-muted'}`;
     document.getElementById('nav-tools').className = `${navBase} ${t === 'tools' ? 'nav-tab-active' : 'text-muted'}`;
-    document.getElementById('nav-today').className = `${navBase} ${t === 'today' ? 'nav-tab-active' : 'text-muted'}`;
     updateFabVisibility();
     syncEditChrome();
     if (t === 'tools') {
@@ -2942,8 +2856,6 @@ async function setTab(t) {
         if (typeof renderStaysList === 'function') renderStaysList();
     }
     if (typeof syncToolsLayout === 'function') syncToolsLayout();
-    if (t === 'today' && typeof renderTravelDashboard === 'function') renderTravelDashboard();
-    else if (typeof stopDashboardCountdownTimer === 'function') stopDashboardCountdownTimer();
     saveUiPrefs();
 }
 

@@ -65,24 +65,6 @@ function renderDayStay(idx) {
     el.classList.toggle('hidden', !lines.length);
 }
 
-function renderDashboardStay(dayIdx) {
-    const el = document.getElementById('dashboard-stay');
-    if (!el) return;
-    const tonight = dayIdx >= 0 ? staysForDay(dayIdx).tonight : -1;
-    if (tonight < 0) {
-        el.classList.add('hidden');
-        el.innerHTML = '';
-        return;
-    }
-    const s = tripStays()[tonight];
-    const nav = stayNavQuery(s);
-    el.innerHTML = `<div class="dashboard-stay-row">
-        <span class="dashboard-stay-text"><span aria-hidden="true">🏨</span>今晚住 <strong>${escapeHtml(s.name || '住宿')}</strong></span>
-        ${nav ? `<button type="button" class="pill-btn" data-q="${escapeAttr(nav)}" onclick="openMapDirections(this.dataset.q)"><i class="fas fa-location-arrow" aria-hidden="true"></i>導航</button>` : ''}
-    </div>`;
-    el.classList.remove('hidden');
-}
-
 function renderStaysList() {
     const el = document.getElementById('stays-list');
     if (!el) return;
@@ -144,7 +126,6 @@ function closeStaySheet() {
 function refreshStayViews() {
     renderDayStay(curDayIdx);
     if (isToolsTabActive()) renderStaysList();
-    if (isTodayTabActive() && typeof renderTravelDashboard === 'function') renderTravelDashboard();
 }
 
 async function saveStayFromSheet() {
