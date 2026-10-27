@@ -102,32 +102,64 @@ function closeEventStatusPicker() {
     window._statusPick = null;
 }
 
-const TRIP_ACCENT_COLORS = ['#FF85A1', '#7C83FD', '#FFB86C', '#6BCB77', '#9D84B7', '#4ECDC4', '#F4845F', '#5DADE2'];
-const SWIPE_HINT_KEY = 'TRAVEL_SWIPE_HINT_SEEN';
+// 旅程圓形頭像：粉彩底 + 深色字，跟名計顏色，同一個旅程永遠同色
+const TRIP_AVATAR_TINTS = [
+    ['#ffe0e9', '#e0567a'],
+    ['#dff5ec', '#2f8f6b'],
+    ['#ece6ff', '#7a5bc7'],
+    ['#fff3cf', '#b7791f'],
+    ['#e3f0ff', '#3b7fc0'],
+    ['#ffe8dc', '#d0693a'],
+];
 
-function tripAccentColor(name, idx) {
+function tripAvatarTint(name, idx) {
     let h = 0;
     const s = name || '';
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-    return TRIP_ACCENT_COLORS[Math.abs(h + idx) % TRIP_ACCENT_COLORS.length];
+    return TRIP_AVATAR_TINTS[Math.abs(h + idx) % TRIP_AVATAR_TINTS.length];
+}
+
+// 「5 天 · 10/21–10/25 · 東京」
+function tripSummaryLine(t) {
+    const days = t.itinerary?.length || 0;
+    const bits = [`${days} 天`];
+    if (t.startDate) {
+        const md = (d) => `${d.getMonth() + 1}/${d.getDate()}`;
+        const start = addDaysFromIso(t.startDate, 0);
+        const end = addDaysFromIso(t.startDate, Math.max(0, days - 1));
+        bits.push(days > 1 ? `${md(start)}–${md(end)}` : md(start));
+    }
+    const place = getWeatherLocation(t.city).label;
+    if (place) bits.push(place);
+    return bits.join(' · ');
 }
 
 function renderTripPicker() {
     const list = document.getElementById('trip-picker');
     if (!list) return;
+    const canManage = !travelMode;
     list.innerHTML = data.trips
         .map((t, i) => {
             const active = i === data.activeIdx;
-            const days = t.itinerary?.length || 0;
-            const color = tripAccentColor(t.name, i);
-            return `<button type="button" role="option" aria-selected="${active}" class="trip-picker-item${active ? ' active' : ''}" onclick="switchTrip(${i}); closeHeaderMenu();">
-                <span class="trip-picker-swatch" style="background:${color}"></span>
-                <span class="trip-picker-meta">
-                    <span class="trip-picker-name">${escapeHtml(t.name || '旅程')}</span>
-                    <span class="trip-picker-days">${days} 天</span>
-                </span>
-                ${active ? '<i class="fas fa-check trip-picker-check" aria-hidden="true"></i>' : ''}
-            </button>`;
+            const name = (t.name || '旅程').trim() || '旅程';
+            const [bg, ink] = tripAvatarTint(name, i);
+            const initial = [...name][0];
+            const actions =
+                active && canManage
+                    ? `<button type="button" class="trip-row-icon" onclick="closeHeaderMenu(); editTripName();" aria-label="改名「${escapeAttr(name)}」"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                       ${data.trips.length > 1 ? `<button type="button" class="trip-row-icon trip-row-icon-danger" onclick="closeHeaderMenu(); deleteCurrentTrip();" aria-label="刪除「${escapeAttr(name)}」"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>` : ''}`
+                    : '';
+            return `<div class="trip-row${active ? ' active' : ''}">
+                <button type="button" role="option" aria-selected="${active}" class="trip-row-main" onclick="${active ? 'closeHeaderMenu();' : `switchTrip(${i}); closeHeaderMenu();`}">
+                    <span class="trip-avatar" style="background:${bg};color:${ink}" aria-hidden="true">${escapeHtml(initial)}</span>
+                    <span class="trip-picker-meta">
+                        <span class="trip-picker-name">${escapeHtml(name)}</span>
+                        <span class="trip-picker-days">${escapeHtml(tripSummaryLine(t))}</span>
+                    </span>
+                    ${active ? '<i class="fas fa-check trip-picker-check" aria-hidden="true"></i>' : ''}
+                </button>
+                ${actions}
+            </div>`;
         })
         .join('');
 }
@@ -138,21 +170,22 @@ function renderTripHeader() {
     renderTripPicker();
 }
 
+const HEADER_MENU_TRIGGERS = ['header-menu-btn', 'header-title-btn'];
+
 function toggleHeaderMenu() {
     const menu = document.getElementById('header-menu');
-    const btn = document.getElementById('header-menu-btn');
     if (!menu) return;
-    const open = menu.classList.toggle('hidden');
-    if (btn) btn.setAttribute('aria-expanded', open ? 'false' : 'true');
-    if (!open) {
-        renderTripPicker();
-        document.getElementById('del-trip-menu-btn')?.classList.toggle('hidden', travelMode || !isEdit);
-    }
+    const willOpen = menu.classList.contains('hidden');
+    if (willOpen) renderTripPicker();
+    menu.classList.toggle('hidden', !willOpen);
+    HEADER_MENU_TRIGGERS.forEach((id) =>
+        document.getElementById(id)?.setAttribute('aria-expanded', willOpen ? 'true' : 'false'),
+    );
 }
 
 function closeHeaderMenu() {
     document.getElementById('header-menu')?.classList.add('hidden');
-    document.getElementById('header-menu-btn')?.setAttribute('aria-expanded', 'false');
+    HEADER_MENU_TRIGGERS.forEach((id) => document.getElementById(id)?.setAttribute('aria-expanded', 'false'));
 }
 
 function dismissSwipeHint() {
@@ -357,11 +390,14 @@ function setupModalFocusTrap() {
 function setupUiUx() {
     setupDaySwipe();
     setupModalFocusTrap();
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeHeaderMenu();
+    });
     maybeShowSwipeHint();
     document.addEventListener('click', (e) => {
         const menu = document.getElementById('header-menu');
-        const btn = document.getElementById('header-menu-btn');
-        if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !btn?.contains(e.target)) {
+        const onTrigger = HEADER_MENU_TRIGGERS.some((id) => document.getElementById(id)?.contains(e.target));
+        if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !onTrigger) {
             closeHeaderMenu();
         }
         const advBtn = document.getElementById('tools-advanced-btn');

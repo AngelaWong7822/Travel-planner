@@ -1723,7 +1723,6 @@ function syncEditChrome() {
         }
     }
 
-    document.getElementById('del-trip-menu-btn')?.classList.toggle('hidden', !isEdit || travelMode);
     document.querySelectorAll('#edit-controls').forEach((el) => {
         el.classList.toggle('hidden', !isEdit || travelMode);
     });

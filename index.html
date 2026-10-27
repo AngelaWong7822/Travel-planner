@@ -45,27 +45,26 @@
             <button type="button" id="header-menu-btn" onclick="toggleHeaderMenu()" class="flex-shrink-0 w-11 h-11 bg-[var(--cute-pink)] rounded-2xl flex items-center justify-center text-white shadow-lg active:scale-95 transition-transform" aria-label="旅程選單" aria-expanded="false" aria-controls="header-menu">
                 <i class="fas fa-plane-departure"></i>
             </button>
-            <div class="flex flex-col min-w-0 flex-1">
-                <h1 id="trip-title" class="truncate">我的旅行</h1>
-                <p id="header-subtitle" class="truncate">開始規劃！</p>
-            </div>
+            <button type="button" id="header-title-btn" class="header-title-btn" onclick="toggleHeaderMenu()" aria-label="切換旅程" aria-expanded="false" aria-controls="header-menu">
+                <span class="header-title-row">
+                    <span id="trip-title" class="truncate">我的旅行</span>
+                    <i class="fas fa-chevron-down header-title-caret" aria-hidden="true"></i>
+                </span>
+                <span id="header-subtitle" class="truncate">開始規劃！</span>
+            </button>
         </div>
         <button type="button" id="travel-mode-chip" class="travel-mode-chip hidden" onclick="openSettingsSheet()" aria-label="出門模式開緊，撳入設定關閉">🧳 出門中</button>
         <button type="button" id="header-settings-btn" onclick="openSettingsSheet()" class="header-mode-btn header-icon-btn flex-shrink-0" aria-label="設定" aria-haspopup="dialog" aria-controls="settings-sheet">
             <i class="fas fa-gear" aria-hidden="true"></i>
         </button>
-        <div id="header-menu" class="hidden" role="menu">
-            <p class="type-micro text-muted mb-2 px-0.5">我的旅程</p>
+        <div id="header-menu" class="hidden" role="dialog" aria-label="我的旅程">
+            <p class="header-menu-title"><span aria-hidden="true">✈️</span> 我的旅程</p>
             <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
-            <label class="header-menu-field">
-                <span class="type-micro text-muted font-heavy">目的地（天氣用）</span>
-                <select id="weather-location-select" onchange="onWeatherLocationSelect(this.value)" class="weather-day-select" aria-label="選擇目的地"></select>
+            <button type="button" class="trip-add-btn" onclick="closeHeaderMenu(); createNewTrip();"><i class="fas fa-plus" aria-hidden="true"></i>新旅程</button>
+            <label class="header-menu-dest">
+                <span class="header-menu-dest-label"><span aria-hidden="true">📍</span> 目的地</span>
+                <select id="weather-location-select" onchange="onWeatherLocationSelect(this.value)" class="header-menu-dest-select" aria-label="呢個旅程嘅目的地（天氣用）"></select>
             </label>
-            <div class="header-menu-actions">
-                <button type="button" onclick="editTripName(); closeHeaderMenu();" class="bg-pink-50 text-pink-600">改名</button>
-                <button type="button" onclick="createNewTrip(); closeHeaderMenu();" class="bg-pink-50 text-pink-600">新旅程</button>
-                <button type="button" id="del-trip-menu-btn" onclick="deleteCurrentTrip(); closeHeaderMenu();" class="hidden bg-red-50 text-red-500">刪除</button>
-            </div>
         </div>
     </header>
 
