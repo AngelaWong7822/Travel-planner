@@ -364,7 +364,6 @@ function renderEventEditSheetFields(dayIdx, i, ev) {
         </div>
         <div class="event-edit-actions mt-2">
             <button type="button" onclick="copyEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-pink">複製</button>
-            <button type="button" onclick="moveEventToWishlist(${dayIdx}, ${i})" class="btn-inline">移去想去</button>
             <button type="button" onclick="closeEventEditSheet();removeEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-danger">刪除</button>
         </div>`;
 }
@@ -528,7 +527,7 @@ function renderTravelDashboard() {
         renderDashboardWeather(-1);
         syncDashboardProgress([]);
         renderTodayQuickTools();
-        if (typeof renderDashboardSpend === 'function') renderDashboardSpend(-1);
+        if (typeof renderDashboardStay === 'function') renderDashboardStay(-1);
         if (hero) {
             hero.classList.add('hidden');
             hero.innerHTML = '';
@@ -563,7 +562,7 @@ function renderTravelDashboard() {
     const liveToday = hasRealToday() && todayIdx === getTodayDayIndex();
     const hasUpcomingHero = next.type === 'upcoming';
     renderTodayQuickTools(hasUpcomingHero);
-    if (typeof renderDashboardSpend === 'function') renderDashboardSpend(todayIdx);
+    if (typeof renderDashboardStay === 'function') renderDashboardStay(todayIdx);
 
     if (hero) {
         if (next.type === 'empty') {

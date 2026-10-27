@@ -28,7 +28,6 @@
     <input type="file" id="banner-img-input" class="hidden" accept="image/*">
     <input type="file" id="event-img-input" class="hidden" accept="image/*">
     <input type="file" id="lib-file-input" class="hidden" accept="image/*,application/pdf,.pdf">
-    <input type="file" id="journal-img-input" class="hidden" accept="image/*" multiple>
     <input type="file" id="backup-file-input" class="hidden" accept="application/json,.json">
     <div id="lightbox" role="dialog" aria-label="圖片預覽">
         <button type="button" id="lightbox-close" onclick="closeLightbox()" aria-label="關閉"><i class="fas fa-times"></i></button>
@@ -155,33 +154,8 @@
                             <div id="day-map-status" class="day-map-status hidden" aria-live="polite"></div>
                         </div>
                     </div>
-                    <section id="day-expenses" class="day-expenses hidden" aria-label="今日花費"></section>
-                    <section id="day-journal" class="day-journal hidden" aria-label="今日感想">
-                        <div class="expense-head">
-                            <p class="expense-title"><span class="cute-emoji" aria-hidden="true">📝</span>今日感想</p>
-                            <button type="button" class="expense-add-btn" onclick="triggerFile('journal-img-input')"><i class="fas fa-camera" aria-hidden="true"></i>加相</button>
-                        </div>
-                        <label for="journal-text" class="sr-only">今日感想</label>
-                        <textarea id="journal-text" class="journal-text" rows="3" placeholder="今日有咩開心事？食咗咩好嘢？(〃'▽'〃)" oninput="onJournalInput(this)"></textarea>
-                        <div id="journal-photos" class="journal-photos hidden"></div>
-                    </section>
                 </div>
             </div>
-
-            <section id="wishlist-card" class="wishlist-card hidden" aria-label="想去清單">
-                <button type="button" id="wishlist-head" class="wishlist-head" onclick="toggleWishlist()" aria-expanded="false" aria-controls="wishlist-body">
-                    <span><span aria-hidden="true">💡</span> 想去清單 <span id="wishlist-count" class="wishlist-count"></span></span>
-                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                </button>
-                <div id="wishlist-body" class="wishlist-body hidden">
-                    <div id="wishlist-add" class="wishlist-add">
-                        <label for="wishlist-input" class="sr-only">想去嘅地方</label>
-                        <input type="text" id="wishlist-input" class="field-input flex-1" placeholder="想去邊？例：豪德寺" enterkeyhint="done" onkeydown="if(event.key==='Enter')addWish()">
-                        <button type="button" class="expense-add-btn" onclick="addWish()"><i class="fas fa-plus" aria-hidden="true"></i>加</button>
-                    </div>
-                    <div id="wishlist-list" class="wishlist-list"></div>
-                </div>
-            </section>
         </section>
 
         <!-- Tools Tab -->
@@ -216,16 +190,6 @@
                     <p id="rate-detail" class="hidden type-micro text-muted text-center truncate mt-0.5"></p>
                 </div>
             </div>
-            </div>
-
-            <div id="tools-spend-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">💰</span>花費總覽</h2>
-                <div id="spend-totals"></div>
-                <label class="spend-budget-field">
-                    <span class="type-micro text-muted font-heavy">全程預算（<span id="trip-budget-currency">JPY</span>，可留空）</span>
-                    <input type="number" id="trip-budget-input" oninput="onTripBudgetInput(this.value)" placeholder="例：150000" class="field-input w-full mt-1" inputmode="decimal">
-                </label>
-                <div id="spend-detail"></div>
             </div>
 
             <div id="tools-stays-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
@@ -271,7 +235,6 @@
                     <button type="button" onclick="shareCurrentTrip()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-share-alt mr-1"></i>分享全程</button>
                     <button type="button" onclick="printCurrentTrip()" class="flex-1 btn-ghost-sm py-3"><i class="fas fa-print mr-1"></i>列印／PDF</button>
                 </div>
-                <button type="button" onclick="printJournal()" class="w-full btn-ghost-sm py-3"><i class="fas fa-book-open mr-1"></i>遊記 PDF（感想＋相片）</button>
             </div>
         </section>
 
@@ -301,7 +264,7 @@
                 </div>
                 <div id="dashboard-hero" class="hidden"></div>
                 <div id="dashboard-quick-bar" class="dashboard-quick-bar hidden"></div>
-                <div id="dashboard-spend" class="dashboard-spend hidden"></div>
+                <div id="dashboard-stay" class="dashboard-stay hidden"></div>
                 <div id="today-overview-list" class="dashboard-day-list"></div>
             </div>
         </section>
@@ -399,33 +362,6 @@
         </div>
     </div>
 
-    <div id="expense-sheet" class="hidden" role="dialog" aria-labelledby="expense-sheet-title" onclick="if(event.target===this)closeExpenseSheet()">
-        <div class="sheet sheet-tall" onclick="event.stopPropagation()">
-            <p id="expense-sheet-title" class="type-body font-heavy text-primary mb-3">記一筆</p>
-            <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">金額（<span id="expense-currency">JPY</span>）</span>
-                <input type="number" id="expense-amount" class="field-input w-full mt-1" inputmode="decimal" placeholder="0" enterkeyhint="done" onkeydown="if(event.key==='Enter')saveExpenseFromSheet()">
-            </label>
-            <div class="event-edit-sheet-field">
-                <span class="type-micro text-muted">類別</span>
-                <div id="expense-cats" class="expense-cats mt-1"></div>
-            </div>
-            <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">備註</span>
-                <input type="text" id="expense-note" class="field-input w-full mt-1" placeholder="例：拉麵、Suica 增值">
-            </label>
-            <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">日子</span>
-                <select id="expense-day" class="field-input w-full mt-1"></select>
-            </label>
-            <div class="flex gap-2 mt-3">
-                <button type="button" id="expense-delete-btn" onclick="deleteExpenseFromSheet()" class="btn-inline btn-inline-danger hidden">刪除</button>
-                <button type="button" onclick="saveExpenseFromSheet()" class="btn-primary-sm flex-1 py-3">儲存</button>
-            </div>
-            <button type="button" class="type-caption text-muted mt-2 w-full min-h-[2.75rem]" onclick="closeExpenseSheet()">取消</button>
-        </div>
-    </div>
-
     <div id="stay-sheet" class="hidden" role="dialog" aria-labelledby="stay-sheet-title" onclick="if(event.target===this)closeStaySheet()">
         <div class="sheet sheet-tall" onclick="event.stopPropagation()">
             <p id="stay-sheet-title" class="type-body font-heavy text-primary mb-3">加住宿</p>
@@ -452,7 +388,7 @@
                 <input type="text" id="stay-ref" class="field-input w-full mt-1" placeholder="訂位編號">
             </label>
             <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">房費（<span id="stay-cost-currency">JPY</span>，計入預估）</span>
+                <span class="type-micro text-muted">房費（<span id="stay-cost-currency">JPY</span>，可留空）</span>
                 <input type="number" id="stay-cost" class="field-input w-full mt-1" inputmode="decimal">
             </label>
             <div class="flex gap-2 mt-3">
@@ -547,9 +483,7 @@
     <script src="app.js"></script>
     <script src="js/trip-calendar.js"></script>
     <script src="js/day-map.js"></script>
-    <script src="js/expenses.js"></script>
     <script src="js/stays.js"></script>
-    <script src="js/journal.js"></script>
     <script src="js/backup.js"></script>
 </body>
 </html>

@@ -97,9 +97,7 @@ body {
 }
 
 .tint-mint,
-#tools-rate-card,
-#tools-spend-card,
-#day-expenses {
+#tools-rate-card {
     --card-tint: var(--tint-mint);
     --card-line: var(--tint-mint-line);
     --card-ink: var(--tint-mint-ink);
@@ -107,7 +105,6 @@ body {
 
 .tint-lavender,
 #tools-share-card,
-#day-journal,
 #tools-backup-card {
     --card-tint: var(--tint-lavender);
     --card-line: var(--tint-lavender-line);
@@ -116,8 +113,8 @@ body {
 
 .tint-butter,
 #tools-stays-card,
-#wishlist-card,
-#day-stay {
+#day-stay,
+#dashboard-stay {
     --card-tint: var(--tint-butter);
     --card-line: var(--tint-butter-line);
     --card-ink: var(--tint-butter-ink);
@@ -133,13 +130,11 @@ body {
 
 #travel-dashboard,
 #tools-rate-card,
-#tools-spend-card,
 #tools-stays-card,
 #tools-docs-card,
 #tools-checklist-card,
 #tools-share-card,
-#tools-backup-card,
-#wishlist-card {
+#tools-backup-card {
     background: var(--card-tint) !important;
     border: 2px solid var(--card-line) !important;
     border-radius: var(--radius-card) !important;
@@ -147,13 +142,11 @@ body {
 }
 
 #tools-rate-card h2,
-#tools-spend-card h2,
 #tools-stays-card h2,
 #tools-docs-card h2,
 #tools-checklist-card h2,
 #tools-share-card h2,
-#tools-backup-card h2,
-.wishlist-head {
+#tools-backup-card h2 {
     color: var(--card-ink) !important;
 }
 
@@ -184,77 +177,22 @@ body {
     border-bottom: 2px dashed var(--tint-pink-line);
 }
 
-/* 日卡入面嘅住宿／花費／感想：有色小卡，取代虛線分隔 */
-#day-stay .stay-line {
+/* 日卡同今日頁嘅住宿：奶油黃小卡 */
+#day-stay .stay-line,
+#dashboard-stay .dashboard-stay-row {
     background: var(--card-tint);
     border: 1.5px solid var(--card-line);
 }
 
 #day-stay .stay-line strong,
-#day-stay .stay-add-link {
+#day-stay .stay-add-link,
+#dashboard-stay strong {
     color: var(--card-ink);
-}
-
-#day-expenses,
-#day-journal {
-    margin-top: 1.25rem;
-    padding: 0.9rem 1rem;
-    border: 1.5px solid var(--card-line);
-    border-radius: 1.35rem;
-    background: var(--card-tint);
-}
-
-#day-expenses .expense-title,
-#day-journal .expense-title,
-#day-expenses .expense-title i,
-#day-journal .expense-title i {
-    color: var(--card-ink);
-}
-
-#day-expenses .expense-add-btn,
-#day-journal .expense-add-btn {
-    background: var(--surface);
-    color: var(--card-ink);
-    border: 1.5px solid var(--card-line);
-}
-
-#day-expenses .expense-row {
-    border-bottom-color: var(--card-line);
-}
-
-#day-journal .journal-text {
-    background: var(--surface);
-    border-color: var(--card-line);
 }
 
 /* 設定 sheet 入面嘅卡 */
 .settings-sheet-body > div[class*='p-5'] {
     border-radius: 1.35rem !important;
-}
-
-/* 花費卡：條同金額跟卡片色 */
-#tools-spend-card .spend-actual,
-#day-expenses .expense-summary strong {
-    color: var(--card-ink);
-}
-
-#tools-spend-card .spend-cat-bar span,
-#tools-spend-card .progress-fill:not(.spend-over) {
-    background: var(--card-ink);
-}
-
-#tools-spend-card .spend-cat-bar,
-#tools-spend-card .progress-track {
-    background: rgba(255, 255, 255, 0.7);
-}
-
-[data-theme='dark'] #tools-spend-card .spend-cat-bar,
-[data-theme='dark'] #tools-spend-card .progress-track {
-    background: rgba(0, 0, 0, 0.2);
-}
-
-#day-expenses .expense-summary-over strong {
-    color: var(--color-danger);
 }
 
 /* ── emoji 標題 ── */
@@ -320,12 +258,6 @@ body {
 }
 
 /* ── 空白狀態、顏文字 ── */
-.cute-empty {
-    margin: 0.5rem 0 0;
-    font-size: var(--type-caption);
-    color: var(--text-muted);
-}
-
 .timeline-empty-state-title {
     color: var(--tint-pink-ink);
 }
@@ -344,8 +276,7 @@ body {
 /* ── 掣：圓啲、撳落彈一彈 ── */
 .btn-primary-sm,
 .btn-ghost-sm,
-.expense-add-btn,
-.wish-schedule-btn,
+.pill-btn,
 .day-route-btn,
 .day-view-btn,
 .stay-nav-btn,
@@ -357,8 +288,7 @@ body {
 
 .btn-primary-sm:active,
 .btn-ghost-sm:active,
-.expense-add-btn:active,
-.wish-schedule-btn:active,
+.pill-btn:active,
 .day-route-btn:active,
 .day-view-btn:active,
 .stay-nav-btn:active,
@@ -398,7 +328,6 @@ body {
 }
 
 #settings-sheet:not(.hidden) .sheet,
-#expense-sheet:not(.hidden) .sheet,
 #stay-sheet:not(.hidden) .sheet,
 #event-edit-picker:not(.hidden) .sheet,
 #event-status-picker:not(.hidden) .sheet,
@@ -421,7 +350,6 @@ body {
     .cute-pop,
     .app-bottom-nav button.nav-tab-active .nav-emoji,
     #settings-sheet .sheet,
-    #expense-sheet .sheet,
     #stay-sheet .sheet,
     #event-edit-picker .sheet,
     #event-status-picker .sheet,
@@ -432,9 +360,8 @@ body {
 
     .btn-primary-sm:active,
     .btn-ghost-sm:active,
-    .expense-add-btn:active,
-    .wish-schedule-btn:active,
-    .day-route-btn:active,
+    .pill-btn:active,
+        .day-route-btn:active,
     .day-view-btn:active,
     .stay-nav-btn:active,
     .chip-copy:active,

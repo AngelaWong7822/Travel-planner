@@ -1445,6 +1445,8 @@ function normalizeEventStatus(s) {
     return EVENT_STATUS_VALUES.includes(s) ? s : 'pending';
 }
 
+// 記帳、感想、想去清單嘅介面已經拎走，但舊資料照樣讀入同儲存，
+// 咁舊旅程同備份入面嘅內容唔會因為 app 存檔而消失
 const EXPENSE_CATS = [
     { id: 'food', label: '食', icon: '🍜' },
     { id: 'transport', label: '交通', icon: '🚃' },
@@ -2482,9 +2484,6 @@ async function renderDay(idx) {
     }
     if (typeof syncDayMap === 'function') syncDayMap(idx);
     if (typeof renderDayStay === 'function') renderDayStay(idx);
-    if (typeof renderDayExpenses === 'function') renderDayExpenses(idx);
-    if (typeof renderDayJournal === 'function') renderDayJournal(idx);
-    if (typeof renderWishlist === 'function') renderWishlist();
     syncWeatherToDay(idx);
     saveUiPrefs();
 }
@@ -2940,7 +2939,6 @@ async function setTab(t) {
     if (t === 'tools') {
         renderCheck();
         renderDocs();
-        if (typeof renderSpendSummary === 'function') renderSpendSummary();
         if (typeof renderStaysList === 'function') renderStaysList();
     }
     if (typeof syncToolsLayout === 'function') syncToolsLayout();

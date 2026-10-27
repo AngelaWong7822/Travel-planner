@@ -65,15 +65,22 @@ function renderDayStay(idx) {
     el.classList.toggle('hidden', !lines.length);
 }
 
-function dashboardStayHtml(idx) {
-    const { tonight } = staysForDay(idx);
-    if (tonight < 0) return '';
+function renderDashboardStay(dayIdx) {
+    const el = document.getElementById('dashboard-stay');
+    if (!el) return;
+    const tonight = dayIdx >= 0 ? staysForDay(dayIdx).tonight : -1;
+    if (tonight < 0) {
+        el.classList.add('hidden');
+        el.innerHTML = '';
+        return;
+    }
     const s = tripStays()[tonight];
     const nav = stayNavQuery(s);
-    return `<div class="dashboard-spend-row">
-        <span class="dashboard-spend-text"><span aria-hidden="true">🏨</span>今晚住 <strong>${escapeHtml(s.name || '住宿')}</strong></span>
-        ${nav ? `<button type="button" class="expense-add-btn" data-q="${escapeAttr(nav)}" onclick="openMapDirections(this.dataset.q)"><i class="fas fa-location-arrow" aria-hidden="true"></i>導航</button>` : ''}
+    el.innerHTML = `<div class="dashboard-stay-row">
+        <span class="dashboard-stay-text"><span aria-hidden="true">🏨</span>今晚住 <strong>${escapeHtml(s.name || '住宿')}</strong></span>
+        ${nav ? `<button type="button" class="pill-btn" data-q="${escapeAttr(nav)}" onclick="openMapDirections(this.dataset.q)"><i class="fas fa-location-arrow" aria-hidden="true"></i>導航</button>` : ''}
     </div>`;
+    el.classList.remove('hidden');
 }
 
 function renderStaysList() {
@@ -136,10 +143,7 @@ function closeStaySheet() {
 
 function refreshStayViews() {
     renderDayStay(curDayIdx);
-    if (isToolsTabActive()) {
-        renderStaysList();
-        if (typeof renderSpendSummary === 'function') renderSpendSummary();
-    }
+    if (isToolsTabActive()) renderStaysList();
     if (isTodayTabActive() && typeof renderTravelDashboard === 'function') renderTravelDashboard();
 }
 

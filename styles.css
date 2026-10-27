@@ -2837,7 +2837,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #event-edit-picker,
 #trip-date-picker,
 #settings-sheet,
-#expense-sheet,
 #stay-sheet,
 #tools-advanced-menu {
     position: fixed;
@@ -2854,7 +2853,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #event-edit-picker.hidden,
 #trip-date-picker.hidden,
 #settings-sheet.hidden,
-#expense-sheet.hidden,
 #stay-sheet.hidden,
 #tools-advanced-menu.hidden,
 #print-preview.hidden { display: none; }
@@ -2923,7 +2921,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #event-edit-picker .sheet,
 #trip-date-picker .sheet,
 #settings-sheet .sheet,
-#expense-sheet .sheet,
 #stay-sheet .sheet,
 #tools-advanced-menu .sheet {
     width: 100%;
@@ -3436,37 +3433,8 @@ select {
     color: var(--text-muted);
 }
 
-/* ── 記帳 ── */
-.day-expenses {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 2px dashed var(--border-soft);
-}
-
-.day-expenses.hidden {
-    display: none;
-}
-
-.expense-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-
-.expense-title {
-    margin: 0;
-    font-size: var(--type-body);
-    font-weight: 800;
-    color: var(--text-primary);
-}
-
-.expense-title i {
-    margin-right: 0.4rem;
-    color: var(--cute-pink);
-}
-
-.expense-add-btn {
+/* ── 今日頁：今晚住 ── */
+.pill-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
@@ -3481,102 +3449,15 @@ select {
     font-weight: 800;
 }
 
-.expense-summary {
-    margin: 0.4rem 0 0;
-    font-size: var(--type-caption);
-    color: var(--text-secondary);
-}
-
-.expense-summary strong {
-    color: var(--text-primary);
-    font-weight: 900;
-}
-
-.expense-summary-over strong {
-    color: #ef4444;
-}
-
-.expense-home {
-    margin-left: 0.4rem;
-    color: var(--text-muted);
-    font-size: var(--type-micro);
-}
-
-.expense-list {
-    display: flex;
-    flex-direction: column;
-    margin-top: 0.6rem;
-}
-
-.expense-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    width: 100%;
-    padding: 0.55rem 0.1rem;
-    border: none;
-    border-bottom: 1px solid var(--border-soft);
-    background: none;
-    text-align: left;
-    font-size: var(--type-caption);
-    color: var(--text-primary);
-}
-
-.expense-row:last-child {
-    border-bottom: none;
-}
-
-.expense-row-note {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-weight: 700;
-}
-
-.expense-row-amount {
-    font-weight: 900;
-}
-
-.expense-cats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.4rem;
-}
-
-.expense-cat-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    min-height: 2.5rem;
-    border-radius: 0.9rem;
-    border: 1px solid var(--border-soft);
-    background: var(--surface-muted);
-    font-size: var(--type-caption);
-    font-weight: 800;
-    color: var(--text-secondary);
-}
-
-.expense-cat-btn-active {
-    background: var(--cute-pink);
-    border-color: var(--cute-pink);
-    color: #fff;
-}
-
-.dashboard-spend {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
+.dashboard-stay {
     margin: 0.75rem 0 0.25rem;
 }
 
-.dashboard-spend.hidden {
+.dashboard-stay.hidden {
     display: none;
 }
 
-.dashboard-spend-row {
+.dashboard-stay-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -3588,291 +3469,18 @@ select {
     color: var(--text-secondary);
 }
 
-.dashboard-spend-text {
+.dashboard-stay-text {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.dashboard-spend-text i,
-.dashboard-spend-text > span[aria-hidden] {
+.dashboard-stay-text > span[aria-hidden] {
     margin-right: 0.35rem;
-    color: var(--cute-pink);
 }
 
-.dashboard-spend-text strong {
+.dashboard-stay-text strong {
     color: var(--text-primary);
     font-weight: 900;
-}
-
-/* ── 花費總覽 ── */
-.spend-actual {
-    margin: 0;
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--cute-pink);
-    line-height: 1.1;
-}
-
-.spend-sub {
-    margin: 0.2rem 0 0;
-    font-size: var(--type-caption);
-    font-weight: 700;
-    color: var(--text-secondary);
-}
-
-.progress-fill.spend-over {
-    background: #ef4444;
-}
-
-.spend-cats {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.spend-cat-row {
-    display: grid;
-    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--type-caption);
-    font-weight: 700;
-    color: var(--text-secondary);
-}
-
-.spend-cat-bar {
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--surface-muted);
-    overflow: hidden;
-}
-
-.spend-cat-bar span {
-    display: block;
-    height: 100%;
-    border-radius: 999px;
-    background: var(--cute-pink);
-}
-
-.spend-cat-amount {
-    font-weight: 900;
-    color: var(--text-primary);
-}
-
-.spend-section-label {
-    margin: 0.9rem 0 0.3rem;
-    font-size: var(--type-micro);
-    font-weight: 800;
-    color: var(--text-muted);
-}
-
-.spend-days {
-    display: flex;
-    flex-direction: column;
-}
-
-.spend-day-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.45rem 0;
-    border: none;
-    border-bottom: 1px solid var(--border-soft);
-    background: none;
-    font-size: var(--type-caption);
-    font-weight: 700;
-    color: var(--text-primary);
-    text-align: left;
-}
-
-.spend-day-row:last-child {
-    border-bottom: none;
-}
-
-/* ── 每日感想 ── */
-.day-journal {
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 2px dashed var(--border-soft);
-}
-
-.day-journal.hidden {
-    display: none;
-}
-
-.journal-text {
-    width: 100%;
-    margin-top: 0.6rem;
-    padding: 0.7rem 0.85rem;
-    border-radius: 1rem;
-    border: 1px solid var(--border-soft);
-    background: var(--surface-muted);
-    color: var(--text-primary);
-    line-height: 1.7;
-    resize: vertical;
-    outline: none;
-}
-
-.journal-text:focus {
-    border-color: var(--cute-pink);
-}
-
-.journal-photos {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.4rem;
-    margin-top: 0.6rem;
-}
-
-.journal-photos.hidden {
-    display: none;
-}
-
-.journal-photo {
-    position: relative;
-}
-
-.journal-photo-img {
-    display: block;
-    width: 100%;
-    padding: 0;
-    border: none;
-    background: none;
-}
-
-.journal-photo-img img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 0.75rem;
-}
-
-.journal-photo-del {
-    position: absolute;
-    top: 0.25rem;
-    right: 0.25rem;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 999px;
-    border: none;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    font-size: 0.7rem;
-}
-
-/* ── 想去清單 ── */
-.wishlist-card {
-    border-radius: 1.5rem;
-    border: 1px solid var(--border-default);
-    background: var(--surface);
-    overflow: hidden;
-}
-
-.wishlist-card.hidden {
-    display: none;
-}
-
-.wishlist-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    min-height: var(--touch-min);
-    padding: 0.85rem 1.15rem;
-    border: none;
-    background: none;
-    font-size: var(--type-body);
-    font-weight: 800;
-    color: var(--text-primary);
-}
-
-.wishlist-head i {
-    color: var(--text-muted);
-    transition: transform 0.2s;
-}
-
-.wishlist-head.is-open i {
-    transform: rotate(180deg);
-}
-
-.wishlist-count {
-    margin-left: 0.25rem;
-    padding: 0.05rem 0.45rem;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--cute-pink);
-    font-size: var(--type-micro);
-}
-
-.wishlist-count:empty {
-    display: none;
-}
-
-.wishlist-body {
-    padding: 0 1.15rem 1rem;
-}
-
-.wishlist-body.hidden,
-.wishlist-add.hidden {
-    display: none;
-}
-
-.wishlist-add {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.6rem;
-}
-
-.wish-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0;
-    border-bottom: 1px solid var(--border-soft);
-}
-
-.wish-row:last-child {
-    border-bottom: none;
-}
-
-.wish-row-main {
-    flex: 1;
-    min-width: 0;
-}
-
-.wish-row-loc {
-    margin: 0;
-    font-size: var(--type-caption);
-    font-weight: 800;
-    color: var(--text-primary);
-}
-
-.wish-row-remark {
-    margin: 0.1rem 0 0;
-    font-size: var(--type-micro);
-    color: var(--text-muted);
-}
-
-.wish-schedule-btn {
-    flex-shrink: 0;
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
-    border: none;
-    background: var(--cute-pink);
-    color: #fff;
-    font-size: var(--type-micro);
-    font-weight: 800;
-}
-
-.wish-del-btn {
-    flex-shrink: 0;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 999px;
-    border: none;
-    background: none;
-    color: var(--text-muted);
 }
