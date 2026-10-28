@@ -104,7 +104,8 @@ body {
 
 .tint-lavender,
 #tools-share-card,
-#tools-backup-card {
+#tools-backup-card,
+#tools-cloud-card {
     --card-tint: var(--tint-lavender);
     --card-line: var(--tint-lavender-line);
     --card-ink: var(--tint-lavender-ink);
@@ -131,7 +132,8 @@ body {
 #tools-docs-card,
 #tools-checklist-card,
 #tools-share-card,
-#tools-backup-card {
+#tools-backup-card,
+#tools-cloud-card {
     background: var(--card-tint) !important;
     border: 2px solid var(--card-line) !important;
     border-radius: var(--radius-card) !important;
@@ -143,7 +145,8 @@ body {
 #tools-docs-card h2,
 #tools-checklist-card h2,
 #tools-share-card h2,
-#tools-backup-card h2 {
+#tools-backup-card h2,
+#tools-cloud-card h2 {
     color: var(--card-ink) !important;
 }
 

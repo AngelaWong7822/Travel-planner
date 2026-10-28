@@ -53,6 +53,7 @@
                 <span id="header-subtitle" class="truncate">開始規劃！</span>
             </button>
         </div>
+        <button type="button" id="cloud-chip" class="cloud-chip hidden" onclick="openSettingsSheet()" aria-label="雲端同步">☁️</button>
         <button type="button" id="travel-mode-chip" class="travel-mode-chip hidden" onclick="openSettingsSheet()" aria-label="出門模式開緊，撳入設定關閉">🧳 出門中</button>
         <button type="button" id="header-settings-btn" onclick="openSettingsSheet()" class="header-mode-btn header-icon-btn flex-shrink-0" aria-label="設定" aria-haspopup="dialog" aria-controls="settings-sheet">
             <i class="fas fa-gear" aria-hidden="true"></i>
@@ -259,6 +260,34 @@
     <div id="settings-sheet" class="hidden" role="dialog" aria-label="設定" onclick="if(event.target===this)closeSettingsSheet()">
         <div class="sheet sheet-tall settings-sheet-body" onclick="event.stopPropagation()">
             <p class="type-caption text-muted mb-1">設定</p>
+            <div id="tools-cloud-card" class="hidden bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
+                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">☁️</span>雲端同步</h2>
+                <div id="cloud-signed-out" class="space-y-2">
+                    <p class="type-caption text-gray-500">登入之後，手機同電腦會自動同步行程同相片。冇網絡照用，有網絡先同步。</p>
+                    <div class="flex gap-2">
+                        <label for="cloud-email" class="sr-only">Email</label>
+                        <input type="email" id="cloud-email" class="field-input flex-1 min-w-0" placeholder="you@example.com" autocomplete="email" enterkeyhint="send" onkeydown="if(event.key==='Enter')cloudSendLoginEmail()">
+                        <button type="button" id="cloud-send-btn" onclick="cloudSendLoginEmail()" class="btn-primary-sm px-4 py-2">寄登入連結</button>
+                    </div>
+                    <div id="cloud-code-row" class="hidden space-y-2">
+                        <p id="cloud-sent-to" class="type-micro text-muted"></p>
+                        <div class="flex gap-2">
+                            <label for="cloud-code" class="sr-only">6 位數字驗證碼</label>
+                            <input type="text" id="cloud-code" class="field-input flex-1 min-w-0" inputmode="numeric" maxlength="6" placeholder="或者輸入信入面 6 位數字" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')cloudVerifyCode()">
+                            <button type="button" onclick="cloudVerifyCode()" class="btn-ghost-sm px-4 py-2">確認</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="cloud-signed-in" class="hidden space-y-2">
+                    <p class="type-caption text-secondary">已登入：<strong id="cloud-user-email" class="text-primary"></strong></p>
+                    <p id="cloud-status" class="type-micro text-muted font-bold"></p>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="cloudSync()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-rotate mr-1" aria-hidden="true"></i>立即同步</button>
+                        <button type="button" onclick="cloudSignOut()" class="flex-1 btn-ghost-sm py-3">登出</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="tools-backup-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">💾</span>備份</h2>
                 <p class="type-caption text-gray-500">資料只存喺呢部機嘅瀏覽器。定期匯出備份檔（連相片），換機或者清咗瀏覽器都可以還原。</p>
@@ -464,5 +493,8 @@
     <script src="js/day-map.js"></script>
     <script src="js/stays.js"></script>
     <script src="js/backup.js"></script>
+    <script src="vendor/supabase/supabase.js"></script>
+    <script src="js/cloud-config.js"></script>
+    <script src="js/cloud-sync.js"></script>
 </body>
 </html>

@@ -3093,3 +3093,41 @@ select {
     color: var(--text-primary);
     font-weight: 800;
 }
+
+/* ── header：雲端同步狀態 ── */
+.cloud-chip {
+    flex-shrink: 0;
+    margin-right: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--surface-muted);
+    color: var(--text-secondary);
+    font-size: var(--type-micro);
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.cloud-chip.hidden {
+    display: none;
+}
+
+.cloud-chip.is-syncing {
+    animation: cloud-pulse 1.2s ease-in-out infinite;
+}
+
+.cloud-chip.is-error {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+}
+
+@keyframes cloud-pulse {
+    50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cloud-chip.is-syncing {
+        animation: none;
+    }
+}
+

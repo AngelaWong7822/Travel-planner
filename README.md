@@ -38,6 +38,14 @@
 - 本機通知（Notification API）：出發前一日、出發當日、行程中每日早上
 - 需允許瀏覽器通知；**非**伺服器 Web Push（App 關閉後 iOS 可能無法觸發）
 
+### 雲端同步（右上角齒輪 → ☁️ 雲端同步）
+- Supabase：email 魔法連結登入（亦可輸入信入面 6 位數字，方便 iPhone 主畫面 app）
+- 本機係工作副本，冇網絡照用；有網絡就喺背景同步：改完約 1 秒上傳、開 app／返到 app／重新連線時拉最新
+- 以「成個旅程」做單位，兩部機都改過就最後改嗰個贏；編輯緊嘅旅程唔會喺手底下被換走
+- 相片／PDF 上傳去私人 bucket，另一部機用到先下載
+- header 顯示 ☁️ ✓／☁️ …／☁️ 離線／☁️ ⚠️
+- 未設定 `js/cloud-config.js` 或者未登入：app 照舊只用本機
+
 ### 備份（右上角齒輪 → 備份）
 - **匯出備份**：下載完整 JSON，所有圖片（封面、景點圖、文件，以及舊版留低嘅感想相）以 base64 內嵌，可跨裝置還原
 - **分享備份檔**：支援檔案分享嘅裝置（多數手機）會顯示，可直接存去 iCloud Drive、AirDrop、WhatsApp 等
@@ -76,14 +84,19 @@ JP/
 │   ├── trip-calendar.js      # 行程日期月曆
 │   ├── day-map.js            # 景點地圖、查座標、成日路線
 │   ├── stays.js              # 住宿
-│   └── backup.js             # 備份匯出、匯入（取代／合併）
+│   ├── backup.js             # 備份匯出、匯入（取代／合併）
+│   ├── cloud-config.js       # Supabase URL 同 anon key（公開值）
+│   └── cloud-sync.js         # 雲端同步：登入、旅程、相片
+├── supabase/
+│   └── schema.sql            # 建 table、RLS、相片 bucket（貼去 SQL Editor 執行）
 ├── sw.js
 ├── manifest.webmanifest
 ├── vendor/
 │   ├── tailwind.css          # 預編譯 Tailwind（勿手改）
 │   ├── fonts/                # jf open 粉圓（SIL OFL）、Noto Sans TC（後備）
 │   ├── fontawesome/          # Font Awesome 6.4
-│   └── leaflet/              # Leaflet 1.9.4（地圖）
+│   ├── leaflet/              # Leaflet 1.9.4（地圖）
+│   └── supabase/             # supabase-js 2.45.4（雲端同步）
 ├── icons/
 │   ├── icon.svg
 │   ├── icon-192.png
@@ -92,6 +105,17 @@ JP/
 ├── tailwind.config.js
 └── README.md
 ```
+
+## 設定雲端同步（第一次）
+
+1. 喺 [supabase.com](https://supabase.com) 開一個新 project
+2. SQL Editor → 貼 `supabase/schema.sql` 全部 → Run
+3. Authentication → URL Configuration：Site URL 填 GitHub Pages 網址；Redirect URLs 加 `http://localhost:8090/**` 同 GitHub Pages 網址 `/**`
+4. （可選）Authentication → Email Templates → Magic Link：加一句 `驗證碼：{{ .Token }}`，iPhone 主畫面 app 可以直接輸入數字登入
+5. Project Settings → API：將 Project URL 同 anon public key 填入 `js/cloud-config.js`
+6. 自己登入一次之後，Authentication → Sign In / Providers 關閉「Allow new users to sign up」
+
+> Supabase 免費 project 一個禮拜冇人用會暫停，入網站撳 Restore 就得；暫停期間 app 照用本機資料。
 
 ## 本地執行
 
@@ -129,6 +153,7 @@ npm run build:css
 | 深色模式 | `localStorage`（`TRAVEL_APP_DARK_MODE`） | 開／關 |
 | 出門模式 | `localStorage`（`TRAVEL_APP_TRAVEL_MODE`） | 開／關 |
 | 提醒設定 | `localStorage`（`TRAVEL_APP_REMINDER_SETTINGS`） | 開關、時段 |
+| 雲端同步狀態 | `localStorage`（`TRAVEL_CLOUD_META`） | 每個旅程上次同步版本、已上傳相片 |
 | 上次備份 | `localStorage`（`TRAVEL_APP_LAST_BACKUP`） | 上次匯出時間 |
 | 列表／地圖 | `localStorage`（`TRAVEL_APP_DAY_VIEW`） | 上次揀嘅顯示方式 |
 
@@ -201,4 +226,5 @@ npm run build:css
 - Font Awesome 6、jf open 粉圓、Noto Sans TC（本地）
 - Open-Meteo API（天氣）
 - Leaflet + OpenStreetMap（地圖底圖、Nominatim 查座標）
+- Supabase（雲端同步：Postgres + Auth + Storage）
 - localStorage + IndexedDB

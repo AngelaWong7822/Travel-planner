@@ -818,7 +818,9 @@ async function resolveImageUrl(ref) {
     if (!ref) return '';
     if (!isIdbRef(ref)) return ref;
     if (imageUrlCache.has(ref)) return imageUrlCache.get(ref);
-    const data = await idbGet(idbRefToId(ref));
+    let data = await idbGet(idbRefToId(ref));
+    // 本機冇（例如喺另一部機上傳）就試吓由雲端攞
+    if (!data && typeof cloudFetchImage === 'function') data = await cloudFetchImage(idbRefToId(ref));
     if (!data) return '';
     imageUrlCache.set(ref, data);
     return data;
@@ -1338,7 +1340,20 @@ function dayCardLines(trip, i) {
     return { line1: d.date, line2: d.weekday, sub: '' };
 }
 
+// 旅程 id 用 UUID：雲端同步用嚟對返同一個旅程
+function newTripId() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const defaultTrip = (name = '我的旅行', city = 'Tokyo') => ({
+    id: newTripId(),
     name,
     city,
     localCurrency: 'JPY',
@@ -1452,6 +1467,7 @@ function migrateEvent(ev) {
 
 function migrateTrip(t) {
     const trip = {
+        id: UUID_RE.test(t.id || '') ? t.id : newTripId(),
         name: t.name || '旅程',
         city: getWeatherLocation(t.city || 'Tokyo').id,
         localCurrency: normalizeCurrency(t.localCurrency) || 'JPY',
@@ -1583,6 +1599,7 @@ function save() {
         throw err;
     }
     updateStorageEstimate();
+    if (typeof cloudOnSave === 'function') cloudOnSave();
 }
 
 function debouncedSave() {
@@ -2043,6 +2060,7 @@ async function deleteCurrentTrip() {
         return;
     }
     if (await modalConfirm('刪除旅程', `確定要刪除「${trip.name}」嗎？`, { danger: true, confirmText: '刪除' })) {
+        if (typeof cloudOnTripDeleted === 'function') cloudOnTripDeleted(trip);
         await purgeTripImages(trip);
         data.trips.splice(data.activeIdx, 1);
         data.activeIdx = 0;

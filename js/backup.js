@@ -131,6 +131,12 @@ async function importReplace(incoming) {
 async function importMerge(incoming) {
     await migrateDataUrlsToIdb(incoming);
     flushSave();
+    // 同一個備份合併兩次唔好撞 id（雲端同步靠 id 認旅程）
+    const ids = new Set(data.trips.map((t) => t.id));
+    incoming.trips.forEach((t) => {
+        if (ids.has(t.id)) t.id = newTripId();
+        ids.add(t.id);
+    });
     data.trips.push(...incoming.trips);
     save();
     renderTripHeader();
