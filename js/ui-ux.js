@@ -199,49 +199,63 @@ function expandEventEdit(dayIdx, i) {
     openEventEditSheet(dayIdx, i);
 }
 
+// 常用欄位擺出嚟，其他收入「更多」；摘要會講返入面已經填咗啲咩
 function renderEventEditSheetFields(dayIdx, i, ev) {
     const statusUI = renderStatusBadgeHtml(ev.status, { interactive: true, dayIdx, eventIdx: i });
+    const status = normalizeEventStatus(ev.status);
+    const filled = [
+        status !== 'pending' ? eventStatusMeta(status).label : '',
+        ev.bookingRef ? `訂位 ${ev.bookingRef}` : '',
+        ev.tag || '',
+        ev.cost !== '' && ev.cost != null ? formatAmount(ev.cost) : '',
+        ev.link ? '連結' : '',
+        ev.img ? '圖片' : '',
+    ].filter(Boolean);
+    const path = `trip.itinerary[${dayIdx}].events[${i}]`;
     return `
         <label class="event-edit-sheet-field">
             <span class="type-micro text-muted">景點名稱</span>
-            <input oninput="trip.itinerary[${dayIdx}].events[${i}].loc=this.value;debouncedSave();document.getElementById('event-edit-picker-loc').textContent=this.value||'景點'" value="${escapeAttr(ev.loc)}" placeholder="景點名稱" class="field-input w-full mt-1">
+            <input oninput="${path}.loc=this.value;debouncedSave();document.getElementById('event-edit-picker-loc').textContent=this.value||'景點'" value="${escapeAttr(ev.loc)}" placeholder="景點名稱" class="field-input w-full mt-1">
         </label>
-        <div class="event-edit-sheet-field">
-            <span class="type-micro text-muted">狀態</span>
-            <div class="mt-1">${statusUI}</div>
-        </div>
         <label class="event-edit-sheet-field">
             <span class="type-micro text-muted">時間</span>
-            <input type="time" oninput="trip.itinerary[${dayIdx}].events[${i}].time=this.value;debouncedSave();debouncedRenderDay()" value="${escapeAttr(ev.time)}" class="field-input w-full mt-1">
-        </label>
-        <label class="event-edit-sheet-field">
-            <span class="type-micro text-muted">標籤</span>
-            <input oninput="trip.itinerary[${dayIdx}].events[${i}].tag=this.value;debouncedSave()" value="${escapeAttr(ev.tag)}" placeholder="例：美食" class="field-input w-full mt-1">
+            <input type="time" oninput="${path}.time=this.value;debouncedSave();debouncedRenderDay()" value="${escapeAttr(ev.time)}" class="field-input w-full mt-1">
         </label>
         <label class="event-edit-sheet-field">
             <span class="type-micro text-muted">備註</span>
-            <textarea oninput="trip.itinerary[${dayIdx}].events[${i}].remark=this.value;debouncedSave()" placeholder="備註" class="field-input field-textarea w-full mt-1">${escapeHtml(ev.remark || '')}</textarea>
+            <textarea oninput="${path}.remark=this.value;debouncedSave()" placeholder="備註" class="field-input field-textarea w-full mt-1">${escapeHtml(ev.remark || '')}</textarea>
         </label>
-        <label class="event-edit-sheet-field">
-            <span class="type-micro text-muted">地圖連結</span>
-            <input oninput="trip.itinerary[${dayIdx}].events[${i}].link=this.value;debouncedSave()" value="${escapeAttr(ev.link)}" placeholder="https://…" class="field-input w-full mt-1">
-        </label>
-        <label class="event-edit-sheet-field">
-            <span class="type-micro text-muted">訂位／票號</span>
-            <input oninput="trip.itinerary[${dayIdx}].events[${i}].bookingRef=this.value;debouncedSave()" value="${escapeAttr(ev.bookingRef)}" placeholder="訂位編號" class="field-input w-full mt-1">
-        </label>
-        <label class="event-edit-sheet-field">
-            <span class="type-micro text-muted">預估花費（${escapeAttr(tripLocalCurrency())}）</span>
-            <input type="number" oninput="trip.itinerary[${dayIdx}].events[${i}].cost=this.value;debouncedSave();renderDaySelector();syncTripScheduleChrome()" value="${escapeAttr(ev.cost === '' || ev.cost == null ? '' : String(ev.cost))}" class="field-input w-full mt-1" inputmode="decimal">
-        </label>
-        <div class="event-edit-sheet-field">
-            <span class="type-micro text-muted">圖片</span>
-            <div id="event-edit-img-preview" class="event-edit-img-preview mt-1"></div>
-            <button type="button" onclick="curEventIdx=${i};triggerFile('event-img-input')" class="btn-inline mt-2">上傳／更換</button>
-        </div>
+        <details class="event-edit-more">
+            <summary>更多${filled.length ? `<span class="event-edit-more-hint">· ${escapeHtml(filled.join(' · '))}</span>` : '<span class="event-edit-more-hint">（狀態、訂位、連結、花費、圖片）</span>'}</summary>
+            <div class="event-edit-sheet-field">
+                <span class="type-micro text-muted">狀態</span>
+                <div class="mt-1">${statusUI}</div>
+            </div>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">訂位／票號</span>
+                <input oninput="${path}.bookingRef=this.value;debouncedSave()" value="${escapeAttr(ev.bookingRef)}" placeholder="訂位編號" class="field-input w-full mt-1">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">標籤</span>
+                <input oninput="${path}.tag=this.value;debouncedSave()" value="${escapeAttr(ev.tag)}" placeholder="例：美食" class="field-input w-full mt-1">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">預估花費（${escapeAttr(tripLocalCurrency())}）</span>
+                <input type="number" oninput="${path}.cost=this.value;debouncedSave();renderDaySelector();syncTripScheduleChrome()" value="${escapeAttr(ev.cost === '' || ev.cost == null ? '' : String(ev.cost))}" class="field-input w-full mt-1" inputmode="decimal">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">地圖連結</span>
+                <input oninput="${path}.link=this.value;debouncedSave()" value="${escapeAttr(ev.link)}" placeholder="https://…" class="field-input w-full mt-1">
+            </label>
+            <div class="event-edit-sheet-field">
+                <span class="type-micro text-muted">圖片</span>
+                <div id="event-edit-img-preview" class="event-edit-img-preview mt-1"></div>
+                <button type="button" onclick="curEventIdx=${i};triggerFile('event-img-input')" class="btn-inline mt-2">上傳／更換</button>
+            </div>
+        </details>
         <div class="event-edit-actions mt-2">
             <button type="button" onclick="copyEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-pink">複製</button>
-            <button type="button" onclick="closeEventEditSheet();removeEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-danger">刪除</button>
+            <button type="button" onclick="removeEvent(${dayIdx}, ${i})" class="btn-inline btn-inline-danger">刪除</button>
         </div>`;
 }
 
@@ -309,6 +323,8 @@ function openMapPrimary(loc, link) {
 
 function renderEventStatusUI(dayIdx, eventIdx, ev) {
     if (isEdit && !travelMode) return '';
+    // 「待辦」係預設，唔使掛喺每個景點；出門模式要撳嚟剔完成，先照顯示
+    if (!travelMode && normalizeEventStatus(ev.status) === 'pending') return '';
     return renderStatusBadgeHtml(ev.status, {
         interactive: travelMode,
         dayIdx,

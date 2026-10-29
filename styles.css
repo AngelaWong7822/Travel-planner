@@ -2265,6 +2265,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #trip-date-picker,
 #settings-sheet,
 #stay-sheet,
+#quick-add-sheet,
 #tools-advanced-menu {
     position: fixed;
     inset: 0;
@@ -2281,6 +2282,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #trip-date-picker.hidden,
 #settings-sheet.hidden,
 #stay-sheet.hidden,
+#quick-add-sheet.hidden,
 #tools-advanced-menu.hidden,
 #print-preview.hidden { display: none; }
 
@@ -2349,6 +2351,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #trip-date-picker .sheet,
 #settings-sheet .sheet,
 #stay-sheet .sheet,
+#quick-add-sheet .sheet,
 #tools-advanced-menu .sheet {
     width: 100%;
     max-width: 24rem;
@@ -3002,5 +3005,111 @@ select {
 
 .sortable-drag {
     cursor: grabbing;
+}
+
+/* ── 易用性：撳景點就改、復原、更多、設定日期 ── */
+.timeline-event-tappable {
+    cursor: pointer;
+    border-radius: 1rem;
+    transition: background 0.15s;
+}
+
+.timeline-event-tappable:active {
+    background: var(--accent-soft);
+}
+
+.undo-toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+    z-index: 260;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--surface-inverse);
+    color: var(--text-on-inverse);
+    font-size: var(--type-caption);
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(20px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.undo-toast.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.undo-toast-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.undo-toast button {
+    flex-shrink: 0;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--cute-pink);
+    color: #fff;
+    font-weight: 800;
+}
+
+.event-edit-more {
+    margin-top: 0.25rem;
+    border-top: 1.5px dashed var(--border-soft);
+    padding-top: 0.6rem;
+}
+
+.event-edit-more > summary {
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--type-caption);
+    font-weight: 800;
+    color: var(--cute-pink);
+}
+
+.event-edit-more > summary::-webkit-details-marker {
+    display: none;
+}
+
+.event-edit-more > summary::after {
+    content: ' ▾';
+}
+
+.event-edit-more[open] > summary::after {
+    content: ' ▴';
+}
+
+.event-edit-more-hint {
+    margin-left: 0.35rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.day-date-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: 2.25rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1.5px dashed var(--cute-pink);
+    background: var(--surface);
+    color: var(--cute-pink);
+    font-size: var(--type-micro);
+    font-weight: 800;
+}
+
+.day-date-btn.hidden {
+    display: none;
 }
 

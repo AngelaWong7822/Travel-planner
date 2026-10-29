@@ -318,12 +318,6 @@ function showToast(msg) {
     showToast._t = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
-let saveToastTimer = null;
-function notifySaved() {
-    clearTimeout(saveToastTimer);
-    saveToastTimer = setTimeout(() => showToast('已儲存'), 350);
-}
-
 async function copyBookingRef(text) {
     try {
         await navigator.clipboard.writeText(text);
@@ -550,6 +544,7 @@ function syncTripScheduleChrome() {
     if (bar) bar.classList.toggle('hidden', !showBar);
     // 有出發日期就用月曆改日數，唔使「新增一天」
     document.getElementById('add-day-btn')?.classList.toggle('hidden', !!trip.startDate);
+    document.getElementById('day-date-btn')?.classList.toggle('hidden', !!trip.startDate || travelMode);
 }
 
 function closeSearchPanelIfOpen() {
@@ -1594,7 +1589,6 @@ function debouncedSave() {
         saveTimer = null;
         try {
             save();
-            notifySaved();
         } catch (_) {}
     }, SAVE_DEBOUNCE_MS);
 }
@@ -2079,20 +2073,46 @@ async function toggleEdit() {
     renderTripHeader();
 }
 
-async function quickAddEvent() {
+// 加景點：彈細表填名同時間，唔使入編輯模式
+function suggestNextEventTime(day) {
+    const times = day.events.map((e) => parseEventTime(e.time)).filter((t) => t != null);
+    if (!times.length) return '10:00';
+    const t = Math.min(Math.max(...times) + 60, 23 * 60);
+    return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
+
+function quickAddEvent() {
     if (travelMode) return;
-    if (!isEdit) {
-        isEdit = true;
-        closeSearchPanelIfOpen();
-        syncEditChrome();
-        renderCityUI();
-        renderDaySelector();
-        renderDocs();
-        renderCheck();
-        updateFabVisibility();
-        await renderDay(curDayIdx);
+    const day = trip.itinerary[curDayIdx];
+    if (!day) return;
+    document.getElementById('quick-add-title').textContent = `加景點 · ${formatBannerDayLabel(trip, day, curDayIdx)}`;
+    document.getElementById('qa-loc').value = '';
+    document.getElementById('qa-time').value = suggestNextEventTime(day);
+    document.getElementById('quick-add-sheet').classList.remove('hidden');
+    setTimeout(() => document.getElementById('qa-loc')?.focus(), 60);
+}
+
+function closeQuickAdd() {
+    document.getElementById('quick-add-sheet')?.classList.add('hidden');
+}
+
+async function submitQuickAdd() {
+    const input = document.getElementById('qa-loc');
+    const loc = (input?.value || '').trim();
+    if (!loc) {
+        input?.focus();
+        if (typeof cutePop === 'function') cutePop(input);
+        return;
     }
-    addEvent();
+    const day = trip.itinerary[curDayIdx];
+    day.events.push(migrateEvent({ loc, time: document.getElementById('qa-time').value || '' }));
+    const newIdx = day.events.length - 1;
+    save();
+    closeQuickAdd();
+    renderDaySelector();
+    await renderDay(curDayIdx);
+    if (typeof cutePop === 'function') cutePop(`.timeline-event[data-event-idx="${newIdx}"]`);
+    showToast(`已加「${loc}」✨`);
 }
 
 function updateFabVisibility() {
@@ -2243,7 +2263,6 @@ function updateWeatherIcon(code) {
 function setEventStatus(dayIdx, eventIdx, status) {
     trip.itinerary[dayIdx].events[eventIdx].status = normalizeEventStatus(status);
     save();
-    notifySaved();
     if (typeof closeEventStatusPicker === 'function') closeEventStatusPicker();
     if (typeof refreshEventEditSheetIfOpen === 'function') refreshEventEditSheetIfOpen(dayIdx, eventIdx);
     renderDay(dayIdx);
@@ -2251,7 +2270,11 @@ function setEventStatus(dayIdx, eventIdx, status) {
 }
 window.setEventStatus = setEventStatus;
 
+// 兩次 renderDay 撞埋時（例如改狀態再即刻關編輯表），只畫最新嗰次，唔會重複出景點
+let renderDaySeq = 0;
+
 async function renderDay(idx) {
+    const seq = ++renderDaySeq;
     const editPicker = document.getElementById('event-edit-picker');
     if (
         editPicker &&
@@ -2265,6 +2288,7 @@ async function renderDay(idx) {
     curDayIdx = idx;
     const day = trip.itinerary[idx];
     const dayImgUrl = await resolveImageUrl(day.img);
+    if (seq !== renderDaySeq) return;
     document.getElementById('day-img').src = dayImgUrl || day.img;
     document.getElementById('day-img').alt = day.title || '';
     document.getElementById('day-label').innerText = formatBannerDayLabel(trip, day, idx);
@@ -2301,9 +2325,18 @@ async function renderDay(idx) {
     }
 
     const timeline = document.getElementById('timeline');
-    timeline.innerHTML = '<div class="timeline-line"></div>';
     const filtered = day.events.map((ev, i) => ({ ev, i })).filter(({ ev }) => eventMatchesSearch(ev));
     const entries = isEdit && !travelMode ? filtered : sortEventEntries(filtered);
+    // 先等晒圖片，再一次過清空同畫，中途有新嘅 renderDay 就放棄呢次
+    const eventRows = await Promise.all(
+        entries.map(async ({ ev, i }) => ({
+            ev,
+            i,
+            imgUrl: ev.img ? await resolveImageUrl(ev.img) : '',
+        })),
+    );
+    if (seq !== renderDaySeq) return;
+    timeline.innerHTML = '<div class="timeline-line"></div>';
     if (entries.length === 0 && day.events.length > 0) {
         timeline.innerHTML += `<p class="pl-14 type-body text-muted">沒有符合「${escapeHtml(searchQuery)}」的景點</p>`;
     } else if (entries.length === 0 && day.events.length === 0) {
@@ -2318,13 +2351,6 @@ async function renderDay(idx) {
                 ${cta}
             </div>`;
     }
-    const eventRows = await Promise.all(
-        entries.map(async ({ ev, i }) => ({
-            ev,
-            i,
-            imgUrl: ev.img ? await resolveImageUrl(ev.img) : '',
-        })),
-    );
     eventRows.forEach(({ ev, i, imgUrl }) => {
         const statusUI = renderEventStatusUI(idx, i, ev);
         const metaBits = [];
@@ -2374,8 +2400,11 @@ async function renderDay(idx) {
             return;
         }
 
+        const tapToEdit = !travelMode
+            ? ` timeline-event-tappable" role="button" tabindex="0" aria-label="編輯「${escapeAttr(ev.loc || '景點')}」" onclick="openEventEditSheet(${idx}, ${i})" onkeydown="if(event.key==='Enter')openEventEditSheet(${idx}, ${i})`
+            : '';
         timeline.innerHTML += `
-            <div class="relative pl-14 animate-fade-in timeline-event" data-event-idx="${i}">
+            <div class="relative pl-14 animate-fade-in timeline-event${tapToEdit}" data-event-idx="${i}">
                 <div class="timeline-dot"></div>
                 <div class="timeline-event-head">
                     <span class="timeline-event-time">${escapeHtml(ev.time || '--:--')}</span>
@@ -2639,18 +2668,62 @@ async function removeDoc(i) {
     await renderDocs();
 }
 
+// 刪景點唔再問「確定？」：即刻刪，底部有 5 秒「復原」
+let undoTimer = null;
+let undoAction = null;
+
+function showUndoToast(text, onUndo, onExpire) {
+    finishUndo();
+    const el = document.getElementById('undo-toast');
+    if (!el) return;
+    el.querySelector('.undo-toast-text').textContent = text;
+    undoAction = { onUndo, onExpire };
+    el.classList.add('show');
+    undoTimer = setTimeout(finishUndo, 5000);
+}
+
+function finishUndo() {
+    clearTimeout(undoTimer);
+    undoTimer = null;
+    const action = undoAction;
+    undoAction = null;
+    document.getElementById('undo-toast')?.classList.remove('show');
+    action?.onExpire?.();
+}
+
+function undoLast() {
+    clearTimeout(undoTimer);
+    undoTimer = null;
+    const action = undoAction;
+    undoAction = null;
+    document.getElementById('undo-toast')?.classList.remove('show');
+    action?.onUndo?.();
+}
+
 async function removeEvent(dayIdx, eventIdx) {
-    const ev = trip.itinerary[dayIdx].events[eventIdx];
-    const name = ev.loc || '此景點';
-    if (!(await modalConfirm('刪除景點', `確定刪除「${name}」？`, { danger: true, confirmText: '刪除' }))) return;
-    if (isIdbRef(ev.img)) await deleteImageRef(ev.img);
-    trip.itinerary[dayIdx].events.splice(eventIdx, 1);
+    const day = trip.itinerary[dayIdx];
+    const ev = day?.events[eventIdx];
+    if (!ev) return;
+    day.events.splice(eventIdx, 1);
     save();
     if (typeof closeEventEditSheet === 'function') closeEventEditSheet({ silent: true });
-    await renderDay(dayIdx);
+    await renderDay(curDayIdx);
     renderDaySelector();
     renderSearchResults();
     syncTripScheduleChrome();
+    showUndoToast(
+        `已刪除「${ev.loc || '景點'}」`,
+        async () => {
+            day.events.splice(Math.min(eventIdx, day.events.length), 0, ev);
+            save();
+            await renderDay(curDayIdx);
+            renderDaySelector();
+        },
+        // 過咗 5 秒先真係刪圖片，咁復原時圖片仲喺度
+        () => {
+            if (isIdbRef(ev.img)) deleteImageRef(ev.img);
+        },
+    );
 }
 
 function triggerFile(id) {
@@ -2799,24 +2872,6 @@ async function delDay(i) {
     await renderDay(nextIdx);
     fetchWeather();
     renderDaySelector();
-}
-
-function addEvent() {
-    const newIdx = trip.itinerary[curDayIdx].events.length;
-    trip.itinerary[curDayIdx].events.push({
-        loc: '新景點／地點',
-        time: '12:00',
-        remark: '',
-        status: 'pending',
-        img: '',
-        link: '',
-        bookingRef: '',
-        cost: '',
-        tag: '',
-    });
-    if (typeof expandEventEdit === 'function') expandEventEdit(curDayIdx, newIdx);
-    save();
-    renderDay(curDayIdx);
 }
 
 async function addCheck() {

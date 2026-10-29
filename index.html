@@ -78,7 +78,7 @@
 
             <div id="itinerary-sticky-bar" class="itinerary-sticky-bar">
                 <div id="edit-controls" class="itinerary-edit-actions hidden">
-                    <button type="button" onclick="addEvent()" class="itinerary-edit-action itinerary-edit-action-primary">+ 新增景點</button>
+                    <button type="button" onclick="quickAddEvent()" class="itinerary-edit-action itinerary-edit-action-primary">+ 新增景點</button>
                     <button type="button" id="add-day-btn" onclick="addDay()" class="itinerary-edit-action">+ 新增一天</button>
                 </div>
                 <div class="itinerary-sticky-tools">
@@ -113,6 +113,7 @@
                                 <span id="day-banner-weather-mood" class="day-banner-weather-mood"></span>
                             </div>
                             <span class="day-banner-tools">
+                                <button type="button" id="day-date-btn" class="day-date-btn hidden" onclick="openTripDatePicker()"><span aria-hidden="true">📅</span> 設定日期</button>
                                 <button type="button" id="day-edit-btn" class="day-icon-btn" onclick="toggleEdit()" aria-label="編輯行程"><i class="fas fa-pen" aria-hidden="true"></i></button>
                             </span>
                         </div>
@@ -344,6 +345,27 @@
             </div>
             <button type="button" class="type-caption text-muted mt-1 w-full min-h-[2.75rem]" onclick="closeSettingsSheet()">完成</button>
         </div>
+    </div>
+
+    <div id="quick-add-sheet" class="hidden" role="dialog" aria-labelledby="quick-add-title" onclick="if(event.target===this)closeQuickAdd()">
+        <form class="sheet" onclick="event.stopPropagation()" onsubmit="event.preventDefault(); submitQuickAdd();">
+            <p id="quick-add-title" class="type-body font-heavy text-primary mb-3">加景點</p>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">景點名</span>
+                <input type="text" id="qa-loc" class="field-input w-full mt-1" placeholder="例：淺草寺" autocomplete="off" enterkeyhint="done">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">時間</span>
+                <input type="time" id="qa-time" class="field-input w-full mt-1">
+            </label>
+            <button type="submit" class="btn-primary-sm w-full py-3 mt-3">加 ✨</button>
+            <button type="button" class="type-caption text-muted mt-2 w-full min-h-[2.75rem]" onclick="closeQuickAdd()">取消</button>
+        </form>
+    </div>
+
+    <div id="undo-toast" class="undo-toast" role="status" aria-live="polite">
+        <span class="undo-toast-text"></span>
+        <button type="button" onclick="undoLast()">復原</button>
     </div>
 
     <div id="stay-sheet" class="hidden" role="dialog" aria-labelledby="stay-sheet-title" onclick="if(event.target===this)closeStaySheet()">

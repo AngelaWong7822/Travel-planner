@@ -128,9 +128,8 @@ async function applyTokyoTemplateFromOnboarding() {
 
 async function onboardingAddFirstEvent() {
     finishOnboarding();
-    if (!isEdit) toggleEdit();
-    addEvent();
-    setTab('itinerary');
+    await setTab('itinerary');
+    quickAddEvent();
 }
 
 function finishOnboardingFromStep3() {
