@@ -124,33 +124,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.2rem;
-    min-width: 4.75rem;
+    gap: 0.05rem;
+    min-width: 4rem;
     max-width: 5.5rem;
-    height: 4rem;
+    height: 4.25rem;
     padding: 0.45rem 0.55rem;
     border-radius: 1rem;
     background: var(--card-bg);
     border: 1px solid var(--border-soft);
     transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
-}
-
-.day-chip-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.3rem;
-    width: 100%;
-    min-width: 0;
-}
-
-.day-chip-top .type-day-sub {
-    opacity: 0.55;
-    flex-shrink: 0;
-}
-
-.day-chip-top-edit {
-    gap: 0.2rem;
 }
 
 .day-card-field-date,
@@ -183,7 +165,7 @@
 }
 
 .day-card.active .day-card-cost { color: #fff; opacity: 0.92; }
-.day-card.active .type-day-sub { opacity: 0.75; color: #fff; }
+.day-card.active .day-chip-wd { opacity: 0.8; color: #fff; }
 .day-card.active .day-card-field-date,
 .day-card.active .day-card-field-wd {
     border-bottom-color: rgba(255, 255, 255, 0.45);
@@ -754,65 +736,12 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     }
 }
 
-.itinerary-edit-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-}
-
-.itinerary-edit-actions.hidden,
-.itinerary-sticky-bar .itinerary-edit-actions.hidden {
-    display: none;
-}
-
-.itinerary-sticky-bar {
-    position: sticky;
-    top: var(--header-offset);
-    z-index: 40;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.35rem;
-    padding: 0.45rem max(0.35rem, env(safe-area-inset-right)) 0.45rem max(0.35rem, env(safe-area-inset-left));
-    margin: 0 -0.15rem;
-    border-radius: var(--radius-btn);
-    background: var(--glass-bg);
-    border: 1px solid var(--border-default);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    overflow: visible;
-}
-
-.itinerary-sticky-bar-edit {
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-
-.itinerary-sticky-bar .itinerary-edit-actions {
-    flex: 1;
-    min-width: 0;
-}
-
-.itinerary-sticky-tools {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    flex-shrink: 0;
-    margin-left: auto;
-}
-
 .timeline-event-edit-actions {
     display: inline-flex;
     align-items: center;
     gap: 0.2rem;
     flex-shrink: 0;
     margin-left: auto;
-}
-
-.itinerary-sticky-center {
-    flex: 1;
-    min-width: 0;
-    text-align: center;
 }
 
 .day-nav-label {
@@ -840,23 +769,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     display: none;
 }
 
-@media (max-width: 480px) {
-    .itinerary-sticky-bar-edit {
-        flex-wrap: nowrap;
-        align-items: center;
-    }
-
-    .itinerary-sticky-bar-edit .itinerary-edit-actions {
-        flex: 1 1 auto;
-        min-width: 0;
-    }
-
-    .itinerary-sticky-bar-edit .itinerary-sticky-tools {
-        flex-shrink: 0;
-    }
-
-    
-}
 
 #main-day-card {
     border: 1px solid var(--border-default) !important;
@@ -871,10 +783,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 .day-banner {
     height: 8rem;
     overflow: hidden;
-}
-
-.day-banner-hidden {
-    display: none !important;
 }
 
 .day-banner-date-only {
@@ -2240,11 +2148,6 @@ select {
     }
 }
 
-/* ── 瀏覽模式：sticky bar 冇嘢要顯示（編輯掣喺日卡、搜尋喺旅程選單） ── */
-.itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) {
-    display: none;
-}
-
 /* ── 住宿 ── */
 .day-stay {
     display: flex;
@@ -2743,57 +2646,6 @@ select {
 }
 
 /* ── 編輯模式：一行工具列（日期粒、＋一天、✓ 完成） ── */
-.edit-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-height: 2.4rem;
-    padding: 0.35rem 0.85rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--border-soft);
-    background: var(--surface);
-    color: var(--text-primary);
-    font-size: var(--type-caption);
-    font-weight: 800;
-    white-space: nowrap;
-}
-
-.edit-chip i {
-    color: var(--cute-pink);
-}
-
-.edit-chip-ghost {
-    border-style: dashed;
-    color: var(--cute-pink);
-}
-
-.edit-chip.hidden {
-    display: none;
-}
-
-.itinerary-sticky-bar-edit .itinerary-edit-actions {
-    gap: 0.4rem;
-}
-
-.edit-done-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 2.4rem;
-    padding: 0.35rem 1rem;
-    border-radius: 999px;
-    border: none;
-    background: var(--cute-pink);
-    color: #fff;
-    font-size: var(--type-caption);
-    font-weight: 800;
-    box-shadow: 0 4px 12px rgba(255, 133, 161, 0.35);
-}
-
-.edit-done-btn.hidden {
-    display: none;
-}
-
 .day-heading-edit:not(.hidden) {
     display: flex;
     align-items: center;
@@ -2898,7 +2750,7 @@ select {
 /* ── 日子粒：景點數點點 ── */
 .day-chip-dots {
     display: block;
-    margin-top: 0.1rem;
+    height: 0.75rem;
     font-size: 0.7rem;
     line-height: 1;
     letter-spacing: 0.08em;
@@ -3048,5 +2900,49 @@ select {
     font-size: var(--type-caption);
     font-weight: 700;
     color: var(--cute-pink);
+}
+
+/* ── 日子粒：日期／星期／點點三行 ── */
+.day-chip-date {
+    font-size: var(--type-caption);
+    font-weight: 900;
+    line-height: 1.15;
+}
+
+.day-chip-wd {
+    min-height: 1em;
+    font-size: var(--type-micro);
+    font-weight: 700;
+    line-height: 1.1;
+    opacity: 0.55;
+}
+
+/* 編輯模式日子列尾：📅／＋ 一天 */
+.day-tool-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 0.15rem;
+    min-width: 3.4rem;
+    height: 4.25rem;
+    border-radius: 1rem;
+    border: 1.5px dashed var(--cute-pink);
+    background: var(--accent-soft);
+    color: var(--cute-pink);
+    font-size: var(--type-micro);
+    font-weight: 800;
+}
+
+.day-tool-chip:active {
+    transform: scale(0.95);
+}
+
+/* 日卡右上角：✏️ ↔ ✓ */
+.day-icon-btn.is-done {
+    background: var(--cute-pink);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255, 133, 161, 0.35);
 }
 

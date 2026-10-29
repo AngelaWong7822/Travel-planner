@@ -521,9 +521,8 @@ async function copyCurrentDay() {
 }
 
 function syncTripScheduleChrome() {
-    // 有出發日期就用月曆改日數，唔使「新增一天」
-    document.getElementById('add-day-btn')?.classList.toggle('hidden', !!trip.startDate);
-    document.getElementById('day-date-btn')?.classList.toggle('hidden', !!trip.startDate || travelMode);
+    // 未設日期：瀏覽時日卡有「📅 設定日期」；編輯時用日子列尾嘅 📅
+    document.getElementById('day-date-btn')?.classList.toggle('hidden', !!trip.startDate || travelMode || isEdit);
 }
 
 function sumEventCosts(events) {
@@ -998,20 +997,7 @@ async function setItineraryDayCount(count) {
     return true;
 }
 
-// 編輯模式頂部嘅日期粒：「3/8–3/18 · 11 日」，未設就「設定日期」
 function renderTripScheduleUI() {
-    const chipText = document.getElementById('trip-date-chip-text');
-    if (chipText) {
-        if (trip.startDate) {
-            const md = (d) => `${d.getMonth() + 1}/${d.getDate()}`;
-            const n = trip.itinerary.length;
-            const start = addDaysFromIso(trip.startDate, 0);
-            const end = addDaysFromIso(trip.startDate, Math.max(0, n - 1));
-            chipText.textContent = `${md(start)}${n > 1 ? `–${md(end)}` : ''} · ${n} 日`;
-        } else {
-            chipText.textContent = '設定日期';
-        }
-    }
     syncTripScheduleChrome();
 }
 
@@ -1542,12 +1528,7 @@ function debouncedRenderDay() {
 function syncItineraryChromeOffset() {
     const onItinerary = !document.getElementById('content-itinerary')?.classList.contains('hidden');
     if (!onItinerary) return;
-    const stickyBar = document.getElementById('itinerary-sticky-bar');
-    const chromeH = stickyBar?.offsetHeight || 0;
-    document.documentElement.style.setProperty(
-        '--itinerary-chrome-offset',
-        `calc(var(--header-offset) + ${chromeH}px + 0.35rem)`,
-    );
+    document.documentElement.style.setProperty('--itinerary-chrome-offset', 'calc(var(--header-offset) + 0.35rem)');
 }
 
 function isToolsTabActive() {
@@ -1562,28 +1543,22 @@ function syncEditChrome() {
     const templates = document.getElementById('check-templates');
     const onItinerary = !document.getElementById('content-itinerary').classList.contains('hidden');
     const toolsEdit = canEditToolsContent();
-    // 瀏覽時用日卡右上角 ✏️ 入編輯；編輯中 sticky bar 嘅 ✓ 完成
-    const editBtn = document.getElementById('itinerary-edit-btn');
-    const showDoneBtn = onItinerary && isEdit && !travelMode;
-    editBtn?.classList.toggle('hidden', !showDoneBtn);
-    document.getElementById('day-edit-btn')?.classList.toggle('hidden', travelMode);
-
-    document.querySelectorAll('#edit-controls').forEach((el) => {
-        el.classList.toggle('hidden', !isEdit || travelMode);
-    });
+    // 日卡右上角同一粒掣：✏️ 入編輯，✓ 完成
+    const editBtn = document.getElementById('day-edit-btn');
+    if (editBtn) {
+        const editing = isEdit && !travelMode;
+        editBtn.classList.toggle('hidden', travelMode);
+        editBtn.classList.toggle('is-done', editing);
+        editBtn.setAttribute('aria-label', editing ? '完成編輯' : '編輯行程');
+        editBtn.innerHTML = `<i class="fas fa-${editing ? 'check' : 'pen'}" aria-hidden="true"></i>`;
+    }
     document.getElementById('btn-upload-doc')?.classList.toggle('hidden', !toolsEdit);
     if (templates) templates.classList.toggle('hidden', !toolsEdit || trip.checklist.length > 1);
     document.getElementById('check-add-form')?.classList.toggle('hidden', !toolsEdit);
     const planningEdit = isEdit && !travelMode;
-    const banner = document.getElementById('day-banner');
-    if (banner) {
-        banner.classList.toggle('day-banner-hidden', planningEdit);
-        banner.classList.toggle('day-banner-date-only', !planningEdit);
-        banner.classList.remove('day-banner-photo-mode', 'day-banner-compact');
-    }
+    document.getElementById('day-banner')?.classList.remove('day-banner-photo-mode', 'day-banner-compact');
     document.getElementById('main-day-card')?.classList.toggle('main-day-card-edit', planningEdit);
     document.getElementById('main-day-card')?.classList.toggle('main-day-card-browse', !planningEdit);
-    document.getElementById('itinerary-sticky-bar')?.classList.toggle('itinerary-sticky-bar-edit', planningEdit);
     const daySel = document.getElementById('day-selector');
     // 冇咗「今日」頁，出門模式都要揀得日子
     const showPills = onItinerary && trip.itinerary.length > 0;
@@ -1726,11 +1701,6 @@ async function init() {
             },
             { passive: true },
         );
-        // 編輯／瀏覽切換時 sticky bar 高度會變（瀏覽模式係 0）
-        const stickyBar = document.getElementById('itinerary-sticky-bar');
-        if (stickyBar && 'ResizeObserver' in window) {
-            new ResizeObserver(() => syncItineraryChromeOffset()).observe(stickyBar);
-        }
     }
     syncItineraryChromeOffset();
 }
@@ -1786,16 +1756,21 @@ function renderDayChipBody(d, i, lines) {
     const costHtml = cost > 0
         ? `<span class="day-card-cost">${escapeHtml(formatPillAmount(cost))}</span>`
         : '';
-    const sub = lines.line2 && lines.line2 !== '-'
-        ? `<span class="type-day-sub">${escapeHtml(lines.line2)}</span>`
-        : '';
-    const dateRow = `<span class="day-chip-top">
-                <span class="type-day-label">${escapeHtml(lines.line1)}</span>
-                ${sub}
-               </span>`;
+    const wd = lines.line2 && lines.line2 !== '-' ? lines.line2 : '';
     const n = d.events.length;
-    const dots = n ? `<span class="day-chip-dots" aria-label="${n} 個景點">${'•'.repeat(Math.min(n, 5))}</span>` : '';
-    return `${dateRow}${dots}${costHtml}`;
+    const dots = `<span class="day-chip-dots"${n ? ` aria-label="${n} 個景點"` : ''}>${'•'.repeat(Math.min(n, 5))}</span>`;
+    return `<span class="day-chip-date">${escapeHtml(lines.line1)}</span>
+            <span class="day-chip-wd">${escapeHtml(wd)}</span>
+            ${dots}${costHtml}`;
+}
+
+// 編輯模式日子列尾：📅 改日期（未設日期仲有 ＋ 一天）
+function dayToolChipsHtml() {
+    if (!isEdit || travelMode) return '';
+    const add = trip.startDate
+        ? ''
+        : `<button type="button" class="day-tool-chip" onclick="addDay()" aria-label="新增一天"><i class="fas fa-plus" aria-hidden="true"></i><span>一天</span></button>`;
+    return `${add}<button type="button" class="day-tool-chip" onclick="openTripDatePicker()" aria-label="改旅程日期"><span aria-hidden="true">📅</span><span>${trip.startDate ? `${trip.itinerary.length} 日` : '日期'}</span></button>`;
 }
 
 function renderDaySelector() {
@@ -1811,7 +1786,7 @@ function renderDaySelector() {
             </button>
         </div>`;
         })
-        .join('');
+        .join('') + dayToolChipsHtml();
     if (typeof syncDaySortable === 'function') syncDaySortable();
     requestAnimationFrame(() => syncItineraryChromeOffset());
 }
