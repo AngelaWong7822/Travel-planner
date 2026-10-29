@@ -52,6 +52,16 @@ function weatherLocationOptionsHtml(selectedId) {
     return html;
 }
 
+// 目的地國家 → 當地貨幣（揀目的地時自動轉）
+const COUNTRY_CURRENCY = {
+    jp: 'JPY', tw: 'TWD', hk: 'HKD', kr: 'KRW', th: 'THB', sg: 'SGD', my: 'MYR',
+    cn: 'CNY', it: 'EUR', fr: 'EUR', gb: 'GBP', us: 'USD', au: 'AUD',
+};
+
+function weatherLocationCurrency(cityId) {
+    return COUNTRY_CURRENCY[getWeatherLocation(cityId).cc] || null;
+}
+
 // 國旗小圖（Twemoji SVG，Windows 都顯示到）；搵唔到就 null
 function weatherLocationFlagUrl(cityId) {
     const cc = getWeatherLocation(cityId).cc;

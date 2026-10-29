@@ -182,6 +182,8 @@ function saveTripSettings() {
     closeTripSettings();
     if (city && city !== trip.city) onWeatherLocationSelect(city);
     else save();
+    const cur = weatherLocationCurrency(trip.city);
+    if (cur && cur !== tripLocalCurrency()) setTripLocalCurrency(cur);
     renderTripHeader();
 }
 
