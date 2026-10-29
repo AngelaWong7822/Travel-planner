@@ -113,7 +113,25 @@ function openStaySheet(stayIdx = null, startIdx = curDayIdx) {
         .map((d, i) => `<option value="${i}"${i === start ? ' selected' : ''}>${escapeHtml(weatherDaySelectLabel(i))}</option>`)
         .join('');
     document.getElementById('stay-delete-btn').classList.toggle('hidden', !s);
+    updateStayCheckout();
     document.getElementById('stay-sheet').classList.remove('hidden');
+}
+
+const STAY_MAX_NIGHTS = 60;
+
+function stepStayNights(delta) {
+    const input = document.getElementById('stay-nights');
+    const n = Math.min(STAY_MAX_NIGHTS, Math.max(1, (parseInt(input.value, 10) || 1) + delta));
+    input.value = String(n);
+    updateStayCheckout();
+}
+
+// 「→ 3/9 週二 退房」
+function updateStayCheckout() {
+    const start = parseInt(document.getElementById('stay-start').value, 10) || 0;
+    const n = parseInt(document.getElementById('stay-nights').value, 10) || 1;
+    document.getElementById('stay-nights-text').textContent = `${n} 晚`;
+    document.getElementById('stay-checkout').textContent = `→ ${stayDayLabel(start + n)} 退房`;
 }
 
 function closeStaySheet() {

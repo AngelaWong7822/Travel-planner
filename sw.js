@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'travel-shell-v130';
-const ASSET_CACHE = 'travel-assets-v130';
+const SHELL_CACHE = 'travel-shell-v131';
+const ASSET_CACHE = 'travel-assets-v131';
 
 /** Critical path - small files only; must finish before SW takes over. */
 const CORE_SHELL_URLS = [

@@ -2995,3 +2995,58 @@ select {
     font-weight: 700;
 }
 
+/* ── 住宿視窗：入住日 + −／＋ 晚數 + 退房日 ── */
+.stay-dates {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.stay-start-select {
+    flex: 1;
+    min-width: 0;
+}
+
+.stay-nights-stepper {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.15rem;
+    padding: 0.2rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+}
+
+.stay-nights-stepper button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--surface);
+    color: var(--cute-pink);
+    font-size: 0.7rem;
+}
+
+.stay-nights-stepper button:active {
+    transform: scale(0.9);
+}
+
+#stay-nights-text {
+    min-width: 2.6rem;
+    text-align: center;
+    font-size: var(--type-caption);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.stay-checkout {
+    margin-top: 0.35rem;
+    font-size: var(--type-caption);
+    font-weight: 700;
+    color: var(--cute-pink);
+}
+

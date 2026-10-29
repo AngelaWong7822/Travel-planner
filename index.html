@@ -329,30 +329,35 @@
             <p id="stay-sheet-title" class="type-body font-heavy text-primary mb-3">加住宿</p>
             <label class="event-edit-sheet-field">
                 <span class="type-micro text-muted">名稱</span>
-                <input type="text" id="stay-name" class="field-input w-full mt-1" placeholder="例：上野 APA 酒店">
+                <input type="text" id="stay-name" class="field-input w-full mt-1" placeholder="酒店名稱">
             </label>
-            <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">地址</span>
-                <input type="text" id="stay-address" class="field-input w-full mt-1" placeholder="例：東京都台東区上野 1-2-3">
-            </label>
-            <div class="flex gap-2">
-                <label class="event-edit-sheet-field flex-1">
-                    <span class="type-micro text-muted">入住</span>
-                    <select id="stay-start" class="field-input w-full mt-1"></select>
-                </label>
-                <label class="event-edit-sheet-field w-24">
-                    <span class="type-micro text-muted">晚數</span>
-                    <input type="number" id="stay-nights" min="1" class="field-input w-full mt-1" inputmode="numeric">
-                </label>
+            <div class="event-edit-sheet-field">
+                <span class="type-micro text-muted">入住</span>
+                <div class="stay-dates">
+                    <select id="stay-start" class="field-input stay-start-select" onchange="updateStayCheckout()" aria-label="入住日"></select>
+                    <div class="stay-nights-stepper">
+                        <button type="button" onclick="stepStayNights(-1)" aria-label="少一晚"><i class="fas fa-minus" aria-hidden="true"></i></button>
+                        <span id="stay-nights-text">1 晚</span>
+                        <button type="button" onclick="stepStayNights(1)" aria-label="多一晚"><i class="fas fa-plus" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+                <input type="hidden" id="stay-nights" value="1">
+                <p id="stay-checkout" class="stay-checkout"></p>
             </div>
             <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">訂位編號</span>
-                <input type="text" id="stay-ref" class="field-input w-full mt-1" placeholder="訂位編號">
+                <span class="type-micro text-muted">地址</span>
+                <input type="text" id="stay-address" class="field-input w-full mt-1" placeholder="地址">
             </label>
-            <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">房費 <span id="stay-cost-currency">JPY</span></span>
-                <input type="number" id="stay-cost" class="field-input w-full mt-1" inputmode="decimal">
-            </label>
+            <div class="flex gap-2">
+                <label class="event-edit-sheet-field flex-1 min-w-0">
+                    <span class="type-micro text-muted">訂位編號</span>
+                    <input type="text" id="stay-ref" class="field-input w-full mt-1">
+                </label>
+                <label class="event-edit-sheet-field flex-1 min-w-0">
+                    <span class="type-micro text-muted">房費 <span id="stay-cost-currency">JPY</span></span>
+                    <input type="number" id="stay-cost" class="field-input w-full mt-1" inputmode="decimal">
+                </label>
+            </div>
             <div class="flex gap-2 mt-3">
                 <button type="button" id="stay-delete-btn" onclick="deleteStayFromSheet()" class="btn-inline btn-inline-danger hidden">刪除</button>
                 <button type="button" onclick="saveStayFromSheet()" class="btn-primary-sm flex-1 py-3">儲存</button>
