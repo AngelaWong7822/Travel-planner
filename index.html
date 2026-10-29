@@ -57,6 +57,10 @@
             <p class="header-menu-title"><span aria-hidden="true">✈️</span> 我的旅程</p>
             <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
             <button type="button" class="trip-search-btn" onclick="closeHeaderMenu(); openTripSearch();"><i class="fas fa-search" aria-hidden="true"></i>搜尋全旅程景點、備註、訂位編號</button>
+            <div class="trip-menu-actions">
+                <button type="button" onclick="closeHeaderMenu(); shareCurrentTrip();"><i class="fas fa-share-alt" aria-hidden="true"></i>分享</button>
+                <button type="button" onclick="closeHeaderMenu(); printCurrentTrip();"><i class="fas fa-print" aria-hidden="true"></i>列印／PDF</button>
+            </div>
             <button type="button" class="trip-add-btn" onclick="closeHeaderMenu(); createNewTrip();"><i class="fas fa-plus" aria-hidden="true"></i>新旅程</button>
             <label class="header-menu-dest">
                 <span class="header-menu-dest-label"><span aria-hidden="true">📍</span> 目的地</span>
@@ -138,49 +142,40 @@
 
         <!-- Tools Tab -->
         <section id="content-tools" class="hidden space-y-4 pb-10 tab-panel">
-            <p id="tools-group-travel" class="tools-group-heading">出門必備</p>
-
             <div class="tools-travel-stack">
-            <div id="tools-rate-card" class="tools-widget-card bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
+            <div id="tools-rate-card" class="tools-widget-card bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-2">
                 <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">💱</span>匯率</h2>
-                <div id="rate-widget" class="w-full bg-surface-muted p-3 rounded-2xl border border-default">
-                    <div class="rate-currency-row">
-                        <label class="rate-currency-field">
-                            <span class="type-micro text-muted font-bold">目的地</span>
-                            <select id="local-currency-select" onchange="onLocalCurrencySelect(this.value)" class="rate-currency-select" aria-label="目的地貨幣"></select>
-                        </label>
-                        <button type="button" onclick="swapCurrencies()" class="rate-swap-btn" aria-label="對調貨幣"><i class="fas fa-right-left" aria-hidden="true"></i></button>
-                        <label class="rate-currency-field">
-                            <span class="type-micro text-muted font-bold">本國</span>
-                            <select id="home-currency-select" onchange="onHomeCurrencySelect(this.value)" class="rate-currency-select" aria-label="本國貨幣"></select>
-                        </label>
-                    </div>
-                    <div class="flex items-center gap-1 mt-2">
-                        <input type="number" id="curr-local" oninput="convert('local')" placeholder="JPY" class="w-full bg-surface rounded-xl p-2 type-caption font-bold outline-none min-h-[2.25rem] border border-default" inputmode="decimal">
-                        <i class="fas fa-arrows-left-right type-micro text-muted shrink-0" aria-hidden="true"></i>
-                        <input type="number" id="curr-home" oninput="convert('home')" placeholder="HKD" class="w-full bg-surface rounded-xl p-2 type-caption font-bold outline-none min-h-[2.25rem] border border-default" inputmode="decimal">
-                    </div>
-                    <div class="rate-line-row mt-1">
-                        <p id="rate-line" class="type-micro text-secondary font-bold flex-1 text-center min-w-0 truncate">1 JPY = -- HKD</p>
-                        <span id="rate-loading" aria-hidden="true">●</span>
-                        <button type="button" onclick="refreshRate(true)" class="rate-refresh-btn" aria-label="刷新匯率"><i class="fas fa-rotate-right text-secondary type-micro" aria-hidden="true"></i></button>
-                    </div>
-                    <p id="rate-detail" class="hidden type-micro text-muted text-center truncate mt-0.5"></p>
+                <div class="rate-calc">
+                    <label class="rate-calc-field">
+                        <select id="local-currency-select" onchange="onLocalCurrencySelect(this.value)" class="rate-calc-cur" aria-label="目的地貨幣"></select>
+                        <input type="number" id="curr-local" oninput="convert('local')" placeholder="0" class="rate-calc-input" inputmode="decimal" aria-label="目的地金額">
+                    </label>
+                    <button type="button" onclick="swapCurrencies()" class="rate-calc-swap" aria-label="對調貨幣"><i class="fas fa-right-left" aria-hidden="true"></i></button>
+                    <label class="rate-calc-field">
+                        <select id="home-currency-select" onchange="onHomeCurrencySelect(this.value)" class="rate-calc-cur" aria-label="本國貨幣"></select>
+                        <input type="number" id="curr-home" oninput="convert('home')" placeholder="0" class="rate-calc-input" inputmode="decimal" aria-label="本國金額">
+                    </label>
+                </div>
+                <div class="rate-line-row">
+                    <p id="rate-line" class="type-micro text-muted font-bold min-w-0 truncate">1 JPY = -- HKD</p>
+                    <span id="rate-detail" class="hidden type-micro text-muted truncate"></span>
+                    <span id="rate-loading" aria-hidden="true">●</span>
+                    <button type="button" onclick="refreshRate(true)" class="rate-refresh-btn" aria-label="刷新匯率"><i class="fas fa-rotate-right text-secondary type-micro" aria-hidden="true"></i></button>
                 </div>
             </div>
             </div>
 
             <div id="tools-stays-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🏨</span>住宿</h2>
+                <div class="tools-card-head flex justify-between items-center mb-3">
+                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🏨</span>住宿<span class="card-empty-tag">未有</span></h2>
                     <button type="button" onclick="openStaySheet()" class="type-micro font-heavy text-pink-500 px-3 py-1.5 bg-pink-50 rounded-xl">＋ 新增</button>
                 </div>
                 <div id="stays-list" class="space-y-2"></div>
             </div>
 
             <div id="tools-docs-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">📄</span>重要文件</h2>
+                <div class="tools-card-head flex justify-between items-center mb-4">
+                    <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">📄</span>重要文件<span class="card-empty-tag">未有</span></h2>
                     <button type="button" id="btn-upload-doc" onclick="triggerFile('lib-file-input')" class="hidden btn-primary-sm chip-label px-3 py-2">上傳</button>
                 </div>
                 <div id="doc-list" class="grid grid-cols-2 gap-4"></div>
@@ -189,7 +184,6 @@
             <div id="tools-checklist-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🧳</span>行李清單</h2>
-                    <button type="button" id="btn-add-check" onclick="addCheck()" class="hidden type-micro font-heavy text-pink-500 px-3 py-1.5 bg-pink-50 rounded-xl">+ 新增</button>
                 </div>
                 <div id="check-progress-wrap" class="hidden mb-4">
                     <div class="flex justify-between type-micro font-heavy text-secondary mb-1">
@@ -203,17 +197,12 @@
                     <button type="button" onclick="applyCheckTemplate('business')" class="chip-label px-3 py-1.5 bg-pink-50 text-pink-600 rounded-xl">出差</button>
                 </div>
                 <div id="check-list" class="space-y-3"></div>
+                <form id="check-add-form" class="check-add-form hidden" onsubmit="event.preventDefault(); addCheckInline();">
+                    <label for="check-add-input" class="sr-only">加一項</label>
+                    <input type="text" id="check-add-input" class="check-add-input" placeholder="＋ 加一項…" autocomplete="off" enterkeyhint="done">
+                </form>
             </div>
 
-            <p id="tools-group-backup" class="tools-group-heading mt-2">分享</p>
-
-            <div id="tools-share-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">💌</span>分享與列印</h2>
-                <div class="flex gap-2">
-                    <button type="button" onclick="shareCurrentTrip()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-share-alt mr-1"></i>分享全程</button>
-                    <button type="button" onclick="printCurrentTrip()" class="flex-1 btn-ghost-sm py-3"><i class="fas fa-print mr-1"></i>列印／PDF</button>
-                </div>
-            </div>
         </section>
 
     </main>

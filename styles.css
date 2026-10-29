@@ -1435,49 +1435,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     animation: pulse 1s infinite;
 }
 
-.rate-currency-row {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-}
-
-.rate-currency-field {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
-.rate-currency-select {
-    width: 100%;
-    min-height: 2.25rem;
-    border-radius: var(--radius-input);
-    border: 1px solid var(--border-soft);
-    background: var(--surface);
-    color: var(--text-primary);
-    font-size: var(--type-micro);
-    font-weight: 800;
-    padding: 0.35rem 0.4rem;
-    outline: none;
-}
-
-.rate-swap-btn {
-    align-self: center;
-    min-width: 2.25rem;
-    min-height: 2.25rem;
-    margin-bottom: 0;
-    border-radius: var(--radius-btn);
-    border: 1px solid var(--border-soft);
-    background: var(--surface);
-    color: var(--text-secondary);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
 .rate-line-row {
     display: flex;
     align-items: center;
@@ -1594,21 +1551,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     color: var(--text-secondary);
     line-height: 1.45;
     max-width: 14rem;
-}
-
-.timeline-empty-state-cta {
-    margin-top: 0.35rem;
-    width: 100%;
-    max-width: 16rem;
-    min-height: var(--touch-min);
-    padding: 0.75rem 1.25rem;
-    border-radius: var(--radius-btn);
-    background: var(--cute-pink);
-    color: #fff;
-    font-size: var(--type-body);
-    font-weight: 800;
-    border: none;
-    box-shadow: 0 4px 14px rgba(255, 133, 161, 0.28);
 }
 
 .empty-state-cta {
@@ -3021,5 +2963,153 @@ select {
     padding: 0 0.35rem;
     color: var(--text-muted);
     font-size: 0.7rem;
+}
+
+/* ── 匯率：一行計數機 ── */
+.rate-calc {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.rate-calc-field {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    border-radius: 1rem;
+    border: 1.5px solid var(--card-line, var(--border-soft));
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.rate-calc-cur {
+    flex-shrink: 0;
+    max-width: 4.6rem;
+    padding: 0.5rem 0.1rem 0.5rem 0.6rem;
+    border: none;
+    background: transparent;
+    color: var(--card-ink, var(--cute-pink));
+    font-weight: 800;
+    outline: none;
+}
+
+.rate-calc-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.6rem 0.5rem 0.2rem;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-weight: 800;
+    text-align: right;
+    outline: none;
+}
+
+.rate-calc-swap {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+#tools-rate-card .rate-line-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+#tools-rate-card #rate-detail::before {
+    content: '· ';
+}
+
+/* ── 冇內容嘅卡縮成一行 ── */
+.card-empty-tag {
+    display: none;
+    margin-left: 0.4rem;
+    font-size: var(--type-micro);
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.is-empty .card-empty-tag {
+    display: inline;
+}
+
+.is-empty .tools-card-head {
+    margin-bottom: 0 !important;
+}
+
+.is-empty #doc-list,
+.is-empty #stays-list {
+    display: none;
+}
+
+/* ── 日子粒：景點數點點 ── */
+.day-chip-dots {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    color: var(--cute-pink);
+}
+
+.day-chip.active .day-chip-dots {
+    color: #fff;
+}
+
+/* ── 行李清單：底部打字加 ── */
+.check-add-form {
+    margin-top: 0.75rem;
+}
+
+.check-add-form.hidden {
+    display: none;
+}
+
+.check-add-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 1.1rem;
+    border: 1.5px dashed var(--card-line, var(--border-soft));
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--text-primary);
+    font-weight: 700;
+    outline: none;
+}
+
+.check-add-input:focus {
+    border-style: solid;
+    border-color: var(--cute-pink);
+}
+
+/* ── 旅程選單：分享／列印 ── */
+.trip-menu-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.trip-menu-actions button {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.4rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-soft);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: var(--type-caption);
+    font-weight: 800;
+}
+
+.trip-menu-actions i {
+    color: var(--cute-pink);
 }
 

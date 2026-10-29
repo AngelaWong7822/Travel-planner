@@ -60,9 +60,9 @@ function tripHomeCurrency() {
     return normalizeCurrency(trip.homeCurrency) || 'HKD';
 }
 
+// 匯率計數機嘅貨幣掣好窄，只顯示代碼（符號喺匯率嗰行有）
 function currencyOptionLabel(code) {
-    const sym = CURRENCY_SYMBOLS[code];
-    return sym ? `${code} (${sym})` : code;
+    return code;
 }
 
 function ensureCurrencySelectOptions(el) {
@@ -1691,10 +1691,9 @@ function syncEditChrome() {
     document.querySelectorAll('#edit-controls').forEach((el) => {
         el.classList.toggle('hidden', !isEdit || travelMode);
     });
-    document.querySelectorAll('#btn-upload-doc, #btn-add-check').forEach((el) => {
-        el.classList.toggle('hidden', !toolsEdit);
-    });
-    if (templates) templates.classList.toggle('hidden', !toolsEdit);
+    document.getElementById('btn-upload-doc')?.classList.toggle('hidden', !toolsEdit);
+    if (templates) templates.classList.toggle('hidden', !toolsEdit || trip.checklist.length > 1);
+    document.getElementById('check-add-form')?.classList.toggle('hidden', !toolsEdit);
     const planningEdit = isEdit && !travelMode;
     const banner = document.getElementById('day-banner');
     if (banner) {
@@ -1917,7 +1916,9 @@ function renderDayChipBody(d, i, lines) {
                 <span class="type-day-label">${escapeHtml(lines.line1)}</span>
                 ${sub}
                </span>`;
-    return `${dateRow}${costHtml}`;
+    const n = d.events.length;
+    const dots = n ? `<span class="day-chip-dots" aria-label="${n} 個景點">${'•'.repeat(Math.min(n, 5))}</span>` : '';
+    return `${dateRow}${dots}${costHtml}`;
 }
 
 function renderDaySelector() {
@@ -1948,10 +1949,6 @@ function renderCurrencyUI() {
     const home = tripHomeCurrency();
     renderCurrencySelect(document.getElementById('local-currency-select'), local);
     renderCurrencySelect(document.getElementById('home-currency-select'), home);
-    const currLocal = document.getElementById('curr-local');
-    const currHome = document.getElementById('curr-home');
-    if (currLocal) currLocal.placeholder = local;
-    if (currHome) currHome.placeholder = home;
     applyRateToInputs();
     renderDaySelector();
 }
@@ -2301,15 +2298,11 @@ async function renderDay(idx) {
     if (entries.length === 0 && day.events.length > 0) {
         timeline.innerHTML += `<p class="pl-14 type-body text-muted">沒有符合「${escapeHtml(searchQuery)}」的景點</p>`;
     } else if (entries.length === 0 && day.events.length === 0) {
-        const cta = !travelMode
-            ? `<button type="button" class="timeline-empty-state-cta" onclick="quickAddEvent()"><i class="fas fa-plus mr-1"></i>加第一個景點</button>`
-            : '';
         timeline.innerHTML += `
             <div class="timeline-empty-state">
                 <i class="fas fa-map-marker-alt timeline-empty-state-icon" aria-hidden="true"></i>
                 <p class="timeline-empty-state-title">呢日仲係白紙一張 (｡•ᴗ•｡)</p>
                 ${travelMode ? '<p class="timeline-empty-state-hint">今日可以休息下 ☕</p>' : ''}
-                ${cta}
             </div>`;
     }
     eventRows.forEach(({ ev, i, imgUrl }) => {
@@ -2574,6 +2567,9 @@ function renderCheck() {
         </div>`,
                   )
                   .join('');
+    const canEdit = canEditToolsContent();
+    document.getElementById('check-templates')?.classList.toggle('hidden', !canEdit || trip.checklist.length > 1);
+    document.getElementById('check-add-form')?.classList.toggle('hidden', !canEdit);
     if (typeof syncCheckSortable === 'function') syncCheckSortable();
 }
 
@@ -2606,7 +2602,8 @@ async function renderDocs() {
             ${canEditToolsContent() ? `<button type="button" onclick="removeDoc(${i})" class="absolute -top-1 -right-1 bg-red-400 text-white w-6 h-6 rounded-full type-micro border-2 border-white shadow" aria-label="刪除文件"><i class="fas fa-times"></i></button>` : ''}
         </div>`;
             })
-            .join('') || '<p class="col-span-2 text-center type-caption text-muted py-10 font-heavy">未有文件 (・ω・)</p>';
+            .join('');
+    document.getElementById('tools-docs-card')?.classList.toggle('is-empty', !trip.docs.length);
 }
 
 async function openDoc(ref) {
@@ -2834,13 +2831,16 @@ async function delDay(i) {
     renderDaySelector();
 }
 
-async function addCheck() {
-    const t = await modalPrompt('新增行李項目', '', '清單項目');
-    if (t && t.trim()) {
-        trip.checklist.push({ task: t.trim(), done: false });
-        save();
-        renderCheck();
-    }
+function addCheckInline() {
+    const input = document.getElementById('check-add-input');
+    const task = (input?.value || '').trim();
+    if (!task) return;
+    trip.checklist.push({ task, done: false });
+    save();
+    renderCheck();
+    input.value = '';
+    input.focus();
+    if (typeof cutePop === 'function') cutePop('#check-list > :last-child');
 }
 
 async function setTab(t) {

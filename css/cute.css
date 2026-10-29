@@ -103,7 +103,6 @@ body {
 }
 
 .tint-lavender,
-#tools-share-card,
 #tools-backup-card,
 #tools-cloud-card {
     --card-tint: var(--tint-lavender);
@@ -131,7 +130,6 @@ body {
 #tools-stays-card,
 #tools-docs-card,
 #tools-checklist-card,
-#tools-share-card,
 #tools-backup-card,
 #tools-cloud-card {
     background: var(--card-tint) !important;
@@ -144,21 +142,18 @@ body {
 #tools-stays-card h2,
 #tools-docs-card h2,
 #tools-checklist-card h2,
-#tools-share-card h2,
 #tools-backup-card h2,
 #tools-cloud-card h2 {
     color: var(--card-ink) !important;
 }
 
 /* 卡片入面嘅白底小格，喺有色卡入面改用半透明白 */
-#tools-rate-card #rate-widget,
 #tools-stays-card .stay-card,
 #tools-checklist-card .bg-surface-muted {
     background: rgba(255, 255, 255, 0.65) !important;
     border-color: var(--card-line) !important;
 }
 
-[data-theme='dark'] #tools-rate-card #rate-widget,
 [data-theme='dark'] #tools-stays-card .stay-card,
 [data-theme='dark'] #tools-checklist-card .bg-surface-muted {
     background: rgba(0, 0, 0, 0.18) !important;

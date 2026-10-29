@@ -65,8 +65,9 @@ function renderStaysList() {
     const el = document.getElementById('stays-list');
     if (!el) return;
     const list = tripStays();
+    document.getElementById('tools-stays-card')?.classList.toggle('is-empty', !list.length);
     if (!list.length) {
-        el.innerHTML = '<p class="type-caption text-muted">未有住宿 (￣▽￣)ゞ</p>';
+        el.innerHTML = '';
         return;
     }
     el.innerHTML = list
