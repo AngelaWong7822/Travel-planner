@@ -262,22 +262,14 @@
             <p class="type-caption text-muted mb-1">設定</p>
             <div id="tools-cloud-card" class="hidden bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">☁️</span>雲端同步</h2>
-                <div id="cloud-signed-out" class="space-y-2">
-                    <p class="type-caption text-gray-500">登入之後，手機同電腦會自動同步行程同相片。冇網絡照用，有網絡先同步。</p>
-                    <div class="flex gap-2">
-                        <label for="cloud-email" class="sr-only">Email</label>
-                        <input type="email" id="cloud-email" class="field-input flex-1 min-w-0" placeholder="you@example.com" autocomplete="email" enterkeyhint="send" onkeydown="if(event.key==='Enter')cloudSendLoginEmail()">
-                        <button type="button" id="cloud-send-btn" onclick="cloudSendLoginEmail()" class="btn-primary-sm px-4 py-2">寄登入連結</button>
-                    </div>
-                    <div id="cloud-code-row" class="hidden space-y-2">
-                        <p id="cloud-sent-to" class="type-micro text-muted"></p>
-                        <div class="flex gap-2">
-                            <label for="cloud-code" class="sr-only">6 位數字驗證碼</label>
-                            <input type="text" id="cloud-code" class="field-input flex-1 min-w-0" inputmode="numeric" maxlength="6" placeholder="或者輸入信入面 6 位數字" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')cloudVerifyCode()">
-                            <button type="button" onclick="cloudVerifyCode()" class="btn-ghost-sm px-4 py-2">確認</button>
-                        </div>
-                    </div>
-                </div>
+                <form id="cloud-signed-out" class="space-y-2" onsubmit="event.preventDefault(); cloudSignIn();">
+                    <p class="type-caption text-gray-500">用 PM tracker 個帳號登入，手機同電腦就會自動同步行程同相片。冇網絡照用，有網絡先同步。</p>
+                    <label for="cloud-email" class="sr-only">Email</label>
+                    <input type="email" id="cloud-email" class="field-input w-full" placeholder="Email" autocomplete="username" required>
+                    <label for="cloud-password" class="sr-only">密碼</label>
+                    <input type="password" id="cloud-password" class="field-input w-full" placeholder="密碼" autocomplete="current-password" required>
+                    <button type="submit" id="cloud-signin-btn" class="w-full btn-primary-sm py-3"><i class="fas fa-right-to-bracket mr-1" aria-hidden="true"></i>登入</button>
+                </form>
                 <div id="cloud-signed-in" class="hidden space-y-2">
                     <p class="type-caption text-secondary">已登入：<strong id="cloud-user-email" class="text-primary"></strong></p>
                     <p id="cloud-status" class="type-micro text-muted font-bold"></p>

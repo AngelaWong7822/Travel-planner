@@ -39,7 +39,7 @@
 - 需允許瀏覽器通知；**非**伺服器 Web Push（App 關閉後 iOS 可能無法觸發）
 
 ### 雲端同步（右上角齒輪 → ☁️ 雲端同步）
-- Supabase：email 魔法連結登入（亦可輸入信入面 6 位數字，方便 iPhone 主畫面 app）
+- Supabase（同 PM tracker 共用「PM Management」project 同帳號）：email + 密碼登入
 - 本機係工作副本，冇網絡照用；有網絡就喺背景同步：改完約 1 秒上傳、開 app／返到 app／重新連線時拉最新
 - 以「成個旅程」做單位，兩部機都改過就最後改嗰個贏；編輯緊嘅旅程唔會喺手底下被換走
 - 相片／PDF 上傳去私人 bucket，另一部機用到先下載
@@ -85,7 +85,7 @@ JP/
 │   ├── day-map.js            # 景點地圖、查座標、成日路線
 │   ├── stays.js              # 住宿
 │   ├── backup.js             # 備份匯出、匯入（取代／合併）
-│   ├── cloud-config.js       # Supabase URL 同 anon key（公開值）
+│   ├── cloud-config.js       # Supabase URL 同 publishable key（公開值）
 │   └── cloud-sync.js         # 雲端同步：登入、旅程、相片
 ├── supabase/
 │   └── schema.sql            # 建 table、RLS、相片 bucket（貼去 SQL Editor 執行）
@@ -96,7 +96,7 @@ JP/
 │   ├── fonts/                # jf open 粉圓（SIL OFL）、Noto Sans TC（後備）
 │   ├── fontawesome/          # Font Awesome 6.4
 │   ├── leaflet/              # Leaflet 1.9.4（地圖）
-│   └── supabase/             # supabase-js 2.45.4（雲端同步）
+│   └── supabase/             # supabase-js 2.117.0（雲端同步）
 ├── icons/
 │   ├── icon.svg
 │   ├── icon-192.png
@@ -108,14 +108,12 @@ JP/
 
 ## 設定雲端同步（第一次）
 
-1. 喺 [supabase.com](https://supabase.com) 開一個新 project
-2. SQL Editor → 貼 `supabase/schema.sql` 全部 → Run
-3. Authentication → URL Configuration：Site URL 填 GitHub Pages 網址；Redirect URLs 加 `http://localhost:8090/**` 同 GitHub Pages 網址 `/**`
-4. （可選）Authentication → Email Templates → Magic Link：加一句 `驗證碼：{{ .Token }}`，iPhone 主畫面 app 可以直接輸入數字登入
-5. Project Settings → API：將 Project URL 同 anon public key 填入 `js/cloud-config.js`
-6. 自己登入一次之後，Authentication → Sign In / Providers 關閉「Allow new users to sign up」
+雲端同步用 PM tracker 嘅「PM Management」Supabase project（免費方案最多 2 個 project），table 同 bucket 都有 `travel` 前綴，唔會郁到 PM 嘅資料。
 
-> Supabase 免費 project 一個禮拜冇人用會暫停，入網站撳 Restore 就得；暫停期間 app 照用本機資料。
+1. Supabase → PM Management → SQL Editor → 貼 `supabase/schema.sql` 全部 → Run（建 `travel_trips`、RLS、`travel-images` bucket）
+2. 打開 app → 右上角齒輪 → ☁️ 雲端同步 → 用 PM tracker 個 email 同密碼登入
+
+`js/cloud-config.js` 已經填咗 project URL 同 publishable key（公開值，資料靠 RLS 保護）。PM tracker 每日有排程用到呢個 project，所以唔會因為冇人用而自動暫停。
 
 ## 本地執行
 

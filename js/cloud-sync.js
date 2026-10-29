@@ -1,12 +1,13 @@
-/* 雲端同步 — Supabase：email 登入、旅程上傳／下載、相片；依賴 app.js 全域狀態與工具函式
+/* 雲端同步 — Supabase：email + 密碼登入（同 PM tracker 共用帳號）、旅程上傳／下載、相片；依賴 app.js 全域狀態與工具函式
  *
  * 本機（localStorage + IndexedDB）係主要工作副本，冇網絡照用；登入咗就喺背景同 Supabase 對數：
- * - 每個旅程一行（trips.data = 成個旅程 JSON），以「成個旅程」做單位，最後改嗰個贏
- * - 相片用返本機 idb id 做檔名，上傳去 trip-images/<user id>/<id>；另一部機要用時先下載
+ * - 每個旅程一行（travel_trips.data = 成個旅程 JSON），以「成個旅程」做單位，最後改嗰個贏
+ * - 相片用返本機 idb id 做檔名，上傳去 travel-images/<user id>/<id>；另一部機要用時先下載
  */
 
 const CLOUD_META_KEY = 'TRAVEL_CLOUD_META';
-const CLOUD_BUCKET = 'trip-images';
+const CLOUD_TABLE = 'travel_trips';
+const CLOUD_BUCKET = 'travel-images';
 const CLOUD_PUSH_DELAY_MS = 1200;
 const CLOUD_POLL_MS = 5 * 60 * 1000;
 
@@ -18,7 +19,6 @@ let cloudSyncing = false;
 let cloudSyncAgain = false;
 let cloudPushTimer = null;
 let cloudApplying = false;
-let cloudLoginEmail = '';
 const cloudImageMisses = new Set();
 
 /* ── meta：記住每個旅程上次同步嘅版本 ── */
@@ -176,7 +176,7 @@ async function cloudSync() {
 }
 
 async function cloudPullAndMerge() {
-    const { data: rows, error } = await cloud.from('trips').select('id, data, updated_at, deleted');
+    const { data: rows, error } = await cloud.from(CLOUD_TABLE).select('id, data, updated_at, deleted');
     if (error) throw error;
     const activeId = trip.id;
     let changed = false;
@@ -243,7 +243,7 @@ async function cloudPushTrips() {
         updated_at: new Date(cloudMeta.local[t.id]?.changedAt || Date.now()).toISOString(),
         deleted: false,
     }));
-    const { data: saved, error } = await cloud.from('trips').upsert(rows).select('id, updated_at');
+    const { data: saved, error } = await cloud.from(CLOUD_TABLE).upsert(rows).select('id, updated_at');
     if (error) throw error;
     for (const r of saved) {
         const t = dirty.find((x) => x.id === r.id);
@@ -255,7 +255,7 @@ async function cloudPushDeletes() {
     if (!cloudMeta.deletes.length) return;
     const ids = [...cloudMeta.deletes];
     const { data: saved, error } = await cloud
-        .from('trips')
+        .from(CLOUD_TABLE)
         .update({ deleted: true, updated_at: new Date().toISOString() })
         .in('id', ids)
         .select('id, updated_at');
@@ -318,40 +318,26 @@ function cloudApplyToApp() {
 
 /* ── 登入／登出 ── */
 
-async function cloudSendLoginEmail() {
-    const input = document.getElementById('cloud-email');
-    const email = (input?.value || '').trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        await modalAlert('Email 唔啱', '請輸入正確嘅 email');
+async function cloudSignIn() {
+    const email = (document.getElementById('cloud-email')?.value || '').trim();
+    const passwordEl = document.getElementById('cloud-password');
+    const password = passwordEl?.value || '';
+    if (!email || !password) {
+        await modalAlert('未填齊', '請輸入 email 同密碼');
         return;
     }
-    const btn = document.getElementById('cloud-send-btn');
+    const btn = document.getElementById('cloud-signin-btn');
     if (btn) btn.disabled = true;
     try {
-        const { error } = await cloud.auth.signInWithOtp({
-            email,
-            options: { emailRedirectTo: location.origin + location.pathname },
-        });
+        const { error } = await cloud.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        cloudLoginEmail = email;
-        renderCloudUi();
-        showToast('登入連結已寄出 💌');
+        if (passwordEl) passwordEl.value = '';
+        showToast('登入咗，同步緊 ☁️');
     } catch (err) {
-        await modalAlert('寄唔到', err?.message || '請稍後再試');
+        await modalAlert('登入唔到', err?.message === 'Invalid login credentials' ? 'Email 或者密碼唔啱' : err?.message || '請稍後再試');
     } finally {
         if (btn) btn.disabled = false;
     }
-}
-
-// iPhone 加咗去主畫面嘅 app 撳信入面連結會開 Safari，所以亦支援輸入信入面嘅 6 位數字
-async function cloudVerifyCode() {
-    const code = (document.getElementById('cloud-code')?.value || '').trim();
-    if (!/^\d{6}$/.test(code)) {
-        await modalAlert('驗證碼唔啱', '請輸入信入面嘅 6 位數字');
-        return;
-    }
-    const { error } = await cloud.auth.verifyOtp({ email: cloudLoginEmail, token: code, type: 'email' });
-    if (error) await modalAlert('登入唔到', error.message || '驗證碼可能過咗期，再寄一次啦');
 }
 
 async function cloudSignOut() {
@@ -373,7 +359,6 @@ function cloudSetUser(user) {
         setCloudState('signedout');
         return;
     }
-    cloudLoginEmail = '';
     if (switched) cloudSync();
     else renderCloudUi();
 }
@@ -384,7 +369,7 @@ async function cloudInit() {
         return;
     }
     cloud = window.supabase.createClient(CLOUD_CONFIG.url, CLOUD_CONFIG.anonKey, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' },
+        auth: { persistSession: true, autoRefreshToken: true },
     });
     cloud.auth.onAuthStateChange((_event, session) => cloudSetUser(session?.user || null));
     const { data: sessionData } = await cloud.auth.getSession();
@@ -438,9 +423,6 @@ function renderCloudUi() {
     const inn = document.getElementById('cloud-signed-in');
     out?.classList.toggle('hidden', !!cloudUser);
     inn?.classList.toggle('hidden', !cloudUser);
-    document.getElementById('cloud-code-row')?.classList.toggle('hidden', !cloudLoginEmail);
-    const sentTo = document.getElementById('cloud-sent-to');
-    if (sentTo) sentTo.textContent = cloudLoginEmail ? `已寄去 ${cloudLoginEmail}，去信箱撳連結就登入。` : '';
     if (cloudUser) {
         document.getElementById('cloud-user-email').textContent = cloudUser.email || '';
         const status = document.getElementById('cloud-status');
