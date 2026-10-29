@@ -508,22 +508,6 @@ function cloneDayData(day) {
     };
 }
 
-function moveEvent(dayIdx, eventIdx, delta) {
-    if (!isEdit || travelMode) return;
-    moveEventTo(dayIdx, eventIdx, eventIdx + delta);
-}
-
-function moveEventTo(dayIdx, fromIdx, toIdx) {
-    if (!isEdit || travelMode) return;
-    const events = trip.itinerary[dayIdx].events;
-    if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0 || fromIdx >= events.length || toIdx >= events.length) return;
-    const [item] = events.splice(fromIdx, 1);
-    events.splice(toIdx, 0, item);
-    save();
-    showToast('已調整順序');
-    renderDay(dayIdx);
-}
-
 async function copyEvent(dayIdx, eventIdx) {
     if (travelMode) return;
     const ev = trip.itinerary[dayIdx].events[eventIdx];
@@ -1995,6 +1979,7 @@ function renderDaySelector() {
         </div>`;
         })
         .join('');
+    if (typeof syncDaySortable === 'function') syncDaySortable();
     requestAnimationFrame(() => syncItineraryChromeOffset());
 }
 
@@ -2357,14 +2342,10 @@ async function renderDay(idx) {
             ev.img && !isEdit
                 ? `<button type="button" class="timeline-event-thumb" onclick='event.stopPropagation();showBig(${JSON.stringify(ev.img)})'><img src="${escapeAttr(imgUrl || ev.img)}" alt=""></button>`
                 : '';
+        // 編輯模式：拖 ≡ 改次序（js/drag-sort.js）
         const reorderBtns =
             isEdit && !travelMode
-                ? `<div class="event-reorder shrink-0" onclick="event.stopPropagation()">
-                    <div class="event-reorder-moves">
-                        <button type="button" onclick="moveEvent(${idx}, ${i}, -1)" ${i === 0 ? 'disabled' : ''} aria-label="上移景點"><i class="fas fa-chevron-up"></i></button>
-                        <button type="button" onclick="moveEvent(${idx}, ${i}, 1)" ${i === day.events.length - 1 ? 'disabled' : ''} aria-label="下移景點"><i class="fas fa-chevron-down"></i></button>
-                    </div>
-                   </div>`
+                ? `<span class="event-drag-handle shrink-0" aria-label="拖動改次序" title="拖動改次序"><i class="fas fa-grip-vertical" aria-hidden="true"></i></span>`
                 : '';
 
         if (isEdit && !travelMode) {
@@ -2419,6 +2400,7 @@ async function renderDay(idx) {
         lastRenderedDayIdx = idx;
     }
     if (typeof renderDayStay === 'function') renderDayStay(idx);
+    if (typeof syncEventSortable === 'function') syncEventSortable();
     syncWeatherToDay(idx);
     saveUiPrefs();
 }
@@ -2596,12 +2578,14 @@ function renderCheck() {
                   .map(
                       (c, i) => `
         <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-pink-50">
+            ${canEditToolsContent() ? '<span class="check-drag-handle" aria-label="拖動排序" title="拖動排序"><i class="fas fa-grip-vertical" aria-hidden="true"></i></span>' : ''}
             <input type="checkbox" ${c.done ? 'checked' : ''} onchange="trip.checklist[${i}].done=this.checked;save();renderCheck();cutePop('#check-list > :nth-child(${i + 1})')" class="w-5 h-5 accent-pink-400">
             <span class="type-caption font-heavy ${c.done ? 'line-through opacity-30' : ''}">${escapeHtml(c.task)}</span>
             ${canEditToolsContent() ? `<button type="button" onclick="trip.checklist.splice(${i},1);save();renderCheck()" class="ml-auto text-red-200" aria-label="刪除此項目"><i class="fas fa-trash-alt"></i></button>` : ''}
         </div>`,
                   )
                   .join('');
+    if (typeof syncCheckSortable === 'function') syncCheckSortable();
 }
 
 async function renderDocs() {

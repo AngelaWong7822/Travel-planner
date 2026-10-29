@@ -1739,36 +1739,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     border: none;
 }
 
-.event-reorder {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 2px;
-    margin-right: 2px;
-    flex-shrink: 0;
-}
-
-.event-reorder-moves {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.event-reorder button {
-    width: 1.75rem;
-    height: 1.5rem;
-    border-radius: 0.5rem;
-    background: var(--surface-muted);
-    color: var(--text-secondary);
-    font-size: 10px;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.event-reorder button:active { transform: scale(0.92); }
-.event-reorder button:disabled { opacity: 0.25; pointer-events: none; }
 
 .weather-widget-controls {
     display: flex;
@@ -2991,5 +2961,46 @@ select {
 
 .trip-search-btn i {
     color: var(--cute-pink);
+}
+
+/* ── 拖放排序（編輯模式） ── */
+.event-drag-handle,
+.check-drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border-radius: 0.7rem;
+    background: var(--accent-soft);
+    color: var(--cute-pink);
+    font-size: 0.85rem;
+    cursor: grab;
+    touch-action: none;
+}
+
+.check-drag-handle {
+    width: 1.6rem;
+    height: 1.9rem;
+    background: transparent;
+    color: var(--text-muted);
+}
+
+.edit-mode-on #day-selector .day-chip {
+    cursor: grab;
+}
+
+.drag-ghost {
+    opacity: 0.35;
+}
+
+.drag-chosen {
+    box-shadow: 0 8px 22px rgba(255, 133, 161, 0.35) !important;
+    border-radius: 1.1rem;
+}
+
+.sortable-drag {
+    cursor: grabbing;
 }
 

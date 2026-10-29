@@ -11,7 +11,8 @@
 - 兩個分頁：🗺️ 行程、🧸 工具；開 app 直接去行程，今日嗰日自動置中
 - 全旅程搜尋
 - 景點名旁 📍 一撳導航（Google Maps）
-- 編輯模式：複製景點／整天、▲▼ 排序、刪除二次確認
+- 編輯模式：複製景點／整天、刪除二次確認
+- 拖放（編輯模式，手機長按）：景點拖 ⠿ 改次序，時間對唔上會自動改成前後中間（例：10:00 同 12:00 之間 → 11:00）；日子列拖嚟拖去改日子次序；工具頁行李清單拖 ⠿ 排序
 
 ### 住宿與匯率
 - **住宿**：入住日 + 晚數，範圍內每日顯示「今晚住」、訂位編號、一撳導航；退房日提醒
@@ -78,6 +79,7 @@ JP/
 │   ├── trip-calendar.js      # 行程日期月曆
 │   ├── stays.js              # 住宿
 │   ├── backup.js             # 備份匯出、匯入（取代／合併）
+│   ├── drag-sort.js          # 拖放排序（景點、日子、行李清單）
 │   ├── cloud-config.js       # Supabase URL 同 publishable key（公開值）
 │   └── cloud-sync.js         # 雲端同步：登入、旅程、相片
 ├── supabase/
@@ -88,7 +90,8 @@ JP/
 │   ├── tailwind.css          # 預編譯 Tailwind（勿手改）
 │   ├── fonts/                # jf open 粉圓（SIL OFL）、Noto Sans TC（後備）
 │   ├── fontawesome/          # Font Awesome 6.4
-│   └── supabase/             # supabase-js 2.117.0（雲端同步）
+│   ├── supabase/             # supabase-js 2.117.0（雲端同步）
+│   └── sortable/             # SortableJS 1.15.7（拖放）
 ├── icons/
 │   ├── icon.svg
 │   ├── icon-192.png
