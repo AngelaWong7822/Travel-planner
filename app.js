@@ -1977,17 +1977,6 @@ async function createNewTrip() {
     }
 }
 
-async function editTripName() {
-    if (travelMode) return;
-    const newName = await modalPrompt('修改旅程名稱', trip.name, '旅程名稱');
-    if (newName && newName.trim() !== '') {
-        trip.name = newName.trim();
-        save();
-        renderTripSelector();
-        renderTripHeader();
-    }
-}
-
 async function deleteCurrentTrip() {
     if (travelMode) return;
     if (data.trips.length <= 1) {

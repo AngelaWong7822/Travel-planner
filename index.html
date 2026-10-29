@@ -54,18 +54,17 @@
             <i class="fas fa-gear" aria-hidden="true"></i>
         </button>
         <div id="header-menu" class="hidden" role="dialog" aria-label="我的旅程">
-            <p class="header-menu-title"><span aria-hidden="true">✈️</span> 我的旅程</p>
-            <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
-            <button type="button" class="trip-search-btn" onclick="closeHeaderMenu(); openTripSearch();"><i class="fas fa-search" aria-hidden="true"></i>搜尋全旅程景點、備註、訂位編號</button>
-            <div class="trip-menu-actions">
-                <button type="button" onclick="closeHeaderMenu(); shareCurrentTrip();"><i class="fas fa-share-alt" aria-hidden="true"></i>分享</button>
-                <button type="button" onclick="closeHeaderMenu(); printCurrentTrip();"><i class="fas fa-print" aria-hidden="true"></i>列印／PDF</button>
+            <div class="header-menu-head">
+                <p class="header-menu-title"><span aria-hidden="true">✈️</span> 我的旅程</p>
+                <button type="button" class="header-menu-icon" onclick="closeHeaderMenu(); openTripSearch();" aria-label="搜尋全部旅程" title="搜尋"><i class="fas fa-search" aria-hidden="true"></i></button>
+                <button type="button" id="trip-add-btn" class="header-menu-icon header-menu-icon-add" onclick="closeHeaderMenu(); createNewTrip();" aria-label="新旅程" title="新旅程"><i class="fas fa-plus" aria-hidden="true"></i></button>
             </div>
-            <button type="button" class="trip-add-btn" onclick="closeHeaderMenu(); createNewTrip();"><i class="fas fa-plus" aria-hidden="true"></i>新旅程</button>
-            <label class="header-menu-dest">
-                <span class="header-menu-dest-label"><span aria-hidden="true">📍</span> 目的地</span>
-                <select id="weather-location-select" onchange="onWeatherLocationSelect(this.value)" class="header-menu-dest-select" aria-label="呢個旅程嘅目的地（天氣用）"></select>
-            </label>
+            <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
+            <div class="trip-menu-links">
+                <button type="button" onclick="closeHeaderMenu(); shareCurrentTrip();">分享</button>
+                <span aria-hidden="true">·</span>
+                <button type="button" onclick="closeHeaderMenu(); printCurrentTrip();">列印／PDF</button>
+            </div>
         </div>
     </header>
 
@@ -370,6 +369,25 @@
                 <button type="button" onclick="saveStayFromSheet()" class="btn-primary-sm flex-1 py-3">儲存</button>
             </div>
             <button type="button" class="type-caption text-muted mt-2 w-full min-h-[2.75rem]" onclick="closeStaySheet()">取消</button>
+        </div>
+    </div>
+
+    <div id="trip-settings-sheet" class="hidden" role="dialog" aria-labelledby="trip-settings-title" onclick="if(event.target===this)closeTripSettings()">
+        <div class="sheet" onclick="event.stopPropagation()">
+            <p id="trip-settings-title" class="type-body font-heavy text-primary mb-3">旅程設定</p>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">名稱</span>
+                <input type="text" id="trip-settings-name" class="field-input w-full mt-1" placeholder="旅程名稱">
+            </label>
+            <label class="event-edit-sheet-field">
+                <span class="type-micro text-muted">目的地</span>
+                <select id="weather-location-select" class="field-input w-full mt-1" aria-label="目的地（天氣用）"></select>
+            </label>
+            <div class="flex gap-2 mt-3">
+                <button type="button" id="trip-settings-delete" onclick="closeTripSettings(); deleteCurrentTrip();" class="btn-inline btn-inline-danger">刪除</button>
+                <button type="button" onclick="saveTripSettings()" class="btn-primary-sm flex-1 py-3">儲存</button>
+            </div>
+            <button type="button" class="type-caption text-muted mt-2 w-full min-h-[2.75rem]" onclick="closeTripSettings()">取消</button>
         </div>
     </div>
 

@@ -308,6 +308,7 @@ body {
 
 #settings-sheet:not(.hidden) .sheet,
 #stay-sheet:not(.hidden) .sheet,
+#trip-settings-sheet:not(.hidden) .sheet,
 #quick-add-sheet:not(.hidden) .sheet,
 #event-edit-picker:not(.hidden) .sheet,
 #event-status-picker:not(.hidden) .sheet,
@@ -331,6 +332,7 @@ body {
     .app-bottom-nav button.nav-tab-active .nav-emoji,
     #settings-sheet .sheet,
     #stay-sheet .sheet,
+    #trip-settings-sheet .sheet,
     #quick-add-sheet .sheet,
     #event-edit-picker .sheet,
     #event-status-picker .sheet,

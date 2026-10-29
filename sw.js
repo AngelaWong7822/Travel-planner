@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'travel-shell-v127';
-const ASSET_CACHE = 'travel-assets-v127';
+const SHELL_CACHE = 'travel-shell-v128';
+const ASSET_CACHE = 'travel-assets-v128';
 
 /** Critical path - small files only; must finish before SW takes over. */
 const CORE_SHELL_URLS = [
@@ -40,6 +40,19 @@ const DEFERRED_ASSET_URLS = [
     './vendor/fonts/NotoSansTC-900.ttf',
     './vendor/fontawesome/webfonts/fa-brands-400.woff2',
     './vendor/fontawesome/webfonts/fa-regular-400.woff2',
+    './vendor/flags/au.svg',
+    './vendor/flags/cn.svg',
+    './vendor/flags/fr.svg',
+    './vendor/flags/gb.svg',
+    './vendor/flags/hk.svg',
+    './vendor/flags/it.svg',
+    './vendor/flags/jp.svg',
+    './vendor/flags/kr.svg',
+    './vendor/flags/my.svg',
+    './vendor/flags/sg.svg',
+    './vendor/flags/th.svg',
+    './vendor/flags/tw.svg',
+    './vendor/flags/us.svg',
 ];
 
 const OFFLINE_FALLBACK_HTML =

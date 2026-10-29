@@ -2061,6 +2061,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #trip-date-picker,
 #settings-sheet,
 #stay-sheet,
+#trip-settings-sheet,
 #quick-add-sheet,
 #tools-advanced-menu {
     position: fixed;
@@ -2078,6 +2079,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #trip-date-picker.hidden,
 #settings-sheet.hidden,
 #stay-sheet.hidden,
+#trip-settings-sheet.hidden,
 #quick-add-sheet.hidden,
 #tools-advanced-menu.hidden,
 #print-preview.hidden { display: none; }
@@ -2147,6 +2149,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 #trip-date-picker .sheet,
 #settings-sheet .sheet,
 #stay-sheet .sheet,
+#trip-settings-sheet .sheet,
 #quick-add-sheet .sheet,
 #tools-advanced-menu .sheet {
     width: 100%;
@@ -2578,56 +2581,6 @@ select {
     transform: scale(0.9);
 }
 
-.trip-row-icon-danger {
-    color: var(--color-danger);
-}
-
-.trip-add-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    width: 100%;
-    min-height: var(--touch-min);
-    border-radius: 1.1rem;
-    border: 2px dashed var(--cute-pink);
-    background: var(--accent-soft);
-    color: var(--cute-pink);
-    font-size: var(--type-caption);
-    font-weight: 800;
-}
-
-.trip-add-btn:active {
-    transform: scale(0.97);
-}
-
-.header-menu-dest {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.4rem 0.1rem;
-    border-top: 1.5px dashed var(--border-soft);
-}
-
-.header-menu-dest-label {
-    flex-shrink: 0;
-    font-size: var(--type-caption);
-    font-weight: 800;
-    color: var(--text-secondary);
-}
-
-.header-menu-dest-select {
-    flex: 1;
-    min-width: 0;
-    min-height: 2.5rem;
-    padding: 0.35rem 0.75rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--border-soft);
-    background: var(--surface-muted);
-    color: var(--text-primary);
-    font-weight: 800;
-}
-
 /* ── header：雲端同步狀態 ── */
 .cloud-chip {
     flex-shrink: 0;
@@ -2727,26 +2680,6 @@ select {
     background: var(--accent-soft);
     color: var(--cute-pink);
     font-size: 0.75rem;
-}
-
-.trip-search-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    min-height: 2.5rem;
-    padding: 0.4rem 0.85rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--border-soft);
-    background: var(--surface-muted);
-    color: var(--text-muted);
-    font-size: var(--type-caption);
-    font-weight: 700;
-    text-align: left;
-}
-
-.trip-search-btn i {
-    color: var(--cute-pink);
 }
 
 /* ── 拖放排序（編輯模式） ── */
@@ -3088,28 +3021,64 @@ select {
     border-color: var(--cute-pink);
 }
 
-/* ── 旅程選單：分享／列印 ── */
-.trip-menu-actions {
+/* ── 旅程選單：標題列 🔍 ＋、國旗頭像、細字分享 ── */
+.header-menu-head {
     display: flex;
-    gap: 0.4rem;
+    align-items: center;
+    gap: 0.35rem;
 }
 
-.trip-menu-actions button {
+.header-menu-head .header-menu-title {
     flex: 1;
-    display: inline-flex;
+}
+
+.header-menu-icon {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
-    min-height: 2.4rem;
+    width: 2.25rem;
+    height: 2.25rem;
     border-radius: 999px;
     border: 1.5px solid var(--border-soft);
     background: var(--surface);
-    color: var(--text-secondary);
-    font-size: var(--type-caption);
-    font-weight: 800;
+    color: var(--cute-pink);
+    font-size: 0.8rem;
 }
 
-.trip-menu-actions i {
-    color: var(--cute-pink);
+.header-menu-icon-add {
+    border: none;
+    background: var(--cute-pink);
+    color: #fff;
+}
+
+.header-menu-icon.hidden {
+    display: none;
+}
+
+.header-menu-icon:active {
+    transform: scale(0.9);
+}
+
+.trip-avatar img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.trip-menu-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: var(--type-caption);
+}
+
+.trip-menu-links button {
+    min-height: 2.25rem;
+    padding: 0 0.4rem;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-weight: 700;
 }
 

@@ -129,8 +129,6 @@ function tripSummaryLine(t) {
         const end = addDaysFromIso(t.startDate, Math.max(0, days - 1));
         bits.push(days > 1 ? `${md(start)}–${md(end)}` : md(start));
     }
-    const place = getWeatherLocation(t.city).label;
-    if (place) bits.push(place);
     return bits.join(' · ');
 }
 
@@ -143,15 +141,15 @@ function renderTripPicker() {
             const active = i === data.activeIdx;
             const name = (t.name || '旅程').trim() || '旅程';
             const [bg, ink] = tripAvatarTint(name, i);
-            const initial = [...name][0];
+            const flag = weatherLocationFlagUrl(t.city);
+            const avatar = flag ? `<img src="${flag}" alt="">` : escapeHtml([...name][0]);
             const actions =
                 active && canManage
-                    ? `<button type="button" class="trip-row-icon" onclick="closeHeaderMenu(); editTripName();" aria-label="改名「${escapeAttr(name)}」"><i class="fas fa-pen" aria-hidden="true"></i></button>
-                       ${data.trips.length > 1 ? `<button type="button" class="trip-row-icon trip-row-icon-danger" onclick="closeHeaderMenu(); deleteCurrentTrip();" aria-label="刪除「${escapeAttr(name)}」"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>` : ''}`
+                    ? `<button type="button" class="trip-row-icon" onclick="closeHeaderMenu(); openTripSettings();" aria-label="「${escapeAttr(name)}」設定"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></button>`
                     : '';
             return `<div class="trip-row${active ? ' active' : ''}">
                 <button type="button" role="option" aria-selected="${active}" class="trip-row-main" onclick="${active ? 'closeHeaderMenu();' : `switchTrip(${i}); closeHeaderMenu();`}">
-                    <span class="trip-avatar" style="background:${bg};color:${ink}" aria-hidden="true">${escapeHtml(initial)}</span>
+                    <span class="trip-avatar" style="background:${bg};color:${ink}" aria-hidden="true">${avatar}</span>
                     <span class="trip-picker-meta">
                         <span class="trip-picker-name">${escapeHtml(name)}</span>
                         <span class="trip-picker-days">${escapeHtml(tripSummaryLine(t))}</span>
@@ -162,6 +160,29 @@ function renderTripPicker() {
             </div>`;
         })
         .join('');
+}
+
+// ⋯ 旅程設定：改名、目的地、刪除
+function openTripSettings() {
+    if (travelMode) return;
+    document.getElementById('trip-settings-name').value = trip.name || '';
+    renderWeatherLocationSelect();
+    document.getElementById('trip-settings-delete').classList.toggle('hidden', data.trips.length <= 1);
+    document.getElementById('trip-settings-sheet').classList.remove('hidden');
+}
+
+function closeTripSettings() {
+    document.getElementById('trip-settings-sheet')?.classList.add('hidden');
+}
+
+function saveTripSettings() {
+    const name = document.getElementById('trip-settings-name').value.trim();
+    if (name) trip.name = name;
+    const city = document.getElementById('weather-location-select').value;
+    closeTripSettings();
+    if (city && city !== trip.city) onWeatherLocationSelect(city);
+    else save();
+    renderTripHeader();
 }
 
 function renderTripHeader() {
@@ -176,7 +197,10 @@ function toggleHeaderMenu() {
     const menu = document.getElementById('header-menu');
     if (!menu) return;
     const willOpen = menu.classList.contains('hidden');
-    if (willOpen) renderTripPicker();
+    if (willOpen) {
+        renderTripPicker();
+        document.getElementById('trip-add-btn')?.classList.toggle('hidden', travelMode);
+    }
     menu.classList.toggle('hidden', !willOpen);
     HEADER_MENU_TRIGGERS.forEach((id) =>
         document.getElementById(id)?.setAttribute('aria-expanded', willOpen ? 'true' : 'false'),

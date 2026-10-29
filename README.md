@@ -26,7 +26,7 @@
 - 每個旅程可自訂目的地／本國貨幣與匯率
 
 ### 工具
-- 天氣（Open-Meteo）：每日卡顯示；目的地喺旅程選單揀（日本、台港澳韓、東南亞、中國、意大利、歐美澳）
+- 天氣（Open-Meteo）：每日卡顯示；目的地喺旅程選單 ⋯ 旅程設定揀，旅程頭像會變該國國旗（日本、台港澳韓、東南亞、中國、意大利、歐美澳）
 - 行李清單模板與進度條
 - 重要文件：**圖片 + PDF**（護照、機票等）
 - 出門模式（設定入面開關；開咗只可以睇、header 顯示「🧳 出門中」）
@@ -98,7 +98,8 @@ JP/
 │   ├── fonts/                # jf open 粉圓（SIL OFL）、Noto Sans TC（後備）
 │   ├── fontawesome/          # Font Awesome 6.4
 │   ├── supabase/             # supabase-js 2.117.0（雲端同步）
-│   └── sortable/             # SortableJS 1.15.7（拖放）
+│   ├── sortable/             # SortableJS 1.15.7（拖放）
+│   └── flags/                # Twemoji 國旗 SVG（CC-BY 4.0，旅程頭像）
 ├── icons/
 │   ├── icon.svg
 │   ├── icon-192.png
