@@ -15,8 +15,6 @@ const IDB_REF_PREFIX = 'idb:';
 let isEdit = false, curDayIdx = 0, curEventIdx = null, lastRenderedDayIdx = -1;
 let idbDb = null;
 const imageUrlCache = new Map();
-let searchQuery = '';
-let searchTimer = null;
 let lightboxScale = 1;
 let swRefreshing = false;
 let swUpdatePending = false;
@@ -522,111 +520,10 @@ async function copyCurrentDay() {
     showToast('已複製整天行程');
 }
 
-let searchPanelOpen = false;
-
 function syncTripScheduleChrome() {
     // 有出發日期就用月曆改日數，唔使「新增一天」
     document.getElementById('add-day-btn')?.classList.toggle('hidden', !!trip.startDate);
     document.getElementById('day-date-btn')?.classList.toggle('hidden', !!trip.startDate || travelMode);
-}
-
-function closeSearchPanelIfOpen() {
-    if (!searchPanelOpen) return;
-    searchPanelOpen = false;
-    document.getElementById('search-panel')?.classList.add('hidden');
-}
-
-// 由旅程選單開搜尋：跳去行程頁，打開搜尋欄
-async function openTripSearch() {
-    if (isEdit && !travelMode) await toggleEdit();
-    await setTab('itinerary');
-    if (!searchPanelOpen) toggleSearchPanel();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function toggleSearchPanel() {
-    searchPanelOpen = !searchPanelOpen;
-    const panel = document.getElementById('search-panel');
-    panel?.classList.toggle('hidden', !searchPanelOpen);
-    if (searchPanelOpen) document.getElementById('search-input')?.focus();
-    else if (searchQuery) clearSearch();
-}
-
-function sortSearchHits(hits) {
-    return [...hits].sort((a, b) => {
-        if (a.dayIdx !== b.dayIdx) return a.dayIdx - b.dayIdx;
-        const ta = parseEventTime(a.ev.time);
-        const tb = parseEventTime(b.ev.time);
-        if (ta == null && tb == null) return a.i - b.i;
-        if (ta == null) return 1;
-        if (tb == null) return -1;
-        if (ta !== tb) return ta - tb;
-        return a.i - b.i;
-    });
-}
-
-function getAllSearchHits() {
-    if (!searchQuery) return [];
-    const hits = [];
-    trip.itinerary.forEach((day, dayIdx) => {
-        day.events.forEach((ev, eventIdx) => {
-            if (eventMatchesSearch(ev)) hits.push({ dayIdx, eventIdx, ev, day, i: eventIdx });
-        });
-    });
-    return sortSearchHits(hits);
-}
-
-function renderSearchResults() {
-    const panel = document.getElementById('search-results');
-    const clearBtn = document.getElementById('search-clear');
-    if (!panel) return;
-    if (!searchQuery) {
-        panel.classList.add('hidden');
-        panel.innerHTML = '';
-        if (clearBtn) clearBtn.classList.add('hidden');
-        return;
-    }
-    if (clearBtn) clearBtn.classList.remove('hidden');
-    const hits = getAllSearchHits(searchQuery);
-    if (hits.length === 0) {
-        panel.innerHTML = `<p class="type-caption text-muted p-4 text-center">全旅程沒有符合的景點</p>`;
-        panel.classList.remove('hidden');
-        return;
-    }
-    panel.innerHTML = hits
-        .slice(0, 20)
-        .map(({ ev, i, dayIdx, day }) => {
-            const label = formatBannerDayLabel(trip, day, dayIdx);
-            return `<button type="button" class="search-hit" onclick="jumpToEvent(${dayIdx}, ${i})">
-                <p class="type-body font-bold text-primary">${escapeHtml(ev.loc || '景點')}</p>
-                <p class="type-micro text-muted mt-0.5">${escapeHtml(label)}${ev.time ? ` · ${escapeHtml(ev.time)}` : ''}</p>
-            </button>`;
-        })
-        .join('');
-    if (hits.length > 20) {
-        panel.innerHTML += `<p class="type-micro text-muted p-3 text-center">還有 ${hits.length - 20} 筆結果，請縮小關鍵字</p>`;
-    }
-    panel.classList.remove('hidden');
-}
-
-function scrollToTimelineEvent(eventIdx) {
-    const row = document.querySelector(`#timeline [data-event-idx="${eventIdx}"]`);
-    row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-async function jumpToEvent(dayIdx, eventIdx) {
-    if (searchQuery) clearSearch();
-    setTab('itinerary');
-    await renderDay(dayIdx);
-    setTimeout(() => scrollToTimelineEvent(eventIdx), 120);
-}
-
-function clearSearch() {
-    searchQuery = '';
-    const input = document.getElementById('search-input');
-    if (input) input.value = '';
-    renderSearchResults();
-    renderDay(curDayIdx);
 }
 
 function sumEventCosts(events) {
@@ -1584,15 +1481,6 @@ function persistTripMetaInputs() {
     if (hc) trip.homeCurrency = normalizeCurrency(hc.value) || 'HKD';
 }
 
-function onSearchInput(v) {
-    searchQuery = (v || '').trim().toLowerCase();
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-        renderSearchResults();
-        renderDay(curDayIdx);
-    }, 250);
-}
-
 function onTravelModeToggle(checked) {
     if (isEdit) {
         persistTripMetaInputs();
@@ -1615,14 +1503,6 @@ function onTravelModeToggle(checked) {
     renderCheck();
     updateFabVisibility();
     syncTravelLayout();
-}
-
-function eventMatchesSearch(ev) {
-    if (!searchQuery) return true;
-    const hay = [ev.loc, ev.remark, ev.time, ev.bookingRef, ev.tag, String(ev.cost || '')]
-        .join(' ')
-        .toLowerCase();
-    return hay.includes(searchQuery);
 }
 
 function parseEventTime(t) {
@@ -1704,7 +1584,6 @@ function syncEditChrome() {
     document.getElementById('main-day-card')?.classList.toggle('main-day-card-edit', planningEdit);
     document.getElementById('main-day-card')?.classList.toggle('main-day-card-browse', !planningEdit);
     document.getElementById('itinerary-sticky-bar')?.classList.toggle('itinerary-sticky-bar-edit', planningEdit);
-    if (planningEdit) closeSearchPanelIfOpen();
     const daySel = document.getElementById('day-selector');
     // 冇咗「今日」頁，出門模式都要揀得日子
     const showPills = onItinerary && trip.itinerary.length > 0;
@@ -1720,7 +1599,6 @@ async function exitEditForTabSwitch(targetTab) {
     isEdit = false;
     trip.itinerary.forEach(sortDayEventsInPlace);
     flushSave();
-    closeSearchPanelIfOpen();
     renderDaySelector();
     await renderDay(curDayIdx);
     renderCityUI();
@@ -1833,7 +1711,6 @@ async function init() {
     updateHeaderSubtitle();
     scrollToTodayCard();
     renderTripHeader();
-    renderSearchResults();
     if (typeof setupUiUx === 'function') setupUiUx();
     if (typeof setupReminders === 'function') setupReminders();
     syncTravelLayout();
@@ -2002,7 +1879,6 @@ async function toggleEdit() {
     }
     if (isEdit) persistTripMetaInputs();
     isEdit = !isEdit;
-    if (isEdit) closeSearchPanelIfOpen();
     syncEditChrome();
     if (!isEdit) {
         trip.itinerary.forEach(sortDayEventsInPlace);
@@ -2272,8 +2148,8 @@ async function renderDay(idx) {
     }
 
     const timeline = document.getElementById('timeline');
-    const filtered = day.events.map((ev, i) => ({ ev, i })).filter(({ ev }) => eventMatchesSearch(ev));
-    const entries = isEdit && !travelMode ? filtered : sortEventEntries(filtered);
+    const all = day.events.map((ev, i) => ({ ev, i }));
+    const entries = isEdit && !travelMode ? all : sortEventEntries(all);
     // 先等晒圖片，再一次過清空同畫，中途有新嘅 renderDay 就放棄呢次
     const eventRows = await Promise.all(
         entries.map(async ({ ev, i }) => ({
@@ -2284,9 +2160,7 @@ async function renderDay(idx) {
     );
     if (seq !== renderDaySeq) return;
     timeline.innerHTML = '<div class="timeline-line"></div>';
-    if (entries.length === 0 && day.events.length > 0) {
-        timeline.innerHTML += `<p class="pl-14 type-body text-muted">沒有符合「${escapeHtml(searchQuery)}」的景點</p>`;
-    } else if (entries.length === 0 && day.events.length === 0) {
+    if (entries.length === 0) {
         timeline.innerHTML += `
             <div class="timeline-empty-state">
                 <i class="fas fa-map-marker-alt timeline-empty-state-icon" aria-hidden="true"></i>
@@ -2655,7 +2529,6 @@ async function removeEvent(dayIdx, eventIdx) {
     if (typeof closeEventEditSheet === 'function') closeEventEditSheet({ silent: true });
     await renderDay(curDayIdx);
     renderDaySelector();
-    renderSearchResults();
     syncTripScheduleChrome();
     showUndoToast(
         `已刪除「${ev.loc || '景點'}」`,

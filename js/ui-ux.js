@@ -11,10 +11,6 @@ function syncTravelLayout() {
     document.body.classList.toggle('travel-mode-on', travelMode);
     document.body.classList.toggle('edit-mode-on', isEdit && !travelMode);
 
-    const searchPanel = document.getElementById('search-panel');
-    if (travelMode && searchPanelOpen) toggleSearchPanel();
-    if (searchPanel && travelMode) searchPanel.classList.add('hidden');
-
     syncTravelModeControls();
     syncToolsLayout();
 }

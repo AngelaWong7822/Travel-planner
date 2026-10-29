@@ -56,7 +56,6 @@
         <div id="header-menu" class="hidden" role="dialog" aria-label="我的旅程">
             <div class="header-menu-head">
                 <p class="header-menu-title"><span aria-hidden="true">✈️</span> 我的旅程</p>
-                <button type="button" class="header-menu-icon" onclick="closeHeaderMenu(); openTripSearch();" aria-label="搜尋全部旅程" title="搜尋"><i class="fas fa-search" aria-hidden="true"></i></button>
                 <button type="button" id="trip-add-btn" class="header-menu-icon header-menu-icon-add" onclick="closeHeaderMenu(); createNewTrip();" aria-label="新旅程" title="新旅程"><i class="fas fa-plus" aria-hidden="true"></i></button>
             </div>
             <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
@@ -80,16 +79,6 @@
                         <i class="fas fa-check" aria-hidden="true"></i>完成
                     </button>
                 </div>
-            </div>
-
-            <div id="search-panel" class="hidden space-y-2">
-                <div id="search-wrap" class="search-field">
-                    <label class="sr-only" for="search-input">搜尋全旅程景點與備註</label>
-                    <span class="search-field-icon" aria-hidden="true"><i class="fas fa-search"></i></span>
-                    <input type="text" id="search-input" inputmode="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onSearchInput(this.value)" placeholder="搜尋景點、備註、訂位編號…" class="search-field-input">
-                    <button type="button" id="search-clear" onclick="clearSearch()" class="search-field-clear hidden" aria-label="清除搜尋"><i class="fas fa-times-circle"></i></button>
-                </div>
-                <div id="search-results" class="hidden bg-surface rounded-2xl border border-default overflow-hidden"></div>
             </div>
 
             <div class="flex overflow-x-auto no-scrollbar px-1" id="day-selector"></div>
