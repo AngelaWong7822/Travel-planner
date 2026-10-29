@@ -2183,6 +2183,7 @@ async function renderDay(idx) {
                         ${statusUI ? `<span class="timeline-event-edit-status">${statusUI}</span>` : ''}
                         <div class="timeline-event-edit-actions">
                             ${editImgInd}
+                            ${renderMapActionsUI(ev.loc, ev.link, 'fa-map-marker-alt')}
                             <i class="fas fa-chevron-right timeline-event-edit-chevron" aria-hidden="true"></i>
                         </div>
                     </div>

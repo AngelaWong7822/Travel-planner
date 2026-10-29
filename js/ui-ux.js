@@ -355,11 +355,12 @@ function renderEventStatusUI(dayIdx, eventIdx, ev) {
 }
 
 // 景點名旁邊嘅細導航掣（冇地點但有連結就開連結）
-function renderMapActionsUI(loc, link) {
+// 景點行右邊嘅地圖掣：瀏覽用 ➤，編輯用 📍（icon 由 caller 揀）
+function renderMapActionsUI(loc, link, icon = 'fa-location-arrow') {
     const href = safeExternalUrl(link);
     const locStr = (loc || '').trim();
     if (locStr) {
-        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="導航去${escapeAttr(locStr)}"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>`;
+        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="Google Maps：${escapeAttr(locStr)}"><i class="fas ${icon}" aria-hidden="true"></i></button>`;
     }
     if (href) {
         return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="event-nav-btn" aria-label="開啟連結"><i class="fas fa-link" aria-hidden="true"></i></a>`;
