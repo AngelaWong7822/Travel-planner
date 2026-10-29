@@ -1460,7 +1460,7 @@ function migrateEvent(ev) {
         bookingRef: ev.bookingRef != null ? ev.bookingRef : '',
         cost: ev.cost != null && ev.cost !== '' ? ev.cost : '',
         tag: ev.tag != null ? ev.tag : '',
-        // 地圖座標；geoQ 記住係用邊個景點名查到，改名後會重新查
+        // 舊版地圖功能留低嘅座標：介面已經拎走，資料照留
         lat: hasCoords ? lat : null,
         lon: hasCoords ? lon : null,
         geoQ: hasCoords && ev.geoQ != null ? String(ev.geoQ) : '',
@@ -1916,7 +1916,6 @@ async function init() {
         if (stickyBar && 'ResizeObserver' in window) {
             new ResizeObserver(() => syncItineraryChromeOffset()).observe(stickyBar);
         }
-        if (typeof setupDayMap === 'function') setupDayMap();
     }
     syncItineraryChromeOffset();
 }
@@ -2419,7 +2418,6 @@ async function renderDay(idx) {
         if (dayCard) dayCard.scrollIntoView({ inline: 'center', behavior: 'smooth' });
         lastRenderedDayIdx = idx;
     }
-    if (typeof syncDayMap === 'function') syncDayMap(idx);
     if (typeof renderDayStay === 'function') renderDayStay(idx);
     syncWeatherToDay(idx);
     saveUiPrefs();

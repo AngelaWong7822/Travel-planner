@@ -222,13 +222,6 @@ function renderEventEditSheetFields(dayIdx, i, ev) {
             <span class="type-micro text-muted">備註</span>
             <textarea oninput="trip.itinerary[${dayIdx}].events[${i}].remark=this.value;debouncedSave()" placeholder="備註" class="field-input field-textarea w-full mt-1">${escapeHtml(ev.remark || '')}</textarea>
         </label>
-        <div class="event-edit-sheet-field">
-            <span class="type-micro text-muted">地圖位置</span>
-            <div class="flex items-center gap-2 mt-1">
-                <span class="type-caption text-secondary flex-1">${ev.lat != null ? '📍 已定位' : '未定位（會自動用景點名搵）'}</span>
-                <button type="button" onclick="startDayMapPick(${dayIdx}, ${i})" class="btn-inline">喺地圖揀</button>
-            </div>
-        </div>
         <label class="event-edit-sheet-field">
             <span class="type-micro text-muted">地圖連結</span>
             <input oninput="trip.itinerary[${dayIdx}].events[${i}].link=this.value;debouncedSave()" value="${escapeAttr(ev.link)}" placeholder="https://…" class="field-input w-full mt-1">

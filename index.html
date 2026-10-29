@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="vendor/fonts/jf-openhuninn.css">
     <link rel="stylesheet" href="vendor/fonts/noto-sans-tc.css">
     <link rel="stylesheet" href="vendor/fontawesome/all.min.css">
-    <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/cute.css">
 </head>
@@ -114,7 +113,6 @@
                                 <span id="day-banner-weather-mood" class="day-banner-weather-mood"></span>
                             </div>
                             <span class="day-banner-tools">
-                                <button type="button" id="day-map-toggle" class="day-icon-btn hidden" onclick="toggleDayMapView()" aria-pressed="false" aria-label="顯示地圖"><i class="fas fa-map" aria-hidden="true"></i></button>
                                 <button type="button" id="day-edit-btn" class="day-icon-btn" onclick="toggleEdit()" aria-label="編輯行程"><i class="fas fa-pen" aria-hidden="true"></i></button>
                             </span>
                         </div>
@@ -140,14 +138,7 @@
                         <input type="text" id="day-title-input" placeholder="當日標題，例：上野 · 秋葉原" class="day-heading-input" aria-label="當日標題">
                     </div>
                     <div id="day-stay" class="day-stay hidden"></div>
-                    <div class="day-body-grid">
-                        <div id="timeline" class="space-y-5 relative min-h-[50px]"></div>
-                        <div id="day-map-wrap" class="day-map-wrap hidden">
-                            <div id="day-map" class="day-map" role="region" aria-label="當日景點地圖"></div>
-                            <button type="button" id="day-route-btn" onclick="openDayRoute()" class="day-route-btn hidden"><i class="fas fa-route" aria-hidden="true"></i>成日路線（Google Maps）</button>
-                            <div id="day-map-status" class="day-map-status hidden" aria-live="polite"></div>
-                        </div>
-                    </div>
+                    <div id="timeline" class="space-y-5 relative min-h-[50px]"></div>
                 </div>
             </div>
         </section>
@@ -466,7 +457,6 @@
         </div>
     </div>
 
-    <script src="vendor/leaflet/leaflet.js"></script>
     <script src="js/share-print.js"></script>
     <script src="js/reminders.js"></script>
     <script src="js/weather-locations.js"></script>
@@ -475,7 +465,6 @@
     <script src="js/ui-ux.js"></script>
     <script src="app.js"></script>
     <script src="js/trip-calendar.js"></script>
-    <script src="js/day-map.js"></script>
     <script src="js/stays.js"></script>
     <script src="js/backup.js"></script>
     <script src="vendor/supabase/supabase.js"></script>

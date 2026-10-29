@@ -10,14 +10,8 @@
 - 出發日期自動計算每日日期
 - 兩個分頁：🗺️ 行程、🧸 工具；開 app 直接去行程，今日嗰日自動置中
 - 全旅程搜尋
-- 地圖／導航一鍵開啟（Google Maps、Apple 地圖）
+- 景點名旁 📍 一撳導航（Google Maps）
 - 編輯模式：複製景點／整天、▲▼ 排序、刪除二次確認
-
-### 景點地圖
-- 每日「列表／地圖」切換；闊畫面（≥1024px）時間線同地圖並排
-- 景點按時間編號，虛線連起；用 OpenStreetMap Nominatim 自動查座標（每秒 1 次）
-- 查唔到或者唔準：撳「改位置」／「喺地圖揀」手動釘位
-- **成日路線**：一次過開 Google Maps 導航（最多 10 個點）
 
 ### 住宿與匯率
 - **住宿**：入住日 + 晚數，範圍內每日顯示「今晚住」、訂位編號、一撳導航；退房日提醒
@@ -82,7 +76,6 @@ JP/
 │   ├── onboarding.js         # 新手引導
 │   ├── ui-ux.js              # 設定、出門模式、景點狀態／編輯 sheet
 │   ├── trip-calendar.js      # 行程日期月曆
-│   ├── day-map.js            # 景點地圖、查座標、成日路線
 │   ├── stays.js              # 住宿
 │   ├── backup.js             # 備份匯出、匯入（取代／合併）
 │   ├── cloud-config.js       # Supabase URL 同 publishable key（公開值）
@@ -95,7 +88,6 @@ JP/
 │   ├── tailwind.css          # 預編譯 Tailwind（勿手改）
 │   ├── fonts/                # jf open 粉圓（SIL OFL）、Noto Sans TC（後備）
 │   ├── fontawesome/          # Font Awesome 6.4
-│   ├── leaflet/              # Leaflet 1.9.4（地圖）
 │   └── supabase/             # supabase-js 2.117.0（雲端同步）
 ├── icons/
 │   ├── icon.svg
@@ -153,7 +145,6 @@ npm run build:css
 | 提醒設定 | `localStorage`（`TRAVEL_APP_REMINDER_SETTINGS`） | 開關、時段 |
 | 雲端同步狀態 | `localStorage`（`TRAVEL_CLOUD_META`） | 每個旅程上次同步版本、已上傳相片 |
 | 上次備份 | `localStorage`（`TRAVEL_APP_LAST_BACKUP`） | 上次匯出時間 |
-| 列表／地圖 | `localStorage`（`TRAVEL_APP_DAY_VIEW`） | 上次揀嘅顯示方式 |
 
 建議定期喺「齒輪 → 備份 → 匯出備份」或「分享備份檔」備份 JSON。
 
@@ -182,7 +173,7 @@ npm run build:css
       "itinerary": [
         {
           "title": "抵達・淺草",
-          "events": [{ "loc": "淺草寺", "time": "14:00", "lat": 35.7134, "lon": 139.7955, "geoQ": "淺草寺" }],
+          "events": [{ "loc": "淺草寺", "time": "14:00" }],
           "expenses": [{ "amount": 1200, "cat": "food", "note": "拉麵", "ts": 0 }],
           "journal": { "text": "", "photos": ["idb:…"] }
         }
@@ -213,7 +204,7 @@ npm run build:css
 
 ## 離線限制
 
-- 天氣更新、地圖底圖、自動查座標需要網絡
+- 天氣更新、雲端同步需要網絡
 - 未快取過的 Unsplash 預設封面可能無法顯示
 - 本機提醒需瀏覽器允許通知；背景／關閉 App 後不保證觸發（尤其 iOS）
 
@@ -223,6 +214,5 @@ npm run build:css
 - Tailwind CSS 3（預編譯至 `vendor/tailwind.css`）
 - Font Awesome 6、jf open 粉圓、Noto Sans TC（本地）
 - Open-Meteo API（天氣）
-- Leaflet + OpenStreetMap（地圖底圖、Nominatim 查座標）
 - Supabase（雲端同步：Postgres + Auth + Storage）
 - localStorage + IndexedDB

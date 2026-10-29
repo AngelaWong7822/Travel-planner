@@ -244,17 +244,6 @@ body {
     background-color: transparent !important;
 }
 
-/* ── 地圖心心 pin ── */
-.day-map-pin {
-    border-radius: 50% 50% 50% 8px;
-    transform: rotate(-45deg);
-    border-width: 2.5px;
-}
-
-.day-map-pin span {
-    transform: rotate(45deg);
-}
-
 /* ── 空白狀態、顏文字 ── */
 .timeline-empty-state-title {
     color: var(--tint-pink-ink);
@@ -274,7 +263,6 @@ body {
 /* ── 掣：圓啲、撳落彈一彈 ── */
 .btn-primary-sm,
 .btn-ghost-sm,
-.day-route-btn,
 .day-icon-btn,
 .event-nav-btn,
 .stay-nav-btn,
@@ -286,7 +274,6 @@ body {
 
 .btn-primary-sm:active,
 .btn-ghost-sm:active,
-.day-route-btn:active,
 .day-icon-btn:active,
 .event-nav-btn:active,
 .stay-nav-btn:active,
@@ -358,8 +345,7 @@ body {
 
     .btn-primary-sm:active,
     .btn-ghost-sm:active,
-        .day-route-btn:active,
-    .day-icon-btn:active,
+            .day-icon-btn:active,
     .event-nav-btn:active,
     .stay-nav-btn:active,
     .chip-copy:active,
