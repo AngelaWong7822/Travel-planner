@@ -66,7 +66,7 @@ function renderStaysList() {
     if (!el) return;
     const list = tripStays();
     if (!list.length) {
-        el.innerHTML = '<p class="type-caption text-muted">未有住宿 (￣▽￣)ゞ　撳「＋ 新增」加酒店</p>';
+        el.innerHTML = '<p class="type-caption text-muted">未有住宿 (￣▽￣)ゞ</p>';
         return;
     }
     el.innerHTML = list

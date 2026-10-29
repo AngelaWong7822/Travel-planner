@@ -47,8 +47,7 @@ function renderOnboardingStep() {
 
     if (onboardingStep === 0) {
         body.innerHTML = `
-            <h2 class="type-title text-primary mb-1">歡迎！開始規劃旅程</h2>
-            <p class="type-caption text-secondary mb-4">第一步：幫旅程改個名同設定城市（天氣用）</p>
+            <h2 class="type-title text-primary mb-4">歡迎！開始規劃旅程</h2>
             <label class="onboarding-field">
                 <span class="type-micro text-muted">旅程名稱</span>
                 <input type="text" id="onboarding-name" value="${escapeAttr(trip.name)}" class="field-input w-full mt-1" placeholder="例：東京 5 日">
@@ -63,8 +62,7 @@ function renderOnboardingStep() {
         nextBtn.textContent = '下一步';
     } else if (onboardingStep === 1) {
         body.innerHTML = `
-            <h2 class="type-title text-primary mb-1">設定出發日期</h2>
-            <p class="type-caption text-secondary mb-4">填咗就可以自動對準「今日」；唔肯定可以跳過</p>
+            <h2 class="type-title text-primary mb-4">設定出發日期</h2>
             <label class="onboarding-field">
                 <span class="type-micro text-muted">出發日期</span>
                 <input type="date" id="onboarding-start" value="${escapeAttr(trip.startDate || '')}" class="field-input w-full mt-1 bg-surface-muted rounded-xl px-2 py-2 border border-default">
@@ -72,8 +70,7 @@ function renderOnboardingStep() {
         nextBtn.textContent = '下一步';
     } else {
         body.innerHTML = `
-            <h2 class="type-title text-primary mb-1">加第一個景點</h2>
-            <p class="type-caption text-secondary mb-4">行程頁撳「編輯」就可以隨時加景點；或者而家開始</p>
+            <h2 class="type-title text-primary mb-4">加第一個景點</h2>
             <button type="button" class="btn-primary-sm w-full py-3 mb-2" onclick="onboardingAddFirstEvent()">+ 加第一個景點</button>
             <button type="button" class="btn-ghost-sm w-full py-3" onclick="finishOnboardingFromStep3()">稍後再加</button>`;
         nextBtn.textContent = '完成';
@@ -134,7 +131,7 @@ async function onboardingAddFirstEvent() {
 
 function finishOnboardingFromStep3() {
     finishOnboarding();
-    showToast('開始規劃啦！撳「編輯」加景點');
+    showToast('開始規劃啦 ✨');
 }
 
 function showOnboarding() {

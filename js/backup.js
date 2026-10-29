@@ -141,7 +141,7 @@ async function importMerge(incoming) {
     save();
     renderTripHeader();
     closeSettingsSheet();
-    showToast(`已加入 ${incoming.trips.length} 個旅程，撳左上角切換`);
+    showToast(`已加入 ${incoming.trips.length} 個旅程`);
 }
 
 document.getElementById('backup-file-input')?.addEventListener('change', async (e) => {

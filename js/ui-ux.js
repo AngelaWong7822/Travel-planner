@@ -226,7 +226,7 @@ function renderEventEditSheetFields(dayIdx, i, ev) {
             <textarea oninput="${path}.remark=this.value;debouncedSave()" placeholder="備註" class="field-input field-textarea w-full mt-1">${escapeHtml(ev.remark || '')}</textarea>
         </label>
         <details class="event-edit-more">
-            <summary>更多${filled.length ? `<span class="event-edit-more-hint">· ${escapeHtml(filled.join(' · '))}</span>` : '<span class="event-edit-more-hint">（狀態、訂位、連結、花費、圖片）</span>'}</summary>
+            <summary>更多${filled.length ? `<span class="event-edit-more-hint">· ${escapeHtml(filled.join(' · '))}</span>` : ''}</summary>
             <div class="event-edit-sheet-field">
                 <span class="type-micro text-muted">狀態</span>
                 <div class="mt-1">${statusUI}</div>

@@ -1425,13 +1425,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     cursor: pointer;
 }
 
-#lightbox-hint {
-    color: rgba(255, 255, 255, 0.55);
-    font-size: var(--type-caption);
-    font-weight: 700;
-    margin-top: 0.75rem;
-}
-
 .remark-text { white-space: pre-wrap; word-break: break-word; }
 
 #weather-loading,

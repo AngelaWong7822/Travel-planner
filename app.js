@@ -890,12 +890,8 @@ async function measureTripDataBytes() {
 }
 
 async function updateStorageEstimate() {
-    const infoEl = document.getElementById('storage-info');
     try {
         const tripBytes = await measureTripDataBytes();
-        if (infoEl) {
-            infoEl.textContent = `你嘅行程資料：約 ${formatBytes(tripBytes)}`;
-        }
         let quota = 50 * 1024 * 1024;
         if (navigator.storage?.estimate) {
             const est = await navigator.storage.estimate();
@@ -910,7 +906,6 @@ async function updateStorageEstimate() {
             hideStorageWarning();
         }
     } catch (_) {
-        if (infoEl) infoEl.textContent = '';
         hideStorageWarning();
     }
 }
@@ -1817,15 +1812,6 @@ function setupSwUpdate() {
     });
 }
 
-function setupPwaInstallHint() {
-    const hint = document.getElementById('pwa-install-hint');
-    if (!hint) return;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        hint.classList.remove('hidden');
-    });
-}
-
 async function init() {
     applyTheme();
     await restoreUiPrefs();
@@ -2322,7 +2308,7 @@ async function renderDay(idx) {
             <div class="timeline-empty-state">
                 <i class="fas fa-map-marker-alt timeline-empty-state-icon" aria-hidden="true"></i>
                 <p class="timeline-empty-state-title">呢日仲係白紙一張 (｡•ᴗ•｡)</p>
-                <p class="timeline-empty-state-hint">${travelMode ? '今日可以休息下 ☕' : '撳下面掣開始規劃 ✨'}</p>
+                ${travelMode ? '<p class="timeline-empty-state-hint">今日可以休息下 ☕</p>' : ''}
                 ${cta}
             </div>`;
     }
@@ -2620,7 +2606,7 @@ async function renderDocs() {
             ${canEditToolsContent() ? `<button type="button" onclick="removeDoc(${i})" class="absolute -top-1 -right-1 bg-red-400 text-white w-6 h-6 rounded-full type-micro border-2 border-white shadow" aria-label="刪除文件"><i class="fas fa-times"></i></button>` : ''}
         </div>`;
             })
-            .join('') || '<p class="col-span-2 text-center type-caption text-muted py-10 font-heavy">未有文件 (・ω・)　可以上傳圖片或 PDF</p>';
+            .join('') || '<p class="col-span-2 text-center type-caption text-muted py-10 font-heavy">未有文件 (・ω・)</p>';
 }
 
 async function openDoc(ref) {
@@ -2921,5 +2907,4 @@ setupModal();
 setupLightbox();
 applyTheme();
 setupSwUpdate();
-setupPwaInstallHint();
 window.onload = bootstrap;

@@ -33,7 +33,6 @@
         <div id="lightbox-viewport">
             <img id="lightbox-img" alt="預覽">
         </div>
-        <p id="lightbox-hint">雙指縮放 · 滾輪放大 · Esc 關閉</p>
     </div>
 
     <div id="toast" role="status"></div>
@@ -128,7 +127,7 @@
                     <h2 id="day-title-display" class="day-title-display hidden"></h2>
                     <div id="day-title-edit-panel" class="day-heading-edit hidden">
                         <label for="day-title-input" class="sr-only">當日標題</label>
-                        <input type="text" id="day-title-input" placeholder="當日標題，例：上野 · 秋葉原" class="day-heading-input" aria-label="當日標題">
+                        <input type="text" id="day-title-input" placeholder="當日標題" class="day-heading-input" aria-label="當日標題">
                         <button type="button" id="day-stay-add" class="day-icon-btn hidden" onclick="openStaySheet(null, curDayIdx)" aria-label="加今晚住宿" title="加今晚住宿"><i class="fas fa-bed" aria-hidden="true"></i></button>
                     </div>
                     <div id="day-stay" class="day-stay hidden"></div>
@@ -241,7 +240,6 @@
             <div id="tools-cloud-card" class="hidden bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">☁️</span>雲端同步</h2>
                 <form id="cloud-signed-out" class="space-y-2" onsubmit="event.preventDefault(); cloudSignIn();">
-                    <p class="type-caption text-gray-500">用 PM tracker 個帳號登入，手機同電腦就會自動同步行程同相片。冇網絡照用，有網絡先同步。</p>
                     <label for="cloud-email" class="sr-only">Email</label>
                     <input type="email" id="cloud-email" class="field-input w-full" placeholder="Email" autocomplete="username" required>
                     <label for="cloud-password" class="sr-only">密碼</label>
@@ -260,7 +258,6 @@
 
             <div id="tools-backup-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">💾</span>備份</h2>
-                <p class="type-caption text-gray-500">資料只存喺呢部機嘅瀏覽器。定期匯出備份檔（連相片），換機或者清咗瀏覽器都可以還原。</p>
                 <p id="backup-last" class="type-micro text-muted font-bold"></p>
                 <div class="flex gap-2">
                     <button type="button" onclick="exportBackup()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-download mr-1" aria-hidden="true"></i>匯出備份</button>
@@ -270,14 +267,10 @@
                     <button type="button" onclick="startImport('merge')" class="flex-1 btn-ghost-sm py-3">匯入（合併）</button>
                     <button type="button" onclick="startImport('replace')" class="flex-1 btn-ghost-sm py-3">匯入（取代）</button>
                 </div>
-                <p class="type-micro text-muted">合併：備份入面嘅旅程加落而家嘅列表。取代：清走而家全部旅程，換成備份。</p>
             </div>
             <div id="tools-travelmode-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <label class="setting-row">
-                    <span>
-                        <span class="type-body font-heavy text-primary block"><span class="cute-emoji" aria-hidden="true">🧳</span>出門模式</span>
-                        <span class="type-micro text-muted">開咗之後行程只可以睇，唔會誤改</span>
-                    </span>
+                    <span class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🧳</span>出門模式</span>
                     <span class="setting-toggle">
                         <input type="checkbox" id="travel-mode-toggle" onchange="onTravelModeToggle(this.checked)" class="setting-toggle-input">
                         <span class="setting-toggle-track" aria-hidden="true"></span>
@@ -322,13 +315,6 @@
             </div>
 
             <div id="storage-warning" class="hidden bg-red-50 p-4 rounded-2xl border border-red-200 type-caption font-bold text-red-600 leading-relaxed"></div>
-            <p id="storage-info" class="type-micro text-muted font-bold text-center"></p>
-
-            <div class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">📲</span>離線與安裝</h2>
-                <p class="type-caption text-gray-500">曾連線開啟一次後可離線用。Safari／Chrome 選「加入主畫面」。</p>
-                <p id="pwa-install-hint" class="hidden type-caption text-pink-500 font-bold">可安裝 App 或加入主畫面</p>
-            </div>
 
             <div class="tools-advanced-bar">
                 <button type="button" id="tools-advanced-btn" onclick="closeSettingsSheet();toggleToolsAdvancedMenu()" class="tools-settings-toggle w-full" aria-label="進階選項" aria-expanded="false" aria-controls="tools-advanced-menu">
@@ -369,7 +355,7 @@
                 <input type="text" id="stay-name" class="field-input w-full mt-1" placeholder="例：上野 APA 酒店">
             </label>
             <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">地址（導航用，可留空）</span>
+                <span class="type-micro text-muted">地址</span>
                 <input type="text" id="stay-address" class="field-input w-full mt-1" placeholder="例：東京都台東区上野 1-2-3">
             </label>
             <div class="flex gap-2">
@@ -387,7 +373,7 @@
                 <input type="text" id="stay-ref" class="field-input w-full mt-1" placeholder="訂位編號">
             </label>
             <label class="event-edit-sheet-field">
-                <span class="type-micro text-muted">房費（<span id="stay-cost-currency">JPY</span>，可留空）</span>
+                <span class="type-micro text-muted">房費 <span id="stay-cost-currency">JPY</span></span>
                 <input type="number" id="stay-cost" class="field-input w-full mt-1" inputmode="decimal">
             </label>
             <div class="flex gap-2 mt-3">
