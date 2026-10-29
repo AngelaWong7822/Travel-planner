@@ -170,7 +170,7 @@ function renderTripHeader() {
     renderTripPicker();
 }
 
-const HEADER_MENU_TRIGGERS = ['header-menu-btn', 'header-title-btn'];
+const HEADER_MENU_TRIGGERS = ['header-title-btn'];
 
 function toggleHeaderMenu() {
     const menu = document.getElementById('header-menu');
@@ -323,14 +323,17 @@ function renderEventStatusUI(dayIdx, eventIdx, ev) {
     });
 }
 
+// 景點名旁邊嘅細導航掣（冇地點但有連結就開連結）
 function renderMapActionsUI(loc, link) {
     const href = safeExternalUrl(link);
-    if (!(loc || '').trim() && !href) return '';
-    const locStr = loc || '';
-    return `<div class="map-actions">
-        ${locStr.trim() ? `<button type="button" class="btn-primary-sm" onclick='openMapPrimary(${JSON.stringify(locStr)}, ${JSON.stringify(link || "")})'><i class="fas fa-location-arrow mr-1"></i>去呢度</button>` : ''}
-        ${href && !locStr.trim() ? `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="btn-ghost-sm">開啟連結</a>` : ''}
-    </div>`;
+    const locStr = (loc || '').trim();
+    if (locStr) {
+        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="導航去${escapeAttr(locStr)}"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>`;
+    }
+    if (href) {
+        return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="event-nav-btn" aria-label="開啟連結"><i class="fas fa-link" aria-hidden="true"></i></a>`;
+    }
+    return '';
 }
 
 function setupDaySwipe() {

@@ -572,18 +572,20 @@ function closeSearchPanelIfOpen() {
     if (!searchPanelOpen) return;
     searchPanelOpen = false;
     document.getElementById('search-panel')?.classList.add('hidden');
-    const btn = document.getElementById('search-toggle-btn');
-    btn?.classList.remove('day-nav-search-active');
-    btn?.setAttribute('aria-expanded', 'false');
+}
+
+// 由旅程選單開搜尋：跳去行程頁，打開搜尋欄
+async function openTripSearch() {
+    if (isEdit && !travelMode) await toggleEdit();
+    await setTab('itinerary');
+    if (!searchPanelOpen) toggleSearchPanel();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function toggleSearchPanel() {
     searchPanelOpen = !searchPanelOpen;
     const panel = document.getElementById('search-panel');
-    const btn = document.getElementById('search-toggle-btn');
     panel?.classList.toggle('hidden', !searchPanelOpen);
-    btn?.classList.toggle('day-nav-search-active', searchPanelOpen);
-    btn?.setAttribute('aria-expanded', searchPanelOpen ? 'true' : 'false');
     if (searchPanelOpen) document.getElementById('search-input')?.focus();
     else if (searchQuery) clearSearch();
 }
@@ -1280,7 +1282,7 @@ function getDayBannerWeather(idx) {
     if (!daily?.time || !targetIso) return null;
 
     const i = daily.time.indexOf(targetIso);
-    if (i < 0) return { temp: '--', code: null, mood: '超出預報範圍' };
+    if (i < 0) return null; // 冇預報就唔顯示
 
     const max = Math.round(daily.temperature_2m_max[i]);
     const min = Math.round(daily.temperature_2m_min[i]);
@@ -1727,18 +1729,16 @@ function syncEditChrome() {
     const templates = document.getElementById('check-templates');
     const onItinerary = !document.getElementById('content-itinerary').classList.contains('hidden');
     const toolsEdit = canEditToolsContent();
+    // 瀏覽時用日卡右上角 ✏️ 入編輯；編輯中 sticky bar 嘅 ✓ 完成
     const editBtn = document.getElementById('itinerary-edit-btn');
-    const showEditBtn = onItinerary && !travelMode;
+    const showDoneBtn = onItinerary && isEdit && !travelMode;
     if (editBtn) {
-        editBtn.classList.toggle('hidden', !showEditBtn);
-        if (showEditBtn) {
-            editBtn.classList.toggle('day-nav-edit-active', isEdit);
-            editBtn.setAttribute('aria-label', isEdit ? '完成編輯' : '編輯行程');
-            editBtn.innerHTML = isEdit
-                ? '<i class="fas fa-check" aria-hidden="true"></i>'
-                : '<i class="fas fa-pen" aria-hidden="true"></i>';
-        }
+        editBtn.classList.toggle('hidden', !showDoneBtn);
+        editBtn.classList.add('day-nav-edit-active');
+        editBtn.setAttribute('aria-label', '完成編輯');
+        editBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
     }
+    document.getElementById('day-edit-btn')?.classList.toggle('hidden', travelMode);
 
     document.querySelectorAll('#edit-controls').forEach((el) => {
         el.classList.toggle('hidden', !isEdit || travelMode);
@@ -1756,7 +1756,6 @@ function syncEditChrome() {
     }
     document.getElementById('main-day-card')?.classList.toggle('main-day-card-edit', planningEdit);
     document.getElementById('main-day-card')?.classList.toggle('main-day-card-browse', !planningEdit);
-    document.getElementById('search-toggle-btn')?.classList.toggle('hidden', planningEdit);
     document.getElementById('itinerary-sticky-bar')?.classList.toggle('itinerary-sticky-bar-edit', planningEdit);
     if (planningEdit) closeSearchPanelIfOpen();
     const daySel = document.getElementById('day-selector');
@@ -2402,11 +2401,14 @@ async function renderDay(idx) {
                     <span class="timeline-event-time">${escapeHtml(ev.time || '--:--')}</span>
                     ${statusUI}
                 </div>
-                <h3 class="timeline-event-loc">${escapeHtml(ev.loc || '景點')}</h3>
+                <div class="timeline-event-loc-row">
+                    <h3 class="timeline-event-loc">${escapeHtml(ev.loc || '景點')}</h3>
+                    ${mapLine}
+                </div>
                 ${metaLine}
                 ${bookLine}
                 ${remarkLine}
-                <div class="timeline-event-foot">${mapLine}${imgThumb}</div>
+                ${imgThumb ? `<div class="timeline-event-foot">${imgThumb}</div>` : ''}
             </div>`;
     });
     document.querySelectorAll('.day-card').forEach((el, i) => el.classList.toggle('active', i === idx));

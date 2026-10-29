@@ -35,10 +35,7 @@ function stayNavQuery(s) {
 function renderDayStay(idx) {
     const el = document.getElementById('day-stay');
     if (!el) return;
-    if (isEdit && !travelMode) {
-        el.classList.add('hidden');
-        return;
-    }
+    const editing = isEdit && !travelMode;
     const { tonight, checkout } = staysForDay(idx);
     const list = tripStays();
     const lines = [];
@@ -58,7 +55,7 @@ function renderDayStay(idx) {
             ${s.bookingRef ? `<button type="button" class="chip-copy" data-ref="${escapeAttr(s.bookingRef)}" onclick="copyBookingRef(this.dataset.ref)">${escapeHtml(s.bookingRef)}</button>` : ''}
             ${nav ? `<button type="button" class="stay-nav-btn" data-q="${escapeAttr(nav)}" onclick="openMapDirections(this.dataset.q)" aria-label="導航去住宿"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>` : ''}
         </div>`);
-    } else if (!travelMode) {
+    } else if (editing) {
         lines.push(`<button type="button" class="stay-add-link" onclick="openStaySheet(null, ${idx})"><i class="fas fa-bed" aria-hidden="true"></i>＋ 加今晚住宿</button>`);
     }
     el.innerHTML = lines.join('');

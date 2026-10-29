@@ -28,6 +28,10 @@ function setDayView(view) {
     syncDayMap(curDayIdx);
 }
 
+function toggleDayMapView() {
+    setDayView(getDayView() === 'map' ? 'list' : 'map');
+}
+
 function isWideDayLayout() {
     return window.matchMedia('(min-width: 1024px)').matches;
 }
@@ -57,19 +61,21 @@ function isDayMapVisible() {
 
 function syncDayMap(dayIdx) {
     const wrap = document.getElementById('day-map-wrap');
-    const bar = document.getElementById('day-view-bar');
-    if (!wrap || !bar) return;
+    const toggle = document.getElementById('day-map-toggle');
+    if (!wrap) return;
     const editing = isEdit && !travelMode;
     const entries = dayMapEntries(dayIdx);
     const wide = isWideDayLayout();
     const showMap = !editing && entries.length > 0 && (wide || getDayView() === 'map');
 
-    bar.classList.toggle('hidden', editing || entries.length === 0);
-    bar.querySelectorAll('[data-view]').forEach((btn) => {
-        const on = btn.dataset.view === (showMap ? 'map' : 'list');
-        btn.classList.toggle('day-view-btn-active', on);
-        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
+    // 闊畫面地圖一直並排，唔使切換掣
+    if (toggle) {
+        toggle.classList.toggle('hidden', editing || entries.length === 0 || wide);
+        toggle.classList.toggle('is-active', showMap);
+        toggle.setAttribute('aria-pressed', showMap ? 'true' : 'false');
+        toggle.setAttribute('aria-label', showMap ? '顯示列表' : '顯示地圖');
+        toggle.innerHTML = `<i class="fas ${showMap && !wide ? 'fa-list' : 'fa-map'}" aria-hidden="true"></i>`;
+    }
     document.getElementById('day-route-btn')?.classList.toggle('hidden', entries.length < 2);
     document.getElementById('main-day-card')?.classList.toggle('day-map-on', showMap);
     document.getElementById('timeline')?.classList.toggle('hidden', showMap && !wide);

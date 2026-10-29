@@ -396,7 +396,6 @@ function cloudLastSyncText() {
 }
 
 const CLOUD_CHIP = {
-    idle: { text: '☁️ ✓', label: '雲端已同步' },
     syncing: { text: '☁️ …', label: '同步緊' },
     offline: { text: '☁️ 離線', label: '離線，有網絡會自動同步' },
     error: { text: '☁️ ⚠️', label: '同步出錯，撳入設定睇' },

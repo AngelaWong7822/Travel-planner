@@ -42,9 +42,6 @@
     <!-- Header -->
     <header class="app-header sticky top-0 z-50 glass border-b border-default px-4 py-3 flex justify-between items-center relative">
         <div class="flex items-center gap-2 overflow-hidden min-w-0 flex-1">
-            <button type="button" id="header-menu-btn" onclick="toggleHeaderMenu()" class="flex-shrink-0 w-11 h-11 bg-[var(--cute-pink)] rounded-2xl flex items-center justify-center text-white shadow-lg active:scale-95 transition-transform" aria-label="旅程選單" aria-expanded="false" aria-controls="header-menu">
-                <i class="fas fa-plane-departure"></i>
-            </button>
             <button type="button" id="header-title-btn" class="header-title-btn" onclick="toggleHeaderMenu()" aria-label="切換旅程" aria-expanded="false" aria-controls="header-menu">
                 <span class="header-title-row">
                     <span id="trip-title" class="truncate">我的旅行</span>
@@ -61,6 +58,7 @@
         <div id="header-menu" class="hidden" role="dialog" aria-label="我的旅程">
             <p class="header-menu-title"><span aria-hidden="true">✈️</span> 我的旅程</p>
             <div id="trip-picker" class="trip-picker" role="listbox" aria-label="選擇旅程"></div>
+            <button type="button" class="trip-search-btn" onclick="closeHeaderMenu(); openTripSearch();"><i class="fas fa-search" aria-hidden="true"></i>搜尋全旅程景點、備註、訂位編號</button>
             <button type="button" class="trip-add-btn" onclick="closeHeaderMenu(); createNewTrip();"><i class="fas fa-plus" aria-hidden="true"></i>新旅程</button>
             <label class="header-menu-dest">
                 <span class="header-menu-dest-label"><span aria-hidden="true">📍</span> 目的地</span>
@@ -85,9 +83,6 @@
                     <button type="button" id="add-day-btn" onclick="addDay()" class="itinerary-edit-action">+ 新增一天</button>
                 </div>
                 <div class="itinerary-sticky-tools">
-                    <button type="button" id="search-toggle-btn" class="day-nav-btn day-nav-search" onclick="toggleSearchPanel()" aria-label="搜尋行程" aria-expanded="false" aria-controls="search-panel">
-                        <i class="fas fa-search" aria-hidden="true"></i>
-                    </button>
                     <button type="button" id="itinerary-edit-btn" class="day-nav-btn day-nav-edit hidden" onclick="toggleEdit()" aria-label="編輯行程">
                         <i class="fas fa-pen" aria-hidden="true"></i>
                     </button>
@@ -118,6 +113,10 @@
                                 <span id="day-banner-weather-temp" class="day-banner-weather-temp"></span>
                                 <span id="day-banner-weather-mood" class="day-banner-weather-mood"></span>
                             </div>
+                            <span class="day-banner-tools">
+                                <button type="button" id="day-map-toggle" class="day-icon-btn hidden" onclick="toggleDayMapView()" aria-pressed="false" aria-label="顯示地圖"><i class="fas fa-map" aria-hidden="true"></i></button>
+                                <button type="button" id="day-edit-btn" class="day-icon-btn" onclick="toggleEdit()" aria-label="編輯行程"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                            </span>
                         </div>
                         <p id="day-banner-title" class="day-banner-title hidden"></p>
                     </div>
@@ -141,17 +140,11 @@
                         <input type="text" id="day-title-input" placeholder="當日標題，例：上野 · 秋葉原" class="day-heading-input" aria-label="當日標題">
                     </div>
                     <div id="day-stay" class="day-stay hidden"></div>
-                    <div id="day-view-bar" class="day-view-bar hidden">
-                        <div class="day-view-toggle" role="group" aria-label="顯示方式">
-                            <button type="button" data-view="list" onclick="setDayView('list')" class="day-view-btn" aria-pressed="true"><i class="fas fa-list" aria-hidden="true"></i>列表</button>
-                            <button type="button" data-view="map" onclick="setDayView('map')" class="day-view-btn" aria-pressed="false"><i class="fas fa-map" aria-hidden="true"></i>地圖</button>
-                        </div>
-                        <button type="button" id="day-route-btn" onclick="openDayRoute()" class="day-route-btn"><i class="fas fa-route" aria-hidden="true"></i>成日路線</button>
-                    </div>
                     <div class="day-body-grid">
                         <div id="timeline" class="space-y-5 relative min-h-[50px]"></div>
                         <div id="day-map-wrap" class="day-map-wrap hidden">
                             <div id="day-map" class="day-map" role="region" aria-label="當日景點地圖"></div>
+                            <button type="button" id="day-route-btn" onclick="openDayRoute()" class="day-route-btn hidden"><i class="fas fa-route" aria-hidden="true"></i>成日路線（Google Maps）</button>
                             <div id="day-map-status" class="day-map-status hidden" aria-live="polite"></div>
                         </div>
                     </div>

@@ -1462,13 +1462,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     border: 1px solid var(--border-soft);
 }
 
-.map-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
 .timeline-line {
     position: absolute;
     left: 24px;
@@ -2419,11 +2412,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     box-shadow: 0 0 0 2px var(--cute-pink);
 }
 
-#header-menu-btn {
-    min-width: var(--touch-min);
-    min-height: var(--touch-min);
-}
-
 .header-actions {
     display: flex;
     align-items: center;
@@ -2567,75 +2555,25 @@ select {
     }
 }
 
-/* ── 瀏覽模式：搜尋／編輯掣疊喺日期選擇列右邊，唔再獨佔一行 ── */
+/* ── 瀏覽模式：sticky bar 冇嘢要顯示（編輯掣喺日卡、搜尋喺旅程選單） ── */
 .itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) {
-    height: 0;
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-
-.itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) .itinerary-sticky-tools {
-    position: absolute;
-    top: 0.5rem;
-    right: 0;
-    height: 4.5rem;
-    padding-left: 0.5rem;
-    background: linear-gradient(to right, transparent, var(--soft-bg) 0.5rem);
-}
-
-.itinerary-sticky-bar:not(.itinerary-sticky-bar-edit) ~ #day-selector {
-    padding-right: 6.5rem;
-}
-
-/* ── 景點地圖 ── */
-.day-view-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-bottom: 0.9rem;
-}
-
-.day-view-bar.hidden {
     display: none;
 }
 
-.day-view-toggle {
-    display: inline-flex;
-    padding: 0.2rem;
-    border-radius: 999px;
-    background: var(--surface-muted);
-    border: 1px solid var(--border-soft);
-}
-
-.day-view-btn,
+/* ── 景點地圖 ── */
 .day-route-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     min-height: 2.25rem;
+    margin-top: 0.6rem;
     padding: 0.35rem 0.85rem;
     border-radius: 999px;
     border: none;
-    background: transparent;
-    font-size: var(--type-caption);
-    font-weight: 800;
-    color: var(--text-secondary);
-}
-
-.day-view-btn-active {
-    background: var(--cute-pink);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(255, 133, 161, 0.35);
-}
-
-.day-route-btn {
     background: var(--accent-soft);
     color: var(--cute-pink);
+    font-size: var(--type-caption);
+    font-weight: 800;
 }
 
 .day-route-btn.hidden {
@@ -2755,14 +2693,6 @@ select {
 @media (min-width: 1024px) {
     main:has(#content-itinerary:not(.hidden) #main-day-card.day-map-on) {
         max-width: 64rem;
-    }
-
-    .day-view-toggle {
-        display: none;
-    }
-
-    .day-view-bar {
-        justify-content: flex-end;
     }
 
     #main-day-card.day-map-on .day-body-grid {
@@ -3129,5 +3059,89 @@ select {
     .cloud-chip.is-syncing {
         animation: none;
     }
+}
+
+/* ── 日卡右上角細掣（地圖／編輯）、景點名旁導航掣、旅程選單搜尋 ── */
+.day-banner-tools {
+    display: inline-flex;
+    gap: 0.35rem;
+    margin-left: auto;
+}
+
+.day-banner-weather.hidden {
+    display: none;
+}
+
+/* 有天氣時天氣已經推咗去右邊，掣就跟喺佢後面 */
+.day-banner-weather:not(.hidden) + .day-banner-tools {
+    margin-left: 0;
+}
+
+.day-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-soft);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.day-icon-btn.hidden {
+    display: none;
+}
+
+.day-icon-btn.is-active {
+    background: var(--cute-pink);
+    border-color: var(--cute-pink);
+    color: #fff;
+}
+
+.timeline-event-loc-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.timeline-event-loc-row .timeline-event-loc {
+    flex: 1;
+    min-width: 0;
+}
+
+.event-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent-soft);
+    color: var(--cute-pink);
+    font-size: 0.75rem;
+}
+
+.trip-search-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 2.5rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-soft);
+    background: var(--surface-muted);
+    color: var(--text-muted);
+    font-size: var(--type-caption);
+    font-weight: 700;
+    text-align: left;
+}
+
+.trip-search-btn i {
+    color: var(--cute-pink);
 }
 
