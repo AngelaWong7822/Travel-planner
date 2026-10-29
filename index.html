@@ -68,22 +68,14 @@
 
     <main class="max-w-md mx-auto p-4 space-y-4">
         <section id="content-itinerary" class="space-y-2 flex flex-col tab-panel">
-            <div id="trip-schedule-bar" class="hidden bg-surface p-4 rounded-[1.5rem] border border-default shadow-sm space-y-2">
-                <button type="button" id="trip-date-trigger" class="trip-date-trigger" onclick="openTripDatePicker()" aria-haspopup="dialog" aria-controls="trip-date-picker">
-                    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-                    <span id="trip-date-trigger-text">選擇出發與結束日期</span>
-                </button>
-                <p id="pill-hint" class="type-micro text-muted">撳一下用月曆選出發同結束</p>
-            </div>
-
             <div id="itinerary-sticky-bar" class="itinerary-sticky-bar">
                 <div id="edit-controls" class="itinerary-edit-actions hidden">
-                    <button type="button" onclick="quickAddEvent()" class="itinerary-edit-action itinerary-edit-action-primary">+ 新增景點</button>
-                    <button type="button" id="add-day-btn" onclick="addDay()" class="itinerary-edit-action">+ 新增一天</button>
+                    <button type="button" id="trip-date-chip" class="edit-chip" onclick="openTripDatePicker()" aria-haspopup="dialog" aria-controls="trip-date-picker"><i class="fas fa-calendar-alt" aria-hidden="true"></i><span id="trip-date-chip-text">設定日期</span></button>
+                    <button type="button" id="add-day-btn" onclick="addDay()" class="edit-chip edit-chip-ghost" aria-label="新增一天"><i class="fas fa-plus" aria-hidden="true"></i>一天</button>
                 </div>
                 <div class="itinerary-sticky-tools">
-                    <button type="button" id="itinerary-edit-btn" class="day-nav-btn day-nav-edit hidden" onclick="toggleEdit()" aria-label="編輯行程">
-                        <i class="fas fa-pen" aria-hidden="true"></i>
+                    <button type="button" id="itinerary-edit-btn" class="edit-done-btn hidden" onclick="toggleEdit()" aria-label="完成編輯">
+                        <i class="fas fa-check" aria-hidden="true"></i>完成
                     </button>
                 </div>
             </div>
@@ -137,6 +129,7 @@
                     <div id="day-title-edit-panel" class="day-heading-edit hidden">
                         <label for="day-title-input" class="sr-only">當日標題</label>
                         <input type="text" id="day-title-input" placeholder="當日標題，例：上野 · 秋葉原" class="day-heading-input" aria-label="當日標題">
+                        <button type="button" id="day-stay-add" class="day-icon-btn hidden" onclick="openStaySheet(null, curDayIdx)" aria-label="加今晚住宿" title="加今晚住宿"><i class="fas fa-bed" aria-hidden="true"></i></button>
                     </div>
                     <div id="day-stay" class="day-stay hidden"></div>
                     <div id="timeline" class="space-y-5 relative min-h-[50px]"></div>

@@ -754,30 +754,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     }
 }
 
-.trip-schedule-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    min-height: var(--touch-min);
-    padding: 0.65rem 1rem;
-    border-radius: var(--radius-btn);
-    border: 1px solid var(--border-default);
-    background: var(--surface-muted);
-    text-align: left;
-}
-
-.itinerary-sticky-bar .day-nav-edit {
-    flex-shrink: 0;
-    color: var(--cute-pink);
-}
-
-.itinerary-sticky-bar .day-nav-edit-active {
-    background: var(--cute-pink);
-    border-color: var(--cute-pink);
-    color: #fff;
-}
-
 .itinerary-edit-actions {
     display: flex;
     flex-direction: row;
@@ -787,34 +763,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 .itinerary-edit-actions.hidden,
 .itinerary-sticky-bar .itinerary-edit-actions.hidden {
     display: none;
-}
-
-.itinerary-edit-action {
-    flex: 1;
-    min-height: var(--touch-min);
-    padding: 0.55rem 0.65rem;
-    border-radius: var(--radius-btn);
-    border: 1px solid var(--border-default);
-    background: var(--surface-muted);
-    font-size: var(--type-caption);
-    font-weight: 800;
-    color: var(--text-secondary);
-    text-align: center;
-    white-space: nowrap;
-}
-
-.itinerary-edit-action.hidden {
-    display: none;
-}
-
-.itinerary-edit-action-primary {
-    border: 2px dashed var(--cute-pink);
-    background: var(--accent-soft);
-    color: var(--cute-pink);
-}
-
-.itinerary-edit-action:active {
-    transform: scale(0.98);
 }
 
 .itinerary-sticky-bar {
@@ -892,40 +840,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     display: none;
 }
 
-.day-nav-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: var(--touch-min);
-    min-height: var(--touch-min);
-    border-radius: var(--radius-btn);
-    border: 1px solid var(--border-default);
-    background: var(--surface);
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-}
-
-.day-nav-btn:disabled {
-    opacity: 0.35;
-    pointer-events: none;
-}
-
-.day-nav-search-active {
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-color: var(--cute-pink);
-}
-
-.itinerary-sticky-tools .day-nav-search,
-.itinerary-sticky-tools .day-nav-edit {
-    flex-shrink: 0;
-}
-
-.itinerary-sticky-tools .day-nav-edit.hidden,
-.itinerary-sticky-tools .day-nav-search.hidden {
-    display: none;
-}
-
 @media (max-width: 480px) {
     .itinerary-sticky-bar-edit {
         flex-wrap: nowrap;
@@ -941,10 +855,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
         flex-shrink: 0;
     }
 
-    .itinerary-edit-action {
-        font-size: var(--type-micro);
-        padding: 0.5rem 0.35rem;
-    }
+    
 }
 
 #main-day-card {
@@ -1292,26 +1203,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     font-size: var(--type-caption);
     font-weight: 700;
     color: var(--text-primary);
-}
-
-.timeline-event-edit-del,
-.timeline-event-edit-hint {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2.25rem;
-    min-height: 2.25rem;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    border-radius: 0.65rem;
-}
-
-.timeline-event-edit-del {
-    color: #e11d48;
-}
-
-.timeline-event-edit-hint {
-    color: var(--text-muted);
 }
 
 .timeline-event-edit-status {
@@ -1739,7 +1630,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     border: none;
 }
 
-
 .weather-widget-controls {
     display: flex;
     flex-direction: column;
@@ -1776,35 +1666,6 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
 
 #weather-coverage-hint {
     line-height: 1.4;
-}
-
-.trip-date-trigger {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    width: 100%;
-    min-height: var(--touch-min);
-    padding: 0.65rem 0.85rem;
-    border-radius: var(--radius-btn);
-    border: 1px solid var(--border-default);
-    background: var(--surface-muted);
-    font-size: var(--type-caption);
-    font-weight: 800;
-    color: var(--text-primary);
-    text-align: left;
-    cursor: pointer;
-}
-
-.trip-date-trigger i {
-    color: var(--cute-pink);
-    flex-shrink: 0;
-}
-
-.trip-date-trigger span {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .trip-date-picker-actions {
@@ -2599,19 +2460,6 @@ select {
     color: #fff;
 }
 
-.stay-add-link {
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.1rem;
-    border: none;
-    background: none;
-    font-size: var(--type-micro);
-    font-weight: 800;
-    color: var(--text-muted);
-}
-
 .stay-card {
     display: flex;
     flex-direction: column;
@@ -3111,5 +2959,74 @@ select {
 
 .day-date-btn.hidden {
     display: none;
+}
+
+/* ── 編輯模式：一行工具列（日期粒、＋一天、✓ 完成） ── */
+.edit-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-soft);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: var(--type-caption);
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.edit-chip i {
+    color: var(--cute-pink);
+}
+
+.edit-chip-ghost {
+    border-style: dashed;
+    color: var(--cute-pink);
+}
+
+.edit-chip.hidden {
+    display: none;
+}
+
+.itinerary-sticky-bar-edit .itinerary-edit-actions {
+    gap: 0.4rem;
+}
+
+.edit-done-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.4rem;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--cute-pink);
+    color: #fff;
+    font-size: var(--type-caption);
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(255, 133, 161, 0.35);
+}
+
+.edit-done-btn.hidden {
+    display: none;
+}
+
+.day-heading-edit:not(.hidden) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.day-heading-edit .day-heading-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.timeline-event-edit-chevron {
+    padding: 0 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
 }
 

@@ -522,26 +522,9 @@ async function copyCurrentDay() {
     showToast('已複製整天行程');
 }
 
-function goToTripScheduleSettings() {
-    setTab('itinerary');
-    if (!isEdit && !travelMode) {
-        isEdit = true;
-        syncEditChrome();
-    }
-    setTimeout(() => {
-        const bar = document.getElementById('trip-schedule-bar');
-        if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (typeof openTripDatePicker === 'function') openTripDatePicker();
-    }, 120);
-}
-
 let searchPanelOpen = false;
 
 function syncTripScheduleChrome() {
-    const bar = document.getElementById('trip-schedule-bar');
-    const onItinerary = !document.getElementById('content-itinerary')?.classList.contains('hidden');
-    const showBar = onItinerary && isEdit && !travelMode;
-    if (bar) bar.classList.toggle('hidden', !showBar);
     // 有出發日期就用月曆改日數，唔使「新增一天」
     document.getElementById('add-day-btn')?.classList.toggle('hidden', !!trip.startDate);
     document.getElementById('day-date-btn')?.classList.toggle('hidden', !!trip.startDate || travelMode);
@@ -1123,21 +1106,18 @@ async function setItineraryDayCount(count) {
     return true;
 }
 
+// 編輯模式頂部嘅日期粒：「3/8–3/18 · 11 日」，未設就「設定日期」
 function renderTripScheduleUI() {
-    const triggerText = document.getElementById('trip-date-trigger-text');
-    const pillHint = document.getElementById('pill-hint');
-    if (triggerText) {
-        triggerText.textContent = trip.startDate
-            ? formatTripScheduleRange()
-            : '選擇出發與結束日期';
-    }
-    if (pillHint) {
+    const chipText = document.getElementById('trip-date-chip-text');
+    if (chipText) {
         if (trip.startDate) {
-            pillHint.textContent = `已設定 ${formatTripScheduleRange()} · 共 ${trip.itinerary.length} 日`;
-            pillHint.classList.remove('hidden');
+            const md = (d) => `${d.getMonth() + 1}/${d.getDate()}`;
+            const n = trip.itinerary.length;
+            const start = addDaysFromIso(trip.startDate, 0);
+            const end = addDaysFromIso(trip.startDate, Math.max(0, n - 1));
+            chipText.textContent = `${md(start)}${n > 1 ? `–${md(end)}` : ''} · ${n} 日`;
         } else {
-            pillHint.textContent = '撳一下用月曆選出發同結束';
-            pillHint.classList.remove('hidden');
+            chipText.textContent = '設定日期';
         }
     }
     syncTripScheduleChrome();
@@ -1710,12 +1690,7 @@ function syncEditChrome() {
     // 瀏覽時用日卡右上角 ✏️ 入編輯；編輯中 sticky bar 嘅 ✓ 完成
     const editBtn = document.getElementById('itinerary-edit-btn');
     const showDoneBtn = onItinerary && isEdit && !travelMode;
-    if (editBtn) {
-        editBtn.classList.toggle('hidden', !showDoneBtn);
-        editBtn.classList.add('day-nav-edit-active');
-        editBtn.setAttribute('aria-label', '完成編輯');
-        editBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
-    }
+    editBtn?.classList.toggle('hidden', !showDoneBtn);
     document.getElementById('day-edit-btn')?.classList.toggle('hidden', travelMode);
 
     document.querySelectorAll('#edit-controls').forEach((el) => {
@@ -2118,7 +2093,7 @@ async function submitQuickAdd() {
 function updateFabVisibility() {
     const fab = document.getElementById('fab-quick-add');
     const onIt = !document.getElementById('content-itinerary').classList.contains('hidden');
-    fab.classList.toggle('hidden', travelMode || !onIt || isEdit);
+    fab.classList.toggle('hidden', travelMode || !onIt);
 }
 
 function setWeatherUI({ temp, detail = '', code = null, isError = false }) {
@@ -2391,8 +2366,7 @@ async function renderDay(idx) {
                         ${statusUI ? `<span class="timeline-event-edit-status">${statusUI}</span>` : ''}
                         <div class="timeline-event-edit-actions">
                             ${editImgInd}
-                            <button type="button" class="timeline-event-edit-del" onclick="event.stopPropagation();removeEvent(${idx}, ${i})" aria-label="刪除景點"><i class="fas fa-trash-alt"></i></button>
-                            <button type="button" class="timeline-event-edit-hint" onclick="openEventEditSheet(${idx}, ${i})" aria-label="編輯景點"><i class="fas fa-pen"></i></button>
+                            <i class="fas fa-chevron-right timeline-event-edit-chevron" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>

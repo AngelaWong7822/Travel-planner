@@ -183,8 +183,7 @@ body {
     border: 1.5px solid var(--card-line);
 }
 
-#day-stay .stay-line strong,
-#day-stay .stay-add-link {
+#day-stay .stay-line strong {
     color: var(--card-ink);
 }
 
