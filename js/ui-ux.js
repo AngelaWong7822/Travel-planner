@@ -259,6 +259,10 @@ function renderEventEditSheetFields(dayIdx, i, ev) {
             <input oninput="${path}.loc=this.value;debouncedSave();document.getElementById('event-edit-picker-loc').textContent=this.value||'景點'" value="${escapeAttr(ev.loc)}" placeholder="景點名稱" class="field-input w-full mt-1">
         </label>
         <label class="event-edit-sheet-field">
+            <span class="type-micro text-muted">地點</span>
+            <input oninput="${path}.place=this.value;debouncedSave();debouncedRenderDay()" value="${escapeAttr(ev.place || '')}" placeholder="地名或地址（Google Maps 用）" class="field-input w-full mt-1">
+        </label>
+        <label class="event-edit-sheet-field">
             <span class="type-micro text-muted">時間</span>
             <input type="time" oninput="${path}.time=this.value;debouncedSave();debouncedRenderDay()" value="${escapeAttr(ev.time)}" class="field-input w-full mt-1">
         </label>
@@ -374,13 +378,10 @@ function renderEventStatusUI(dayIdx, eventIdx, ev) {
 }
 
 // 景點名旁邊嘅細導航掣（冇地點但有連結就開連結）
-// 未填地點（空白或者預設名）就唔出地圖掣
-const PLACEHOLDER_LOCS = ['景點', '新景點／地點'];
-
-function renderMapActionsUI(loc, link) {
+// 地圖掣只用「地點」欄；冇填（又冇連結）就唔出
+function renderMapActionsUI(place, link) {
     const href = safeExternalUrl(link);
-    const raw = (loc || '').trim();
-    const locStr = PLACEHOLDER_LOCS.includes(raw) ? '' : raw;
+    const locStr = (place || '').trim();
     if (locStr) {
         return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="Google Maps：${escapeAttr(locStr)}"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>`;
     }

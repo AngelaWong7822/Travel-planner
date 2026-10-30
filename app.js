@@ -1289,6 +1289,8 @@ function migrateEvent(ev) {
     const hasCoords = lat != null && lon != null;
     return {
         loc: ev.loc != null ? ev.loc : '景點',
+        // 地圖掣用嘅地點（地名或地址），同顯示名分開
+        place: ev.place != null ? String(ev.place) : '',
         time: ev.time != null ? ev.time : '12:00',
         remark: ev.remark != null ? ev.remark : '',
         status: normalizeEventStatus(ev.status),
@@ -2151,7 +2153,7 @@ async function renderDay(idx) {
             ? `<p class="timeline-event-book">訂位 ${escapeHtml(ev.bookingRef)} <button type="button" onclick='event.stopPropagation();copyBookingRef(${JSON.stringify(ev.bookingRef)})' class="chip-copy">複製</button></p>`
             : '';
         const remarkLine = ev.remark ? `<p class="timeline-event-remark">${escapeHtml(ev.remark)}</p>` : '';
-        const mapLine = !isEdit ? renderMapActionsUI(ev.loc, ev.link) : '';
+        const mapLine = !isEdit ? renderMapActionsUI(ev.place, ev.link) : '';
         const imgThumb =
             ev.img && !isEdit
                 ? `<button type="button" class="timeline-event-thumb" onclick='event.stopPropagation();showBig(${JSON.stringify(ev.img)})'><img src="${escapeAttr(imgUrl || ev.img)}" alt=""></button>`
