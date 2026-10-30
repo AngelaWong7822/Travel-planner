@@ -2630,6 +2630,17 @@ document.getElementById('event-img-input').onchange = async (e) => {
     }
 };
 
+async function removeEventImage(dayIdx, eventIdx) {
+    const ev = trip.itinerary[dayIdx]?.events[eventIdx];
+    if (!ev?.img) return;
+    if (!(await modalConfirm('移除圖片', '確定移除呢張圖片？', { danger: true, confirmText: '移除' }))) return;
+    await deleteImageRef(ev.img);
+    ev.img = '';
+    save();
+    refreshEventEditSheetIfOpen(dayIdx, eventIdx);
+    await renderDay(curDayIdx);
+}
+
 function addDay() {
     trip.itinerary.push({
         date: `Day ${trip.itinerary.length + 1}`,

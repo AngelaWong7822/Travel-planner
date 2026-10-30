@@ -295,7 +295,10 @@ function renderEventEditSheetFields(dayIdx, i, ev) {
             <div class="event-edit-sheet-field">
                 <span class="type-micro text-muted">圖片</span>
                 <div id="event-edit-img-preview" class="event-edit-img-preview mt-1"></div>
-                <button type="button" onclick="curEventIdx=${i};triggerFile('event-img-input')" class="btn-inline mt-2">上傳／更換</button>
+                <div class="flex gap-2 mt-2">
+                    <button type="button" onclick="curEventIdx=${i};triggerFile('event-img-input')" class="btn-inline">${ev.img ? '更換' : '上傳'}</button>
+                    ${ev.img ? `<button type="button" onclick="removeEventImage(${dayIdx}, ${i})" class="btn-inline btn-inline-danger">移除</button>` : ''}
+                </div>
             </div>
         </details>
         <div class="event-edit-actions mt-2">
@@ -323,7 +326,12 @@ function refreshEventEditSheetIfOpen(dayIdx, i) {
     const ev = trip.itinerary[dayIdx]?.events[i];
     if (!ev) return;
     const body = document.getElementById('event-edit-picker-body');
-    if (body) body.innerHTML = renderEventEditSheetFields(dayIdx, i, ev);
+    if (body) {
+        // 換／刪圖之後「更多」保持打開
+        const moreOpen = body.querySelector('details.event-edit-more')?.open;
+        body.innerHTML = renderEventEditSheetFields(dayIdx, i, ev);
+        if (moreOpen) body.querySelector('details.event-edit-more')?.setAttribute('open', '');
+    }
     updateEventEditSheetImagePreview(dayIdx, i);
 }
 
