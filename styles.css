@@ -2941,3 +2941,12 @@ select {
     box-shadow: 0 4px 12px rgba(255, 133, 161, 0.35);
 }
 
+
+/* ── 住宿／旅程視窗：儲存掣同上面欄位隔開 ── */
+.sheet-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1.5px dashed var(--border-soft);
+}

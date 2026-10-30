@@ -346,7 +346,7 @@
                     <input type="number" id="stay-cost" class="field-input w-full mt-1" inputmode="decimal">
                 </label>
             </div>
-            <div class="flex gap-2 mt-3">
+            <div class="sheet-actions">
                 <button type="button" id="stay-delete-btn" onclick="deleteStayFromSheet()" class="btn-inline btn-inline-danger hidden">刪除</button>
                 <button type="button" onclick="saveStayFromSheet()" class="btn-primary-sm flex-1 py-3">儲存</button>
             </div>
@@ -365,7 +365,7 @@
                 <span class="type-micro text-muted">目的地</span>
                 <select id="weather-location-select" class="field-input w-full mt-1" aria-label="目的地（天氣用）"></select>
             </label>
-            <div class="flex gap-2 mt-3">
+            <div class="sheet-actions">
                 <button type="button" id="trip-settings-delete" onclick="closeTripSettings(); deleteCurrentTrip();" class="btn-inline btn-inline-danger">刪除</button>
                 <button type="button" id="trip-settings-save" onclick="saveTripSettings()" class="btn-primary-sm flex-1 py-3">儲存</button>
             </div>
