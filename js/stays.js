@@ -53,7 +53,7 @@ function renderDayStay(idx) {
                 <span class="stay-line-text">今晚住：<strong>${escapeHtml(s.name || '住宿')}</strong></span>
             </button>
             ${s.bookingRef ? `<button type="button" class="chip-copy" data-ref="${escapeAttr(s.bookingRef)}" onclick="copyBookingRef(this.dataset.ref)">${escapeHtml(s.bookingRef)}</button>` : ''}
-            ${nav ? `<button type="button" class="stay-nav-btn" data-q="${escapeAttr(nav)}" onclick="openMapDirections(this.dataset.q)" aria-label="導航去住宿"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>` : ''}
+            ${nav ? `<button type="button" class="stay-nav-btn" data-q="${escapeAttr(nav)}" onclick="openMapSearch(this.dataset.q)" aria-label="喺 Google Maps 睇住宿"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></button>` : ''}
         </div>`);
     }
     document.getElementById('day-stay-add')?.classList.toggle('hidden', !(editing && tonight < 0));

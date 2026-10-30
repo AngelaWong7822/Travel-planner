@@ -448,10 +448,6 @@ function appleMapsUrl(query) {
     return `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
 }
 
-function googleMapsDirectionsUrl(query) {
-    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
-}
-
 function openExternalUrl(url) {
     if (!url) return;
     const a = document.createElement('a');
@@ -468,12 +464,6 @@ function openMapSearch(loc) {
     const q = (loc || '').trim();
     if (!q) return;
     openExternalUrl(googleMapsUrl(q));
-}
-
-function openMapDirections(loc) {
-    const q = (loc || '').trim();
-    if (!q) return;
-    openExternalUrl(googleMapsDirectionsUrl(q));
 }
 
 function openAppleMap(loc) {

@@ -371,7 +371,8 @@ function openMapPrimary(loc, link) {
         return;
     }
     const q = (loc || '').trim();
-    if (q) openMapDirections(q);
+    // 開地點頁唔開導航：人未到當地時導航會計唔到路線
+    if (q) openMapSearch(q);
 }
 
 function renderEventStatusUI(dayIdx, eventIdx, ev) {
@@ -391,7 +392,7 @@ function renderMapActionsUI(place, link) {
     const href = safeExternalUrl(link);
     const locStr = (place || '').trim();
     if (locStr) {
-        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="Google Maps：${escapeAttr(locStr)}"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>`;
+        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="Google Maps：${escapeAttr(locStr)}"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></button>`;
     }
     if (href) {
         return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="event-nav-btn" aria-label="開啟連結"><i class="fas fa-link" aria-hidden="true"></i></a>`;
