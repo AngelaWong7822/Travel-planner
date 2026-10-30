@@ -125,9 +125,10 @@
     align-items: center;
     justify-content: center;
     gap: 0.05rem;
-    min-width: 4rem;
+    position: relative;
+    min-width: 3.75rem;
     max-width: 5.5rem;
-    height: 4.25rem;
+    height: 3.6rem;
     padding: 0.45rem 0.55rem;
     border-radius: 1rem;
     background: var(--card-bg);
@@ -152,19 +153,6 @@
 .day-card-field-date { width: 2.5rem; }
 .day-card-field-wd { width: 1.35rem; }
 
-.day-card-cost {
-    font-size: var(--type-micro);
-    font-weight: 800;
-    line-height: 1.1;
-    color: var(--cute-pink);
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: center;
-}
-
-.day-card.active .day-card-cost { color: #fff; opacity: 0.92; }
 .day-card.active .day-chip-wd { opacity: 0.8; color: #fff; }
 .day-card.active .day-card-field-date,
 .day-card.active .day-card-field-wd {
@@ -2742,20 +2730,6 @@ select {
     display: none;
 }
 
-/* ── 日子粒：景點數點點 ── */
-.day-chip-dots {
-    display: block;
-    height: 0.75rem;
-    font-size: 0.7rem;
-    line-height: 1;
-    letter-spacing: 0.08em;
-    color: var(--cute-pink);
-}
-
-.day-chip.active .day-chip-dots {
-    color: #fff;
-}
-
 /* ── 行李清單：底部打字加 ── */
 .check-add-form {
     margin-top: 0.75rem;
@@ -2921,7 +2895,7 @@ select {
     flex-shrink: 0;
     gap: 0.15rem;
     min-width: 3.4rem;
-    height: 4.25rem;
+    height: 3.6rem;
     border-radius: 1rem;
     border: 1.5px dashed var(--cute-pink);
     background: var(--accent-soft);
@@ -2950,3 +2924,40 @@ select {
     padding-top: 1rem;
     border-top: 1.5px dashed var(--border-soft);
 }
+
+/* 日子粒右上角景點數 */
+.day-chip-count {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    min-width: 1rem;
+    height: 1rem;
+    padding: 0 0.2rem;
+    border-radius: 999px;
+    background: var(--cute-pink);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 900;
+    line-height: 1rem;
+    text-align: center;
+}
+
+.day-chip.active .day-chip-count {
+    background: #fff;
+    color: var(--cute-pink);
+}
+
+/* 日卡頂：當日預估花費 */
+.day-banner-cost {
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--cute-pink);
+    font-size: var(--type-micro);
+    font-weight: 800;
+}
+
+.day-banner-cost.hidden {
+    display: none;
+}
+

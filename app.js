@@ -1156,6 +1156,7 @@ function updateDayBannerDate(idx) {
         subEl.classList.toggle('hidden', !hero.sub);
     }
     if (todayMark) todayMark.classList.toggle('hidden', !hero.isToday);
+    updateDayBannerCost(idx);
     updateDayBannerWeather(idx);
 }
 
@@ -1743,17 +1744,23 @@ function renderTripSelector() {
     applyRateToInputs();
 }
 
+// 日子粒：日期／星期兩行，景點數擺右上角；當日花費搬咗去日卡頂
 function renderDayChipBody(d, i, lines) {
-    const cost = sumEventCosts(d.events);
-    const costHtml = cost > 0
-        ? `<span class="day-card-cost">${escapeHtml(formatPillAmount(cost))}</span>`
-        : '';
     const wd = lines.line2 && lines.line2 !== '-' ? lines.line2 : '';
     const n = d.events.length;
-    const dots = `<span class="day-chip-dots"${n ? ` aria-label="${n} 個景點"` : ''}>${'•'.repeat(Math.min(n, 5))}</span>`;
+    const count = n ? `<span class="day-chip-count" aria-label="${n} 個景點">${n > 9 ? '9+' : n}</span>` : '';
     return `<span class="day-chip-date">${escapeHtml(lines.line1)}</span>
             <span class="day-chip-wd">${escapeHtml(wd)}</span>
-            ${dots}${costHtml}`;
+            ${count}`;
+}
+
+function updateDayBannerCost(idx) {
+    const el = document.getElementById('day-banner-cost');
+    const day = trip.itinerary[idx];
+    if (!el || !day) return;
+    const cost = sumEventCosts(day.events);
+    el.textContent = cost > 0 ? formatPillAmount(cost) : '';
+    el.classList.toggle('hidden', !(cost > 0));
 }
 
 // 編輯模式日子列尾：📅 改日期（未設日期仲有 ＋ 一天）
@@ -1780,6 +1787,7 @@ function renderDaySelector() {
         })
         .join('') + dayToolChipsHtml();
     if (typeof syncDaySortable === 'function') syncDaySortable();
+    updateDayBannerCost(curDayIdx);
     requestAnimationFrame(() => syncItineraryChromeOffset());
 }
 
