@@ -1821,12 +1821,8 @@ function switchTrip(idx) {
     init();
 }
 
-async function createNewTrip() {
-    const n = await modalPrompt('新增旅程', '新旅程', '旅程名稱');
-    if (n && n.trim()) {
-        data.trips.push(defaultTrip(n.trim()));
-        switchTrip(data.trips.length - 1);
-    }
+function createNewTrip() {
+    openTripSettings(true);
 }
 
 async function deleteCurrentTrip() {
@@ -2183,8 +2179,6 @@ async function renderDay(idx) {
                         ${statusUI ? `<span class="timeline-event-edit-status">${statusUI}</span>` : ''}
                         <div class="timeline-event-edit-actions">
                             ${editImgInd}
-                            ${renderMapActionsUI(ev.loc, ev.link, 'fa-map-marker-alt')}
-                            <i class="fas fa-chevron-right timeline-event-edit-chevron" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>

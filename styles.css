@@ -2657,11 +2657,6 @@ select {
     min-width: 0;
 }
 
-.timeline-event-edit-chevron {
-    padding: 0 0.35rem;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-}
 
 /* ── 匯率：一行計數機 ── */
 .rate-calc {

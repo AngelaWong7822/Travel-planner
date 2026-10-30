@@ -158,13 +158,25 @@ function renderTripPicker() {
         .join('');
 }
 
-// ⋯ 旅程設定：改名、目的地、刪除
-function openTripSettings() {
+// ⋯ 旅程設定：改名、目的地、刪除；＋ 新旅程都用同一個視窗
+let tripSettingsIsNew = false;
+
+function openTripSettings(isNew = false) {
     if (travelMode) return;
-    document.getElementById('trip-settings-name').value = trip.name || '';
-    renderWeatherLocationSelect();
-    document.getElementById('trip-settings-delete').classList.toggle('hidden', data.trips.length <= 1);
+    tripSettingsIsNew = isNew;
+    const nameEl = document.getElementById('trip-settings-name');
+    nameEl.value = isNew ? '新旅程' : trip.name || '';
+    const sel = document.getElementById('weather-location-select');
+    sel.innerHTML = weatherLocationOptionsHtml(trip.city || 'Tokyo');
+    sel.value = getWeatherLocation(trip.city || 'Tokyo').id;
+    document.getElementById('trip-settings-title').textContent = isNew ? '新增旅程' : '旅程設定';
+    document.getElementById('trip-settings-save').textContent = isNew ? '建立' : '儲存';
+    document.getElementById('trip-settings-delete').classList.toggle('hidden', isNew || data.trips.length <= 1);
     document.getElementById('trip-settings-sheet').classList.remove('hidden');
+    if (isNew) {
+        nameEl.focus();
+        nameEl.select();
+    }
 }
 
 function closeTripSettings() {
@@ -173,9 +185,16 @@ function closeTripSettings() {
 
 function saveTripSettings() {
     const name = document.getElementById('trip-settings-name').value.trim();
-    if (name) trip.name = name;
     const city = document.getElementById('weather-location-select').value;
     closeTripSettings();
+    if (tripSettingsIsNew) {
+        const t = defaultTrip(name || '新旅程', city || 'Tokyo');
+        t.localCurrency = weatherLocationCurrency(t.city) || t.localCurrency;
+        data.trips.push(t);
+        switchTrip(data.trips.length - 1);
+        return;
+    }
+    if (name) trip.name = name;
     if (city && city !== trip.city) onWeatherLocationSelect(city);
     else save();
     const cur = weatherLocationCurrency(trip.city);
@@ -355,12 +374,15 @@ function renderEventStatusUI(dayIdx, eventIdx, ev) {
 }
 
 // 景點名旁邊嘅細導航掣（冇地點但有連結就開連結）
-// 景點行右邊嘅地圖掣：瀏覽用 ➤，編輯用 📍（icon 由 caller 揀）
-function renderMapActionsUI(loc, link, icon = 'fa-location-arrow') {
+// 未填地點（空白或者預設名）就唔出地圖掣
+const PLACEHOLDER_LOCS = ['景點', '新景點／地點'];
+
+function renderMapActionsUI(loc, link) {
     const href = safeExternalUrl(link);
-    const locStr = (loc || '').trim();
+    const raw = (loc || '').trim();
+    const locStr = PLACEHOLDER_LOCS.includes(raw) ? '' : raw;
     if (locStr) {
-        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="Google Maps：${escapeAttr(locStr)}"><i class="fas ${icon}" aria-hidden="true"></i></button>`;
+        return `<button type="button" class="event-nav-btn" data-loc="${escapeAttr(locStr)}" data-link="${escapeAttr(link || '')}" onclick="event.stopPropagation();openMapPrimary(this.dataset.loc, this.dataset.link)" aria-label="Google Maps：${escapeAttr(locStr)}"><i class="fas fa-location-arrow" aria-hidden="true"></i></button>`;
     }
     if (href) {
         return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="event-nav-btn" aria-label="開啟連結"><i class="fas fa-link" aria-hidden="true"></i></a>`;
