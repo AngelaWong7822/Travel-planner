@@ -1040,6 +1040,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     color: var(--text-secondary);
     margin-top: 0.35rem;
     line-height: 1.45;
+    white-space: pre-line; /* 備註保留換行 */
 }
 
 .timeline-event-foot {

@@ -7,7 +7,7 @@ function formatDayEventsText(t, day, dayIdx) {
     const lines = events.map(({ ev }) => {
         let line = `${ev.time || '--:--'}  ${ev.loc || '景點'}`;
         if (ev.bookingRef) line += ` [${ev.bookingRef}]`;
-        if (ev.remark) line += `\n    ${ev.remark}`;
+        if (ev.remark) line += `\n    ${ev.remark.replace(/\n/g, '\n    ')}`;
         return line;
     });
     return `${header}\n${lines.join('\n')}`;
@@ -111,7 +111,7 @@ body{font-family:'Noto Sans TC',sans-serif;color:#2D3436;padding:24px;max-width:
 h1{font-size:22px;margin:0 0 4px} .meta{color:#666;font-size:13px;margin-bottom:20px}
 .day{margin-bottom:20px;page-break-inside:avoid} h2{font-size:15px;border-bottom:2px solid #FF85A1;padding-bottom:4px}
 ul{list-style:none;padding:0;margin:8px 0 0} li{margin:8px 0;font-size:13px;line-height:1.5}
-.remark{color:#666;font-size:12px;margin:4px 0 0} .tag{color:#FF85A1;font-size:11px} .muted{color:#999}
+.remark{color:#666;font-size:12px;margin:4px 0 0;white-space:pre-line} .tag{color:#FF85A1;font-size:11px} .muted{color:#999}
 .checklist{margin-bottom:24px}
 .checklist-list li.check-item{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 .check-done{opacity:.55;text-decoration:line-through}
