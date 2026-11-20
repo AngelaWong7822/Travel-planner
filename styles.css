@@ -1612,7 +1612,7 @@ body.travel-mode-on { --accent-soft: #ffe4ec; }
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s, transform 0.2s;
-    z-index: 150;
+    z-index: 250; /* 要喺底部視窗（190）上面先睇到 */
 }
 
 #toast.show {
@@ -2964,6 +2964,6 @@ select {
 
 /* PDF 整緊：掣變淡，唔畀連撳 */
 #trip-pdf-btn.is-busy {
-    opacity: 0.6;
+    opacity: 0.75;
     pointer-events: none;
 }

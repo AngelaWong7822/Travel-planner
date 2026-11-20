@@ -203,65 +203,63 @@ function loadScriptOnce(src) {
     });
 }
 
-async function renderPrintHtmlToCanvas(html) {
+// 列印版面放入隱形 iframe；每個區塊底部係安全切頁位
+async function openPrintFrame(html) {
     const frame = document.createElement('iframe');
     frame.setAttribute('aria-hidden', 'true');
     frame.style.cssText = `position:fixed;left:-10000px;top:0;width:${PDF_PAGE_CSS_WIDTH}px;height:1000px;border:0;background:#fff`;
     document.body.appendChild(frame);
-    try {
-        await new Promise((resolve) => {
-            frame.onload = resolve;
-            frame.srcdoc = html;
-        });
-        const doc = frame.contentDocument;
-        if (doc.fonts?.ready) await doc.fonts.ready;
-        const body = doc.body;
-        body.style.background = '#fff';
-        frame.style.height = `${body.scrollHeight + 40}px`;
-        // 每個區塊底部係安全切頁位
-        const cuts = Array.from(body.children).map((el) => el.offsetTop + el.offsetHeight);
-        const canvas = await window.html2canvas(body, {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            windowWidth: PDF_PAGE_CSS_WIDTH,
-            logging: false,
-        });
-        return { canvas, cuts, cssHeight: body.scrollHeight };
-    } finally {
-        frame.remove();
-    }
+    await new Promise((resolve) => {
+        frame.onload = resolve;
+        frame.srcdoc = html;
+    });
+    const doc = frame.contentDocument;
+    if (doc.fonts?.ready) await doc.fonts.ready;
+    doc.documentElement.style.background = '#fff';
+    const total = doc.documentElement.scrollHeight;
+    frame.style.height = `${total}px`;
+    const cuts = Array.from(doc.body.children).map((el) => Math.ceil(el.getBoundingClientRect().bottom));
+    return { frame, doc, total, cuts };
 }
 
 async function buildTripPdfFile(t) {
     for (const src of PDF_LIBS) await loadScriptOnce(src);
-    const { canvas, cuts, cssHeight } = await renderPrintHtmlToCanvas(buildPrintHtml(t));
-    const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
-    const margin = 10;
-    const pageW = 210 - margin * 2;
-    const mmPerCss = pageW / PDF_PAGE_CSS_WIDTH;
-    const pageCss = (297 - margin * 2) / mmPerCss;
-    const ratio = canvas.width / PDF_PAGE_CSS_WIDTH;
-    let y = 0;
-    let first = true;
-    while (y < cssHeight - 1) {
-        const limit = y + pageCss;
-        // 喺頁底之前搵最後一個區塊尾切；一個區塊長過一頁先硬切
-        const fit = cuts.filter((c) => c > y + 1 && c <= limit);
-        const end = limit >= cssHeight ? cssHeight : fit.length ? Math.max(...fit) : limit;
-        const slice = document.createElement('canvas');
-        slice.width = canvas.width;
-        slice.height = Math.ceil((end - y) * ratio);
-        const ctx = slice.getContext('2d');
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, slice.width, slice.height);
-        ctx.drawImage(canvas, 0, Math.floor(y * ratio), slice.width, slice.height, 0, 0, slice.width, slice.height);
-        if (!first) pdf.addPage();
-        pdf.addImage(slice.toDataURL('image/jpeg', 0.9), 'JPEG', margin, margin, pageW, (end - y) * mmPerCss);
-        first = false;
-        y = end;
+    const { frame, doc, total, cuts } = await openPrintFrame(buildPrintHtml(t));
+    try {
+        const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+        const margin = 10;
+        const pageW = 210 - margin * 2;
+        const mmPerCss = pageW / PDF_PAGE_CSS_WIDTH;
+        const pageCss = (297 - margin * 2) / mmPerCss;
+        let y = 0;
+        let first = true;
+        while (y < total - 1) {
+            const limit = y + pageCss;
+            // 喺頁底之前搵最後一個區塊尾切；一個區塊長過一頁先硬切
+            const fit = cuts.filter((c) => c > y + 1 && c <= limit);
+            const end = limit >= total ? total : fit.length ? Math.max(...fit) : limit;
+            // 一頁影一張，唔整一張超長圖（iPhone 頂唔順）
+            const canvas = await window.html2canvas(doc.documentElement, {
+                x: 0,
+                y,
+                width: PDF_PAGE_CSS_WIDTH,
+                height: Math.ceil(end - y),
+                windowWidth: PDF_PAGE_CSS_WIDTH,
+                windowHeight: total,
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+            });
+            if (!first) pdf.addPage();
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', margin, margin, pageW, (end - y) * mmPerCss);
+            first = false;
+            y = end;
+        }
+        const safeName = (t.name || '行程').replace(/[\/:*?"<>|]/g, '').trim() || '行程';
+        return new File([pdf.output('blob')], `${safeName}.pdf`, { type: 'application/pdf' });
+    } finally {
+        frame.remove();
     }
-    const safeName = (t.name || '行程').replace(/[\/:*?"<>|]/g, '').trim() || '行程';
-    return new File([pdf.output('blob')], `${safeName}.pdf`, { type: 'application/pdf' });
 }
 
 function downloadFile(file) {
@@ -279,11 +277,14 @@ async function shareTripPdf() {
     if (pdfBusy) return;
     pdfBusy = true;
     const btn = document.getElementById('trip-pdf-btn');
-    btn?.classList.add('is-busy');
-    btn?.setAttribute('aria-busy', 'true');
+    const label = btn?.innerHTML;
+    if (btn) {
+        btn.classList.add('is-busy');
+        btn.setAttribute('aria-busy', 'true');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1" aria-hidden="true"></i>整緊…';
+    }
     try {
         if (typeof flushSave === 'function') flushSave();
-        showToast('整緊 PDF…');
         const file = await buildTripPdfFile(trip);
         if (!navigator.canShare?.({ files: [file] })) {
             downloadFile(file);
@@ -305,7 +306,10 @@ async function shareTripPdf() {
         await modalAlert('PDF 失敗', err?.message || '請稍後再試');
     } finally {
         pdfBusy = false;
-        btn?.classList.remove('is-busy');
-        btn?.removeAttribute('aria-busy');
+        if (btn) {
+            btn.classList.remove('is-busy');
+            btn.removeAttribute('aria-busy');
+            btn.innerHTML = label;
+        }
     }
 }
