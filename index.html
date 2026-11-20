@@ -222,6 +222,14 @@
                 </div>
             </div>
 
+            <div id="tools-share-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
+                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">📤</span>分享行程</h2>
+                <div class="flex gap-2">
+                    <button type="button" id="trip-pdf-btn" onclick="shareTripPdf()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-file-pdf mr-1" aria-hidden="true"></i>PDF</button>
+                    <button type="button" onclick="shareCurrentTrip()" class="flex-1 btn-ghost-sm py-3"><i class="fas fa-align-left mr-1" aria-hidden="true"></i>文字</button>
+                </div>
+            </div>
+
             <div id="tools-backup-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
                 <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">💾</span>備份</h2>
                 <p id="backup-last" class="type-micro text-muted font-bold"></p>

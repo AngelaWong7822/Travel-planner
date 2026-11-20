@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'travel-shell-v140';
-const ASSET_CACHE = 'travel-assets-v140';
+const SHELL_CACHE = 'travel-shell-v141';
+const ASSET_CACHE = 'travel-assets-v141';
 
 /** Critical path - small files only; must finish before SW takes over. */
 const CORE_SHELL_URLS = [
@@ -53,6 +53,8 @@ const DEFERRED_ASSET_URLS = [
     './vendor/flags/th.svg',
     './vendor/flags/tw.svg',
     './vendor/flags/us.svg',
+    './vendor/pdf/html2canvas.min.js',
+    './vendor/pdf/jspdf.umd.min.js',
 ];
 
 const OFFLINE_FALLBACK_HTML =

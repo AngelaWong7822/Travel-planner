@@ -2961,3 +2961,8 @@ select {
     display: none;
 }
 
+/* PDF 整緊：掣變淡，唔畀連撳 */
+#trip-pdf-btn.is-busy {
+    opacity: 0.6;
+    pointer-events: none;
+}

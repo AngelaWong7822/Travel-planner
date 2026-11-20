@@ -182,3 +182,130 @@ function runPrintPreview() {
         }
     }, 350);
 }
+
+// ── PDF 分享：用列印版面影相成 A4 PDF，再彈手機分享選單 ──
+const PDF_LIBS = ['vendor/pdf/html2canvas.min.js', 'vendor/pdf/jspdf.umd.min.js'];
+const PDF_PAGE_CSS_WIDTH = 768;
+let pdfBusy = false;
+
+function loadScriptOnce(src) {
+    if (document.querySelector(`script[data-src="${src}"]`)) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.dataset.src = src;
+        s.onload = resolve;
+        s.onerror = () => {
+            s.remove();
+            reject(new Error('載入 PDF 工具失敗'));
+        };
+        document.head.appendChild(s);
+    });
+}
+
+async function renderPrintHtmlToCanvas(html) {
+    const frame = document.createElement('iframe');
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.cssText = `position:fixed;left:-10000px;top:0;width:${PDF_PAGE_CSS_WIDTH}px;height:1000px;border:0;background:#fff`;
+    document.body.appendChild(frame);
+    try {
+        await new Promise((resolve) => {
+            frame.onload = resolve;
+            frame.srcdoc = html;
+        });
+        const doc = frame.contentDocument;
+        if (doc.fonts?.ready) await doc.fonts.ready;
+        const body = doc.body;
+        body.style.background = '#fff';
+        frame.style.height = `${body.scrollHeight + 40}px`;
+        // 每個區塊底部係安全切頁位
+        const cuts = Array.from(body.children).map((el) => el.offsetTop + el.offsetHeight);
+        const canvas = await window.html2canvas(body, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            windowWidth: PDF_PAGE_CSS_WIDTH,
+            logging: false,
+        });
+        return { canvas, cuts, cssHeight: body.scrollHeight };
+    } finally {
+        frame.remove();
+    }
+}
+
+async function buildTripPdfFile(t) {
+    for (const src of PDF_LIBS) await loadScriptOnce(src);
+    const { canvas, cuts, cssHeight } = await renderPrintHtmlToCanvas(buildPrintHtml(t));
+    const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    const margin = 10;
+    const pageW = 210 - margin * 2;
+    const mmPerCss = pageW / PDF_PAGE_CSS_WIDTH;
+    const pageCss = (297 - margin * 2) / mmPerCss;
+    const ratio = canvas.width / PDF_PAGE_CSS_WIDTH;
+    let y = 0;
+    let first = true;
+    while (y < cssHeight - 1) {
+        const limit = y + pageCss;
+        // 喺頁底之前搵最後一個區塊尾切；一個區塊長過一頁先硬切
+        const fit = cuts.filter((c) => c > y + 1 && c <= limit);
+        const end = limit >= cssHeight ? cssHeight : fit.length ? Math.max(...fit) : limit;
+        const slice = document.createElement('canvas');
+        slice.width = canvas.width;
+        slice.height = Math.ceil((end - y) * ratio);
+        const ctx = slice.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, slice.width, slice.height);
+        ctx.drawImage(canvas, 0, Math.floor(y * ratio), slice.width, slice.height, 0, 0, slice.width, slice.height);
+        if (!first) pdf.addPage();
+        pdf.addImage(slice.toDataURL('image/jpeg', 0.9), 'JPEG', margin, margin, pageW, (end - y) * mmPerCss);
+        first = false;
+        y = end;
+    }
+    const safeName = (t.name || '行程').replace(/[\/:*?"<>|]/g, '').trim() || '行程';
+    return new File([pdf.output('blob')], `${safeName}.pdf`, { type: 'application/pdf' });
+}
+
+function downloadFile(file) {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function shareTripPdf() {
+    if (pdfBusy) return;
+    pdfBusy = true;
+    const btn = document.getElementById('trip-pdf-btn');
+    btn?.classList.add('is-busy');
+    btn?.setAttribute('aria-busy', 'true');
+    try {
+        if (typeof flushSave === 'function') flushSave();
+        showToast('整緊 PDF…');
+        const file = await buildTripPdfFile(trip);
+        if (!navigator.canShare?.({ files: [file] })) {
+            downloadFile(file);
+            showToast('已下載 PDF');
+            return;
+        }
+        try {
+            await navigator.share({ files: [file], title: trip.name });
+        } catch (err) {
+            if (err?.name === 'AbortError') return;
+            // 整 PDF 太耐，手機當咗唔係用戶撳 → 再撳一下就得
+            if (err?.name !== 'NotAllowedError') throw err;
+            if (!(await modalConfirm('PDF 整好咗 📄', '撳「分享」傳畀朋友', { confirmText: '分享' }))) return;
+            await navigator.share({ files: [file], title: trip.name }).catch((e) => {
+                if (e?.name !== 'AbortError') throw e;
+            });
+        }
+    } catch (err) {
+        await modalAlert('PDF 失敗', err?.message || '請稍後再試');
+    } finally {
+        pdfBusy = false;
+        btn?.classList.remove('is-busy');
+        btn?.removeAttribute('aria-busy');
+    }
+}
