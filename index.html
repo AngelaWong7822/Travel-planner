@@ -27,7 +27,6 @@
     <input type="file" id="banner-img-input" class="hidden" accept="image/*">
     <input type="file" id="event-img-input" class="hidden" accept="image/*">
     <input type="file" id="lib-file-input" class="hidden" accept="image/*,application/pdf,.pdf">
-    <input type="file" id="backup-file-input" class="hidden" accept="application/json,.json">
     <div id="lightbox" role="dialog" aria-label="圖片預覽">
         <button type="button" id="lightbox-close" onclick="closeLightbox()" aria-label="關閉"><i class="fas fa-times"></i></button>
         <div id="lightbox-viewport">
@@ -230,18 +229,6 @@
                 </div>
             </div>
 
-            <div id="tools-backup-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm space-y-3">
-                <h2 class="type-body font-bold text-primary"><span class="cute-emoji" aria-hidden="true">💾</span>備份</h2>
-                <p id="backup-last" class="type-micro text-muted font-bold"></p>
-                <div class="flex gap-2">
-                    <button type="button" onclick="exportBackup()" class="flex-1 btn-primary-sm py-3"><i class="fas fa-download mr-1" aria-hidden="true"></i>匯出備份</button>
-                    <button type="button" id="backup-share-btn" onclick="shareBackup()" class="hidden flex-1 btn-ghost-sm py-3"><i class="fas fa-share-alt mr-1" aria-hidden="true"></i>分享備份檔</button>
-                </div>
-                <div class="flex gap-2">
-                    <button type="button" onclick="startImport('merge')" class="flex-1 btn-ghost-sm py-3">匯入（合併）</button>
-                    <button type="button" onclick="startImport('replace')" class="flex-1 btn-ghost-sm py-3">匯入（取代）</button>
-                </div>
-            </div>
             <div id="tools-travelmode-card" class="bg-surface p-5 rounded-[1.5rem] border border-default shadow-sm">
                 <label class="setting-row">
                     <span class="type-body font-heavy text-primary"><span class="cute-emoji" aria-hidden="true">🧳</span>出門模式</span>
@@ -467,7 +454,6 @@
     <script src="js/stays.js"></script>
     <script src="vendor/sortable/Sortable.min.js"></script>
     <script src="js/drag-sort.js"></script>
-    <script src="js/backup.js"></script>
     <script src="vendor/supabase/supabase.js"></script>
     <script src="js/cloud-config.js"></script>
     <script src="js/cloud-sync.js"></script>

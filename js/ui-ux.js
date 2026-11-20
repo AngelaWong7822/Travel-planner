@@ -45,7 +45,6 @@ function cutePop(target) {
 
 function openSettingsSheet() {
     closeHeaderMenu();
-    if (typeof renderBackupInfo === 'function') renderBackupInfo();
     document.getElementById('settings-sheet')?.classList.remove('hidden');
     document.getElementById('header-settings-btn')?.setAttribute('aria-expanded', 'true');
 }

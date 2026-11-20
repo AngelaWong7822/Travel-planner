@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'travel-shell-v141';
-const ASSET_CACHE = 'travel-assets-v141';
+const SHELL_CACHE = 'travel-shell-v142';
+const ASSET_CACHE = 'travel-assets-v142';
 
 /** Critical path - small files only; must finish before SW takes over. */
 const CORE_SHELL_URLS = [
@@ -16,7 +16,6 @@ const CORE_SHELL_URLS = [
     './js/ui-ux.js',
     './js/trip-calendar.js',
     './js/stays.js',
-    './js/backup.js',
     './js/drag-sort.js',
     './vendor/sortable/Sortable.min.js',
     './js/cloud-config.js',
